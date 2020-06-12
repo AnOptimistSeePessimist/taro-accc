@@ -10,8 +10,8 @@ class Buy extends Component {
 
   render() {
     return (
-      <View className="buy-page">
-        <Text className="title">Buy</Text>
+      <View className='buy-page'>
+        <Text className='title'>Buy</Text>
       </View>
     );
   }

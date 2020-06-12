@@ -10,8 +10,8 @@ class User extends Component {
 
   render() {
     return (
-      <View className="user-page">
-        <Text className="title">User</Text>
+      <View className='user-page'>
+        <Text className='title'>User</Text>
       </View>
     );
   }

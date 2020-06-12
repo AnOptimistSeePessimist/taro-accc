@@ -10,8 +10,8 @@ class Home extends Component {
 
   render() {
     return (
-      <View className="home-page">
-        <Text className="title">Home</Text>
+      <View className='home-page'>
+        <Text className='title'>Home</Text>
       </View>
     );
   }
