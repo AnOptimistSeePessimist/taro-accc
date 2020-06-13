@@ -10,8 +10,8 @@ class Sell extends Component {
 
   render() {
     return (
-      <View className="sell-page">
-        <Text className="title">Sell</Text>
+      <View className='sell-page'>
+        <Text className='title'>Sell</Text>
       </View>
     );
   }
