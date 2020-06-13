@@ -1,7 +1,8 @@
 @import '../../styles/theme.scss';
 
-.user-page {
+.user {
   @include wh(100%, 100%);
+  background-color: red;
   .title {
     font: {
       size: 24;

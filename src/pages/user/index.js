@@ -10,7 +10,7 @@ class User extends Component {
 
   render() {
     return (
-      <View className='user-page'>
+      <View className='user'>
         <Text className='title'>User</Text>
       </View>
     );
