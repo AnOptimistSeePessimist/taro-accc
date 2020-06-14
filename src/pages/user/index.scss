@@ -3,6 +3,9 @@
 .user {
   @include wh(100%, 100%);
   background-color: red;
+  .scroll-view {
+    background-color: gray;
+  }
   .title {
     font: {
       size: 24;
