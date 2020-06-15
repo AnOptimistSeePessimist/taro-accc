@@ -11,7 +11,6 @@ export default class Profile extends Component {
     Taro.navigateTo({url: '/pages/login/index'});
   };
 
-
   render() {
     console.log('Profile: ', this.props);
     const {userInfo} = this.props;
