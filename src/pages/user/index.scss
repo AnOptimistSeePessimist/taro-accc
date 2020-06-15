@@ -1,10 +1,9 @@
-@import '../../styles/theme.scss';
+@import '@styles/theme.scss';
 
 .user {
   @include wh(100%, 100%);
-  background-color: red;
   .scroll-view {
-    background-color: gray;
+    background-color: #fff;
   }
   .title {
     font: {

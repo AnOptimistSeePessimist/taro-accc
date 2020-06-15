@@ -1,0 +1,52 @@
+@import '@styles/theme.scss';
+
+$height: 270px;
+$avatarSize: 140px;
+
+.profile {
+  position: relative;
+  height: $height;
+  overflow: hidden;
+  .bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: $height;
+  }
+  .wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
+    .avatar {
+      margin-left: 30px;
+      width: $avatarSize;
+      height: $avatarSize;
+      border-radius: $avatarSize / 2;
+      overflow: hidden;
+      .img {
+        width: $avatarSize;
+        height: $avatarSize;
+      }
+    }
+    .info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      margin-left: 30px;
+      .name {
+        color: #444;
+        font-size: 36px;
+        line-height: 36px;
+      }
+      .tip {
+        margin-top: 20px;
+        font-size: 28px;
+        color: rgba(0, 0, 0, 0.3);
+        line-height: 28px;
+      }
+    }
+  }
+}

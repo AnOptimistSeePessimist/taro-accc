@@ -1,18 +1,16 @@
 import Taro, {Component} from '@tarojs/taro';
-import {View, Text, ScrollView} from '@tarojs/components';
+import {View, ScrollView} from '@tarojs/components';
 import {connect} from '@tarojs/redux';
 
-import {getWindowHeight} from '../../utils/style';
-
-import { add } from '../../actions/counter'
-
+import {getWindowHeight} from '@utils/style';
+import { add } from '@actions/counter';
+import Profile from './profile';
+import Menu from './menu';
 import './index.scss';
 
-@connect(state => state, {})
+@connect(state => state.user, {})
 class User extends Component {
-
   componentDidMount() {
-    console.log(getWindowHeight());
     this.props.dispatch(add());
   }
 
@@ -21,10 +19,12 @@ class User extends Component {
   }
 
   render() {
+    const {userInfo} = this.props;
     return (
       <View className='user'>
         <ScrollView className='scroll-view' style={{height: getWindowHeight()}}>
-          <Text>User</Text>
+          <Profile userInfo={userInfo} />
+          <Menu userInfo={userInfo} />
         </ScrollView>
       </View>
     );
