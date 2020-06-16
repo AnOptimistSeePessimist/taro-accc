@@ -3,17 +3,14 @@
 .user {
   @include wh(100%, 100%);
   background-color: #eeeeee;
-  .title {
-    font: {
-      size: 24;
-      weight: bold;
-    }
-  }
   .logout {
     border-radius: 0;
     background-color: #fff;
     border-color: #eeeeee;
     margin-top: 20px;
     margin-bottom: 20px;
+  }
+  .footer {
+    color: #eeeeee,
   }
 }

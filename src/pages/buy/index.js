@@ -1,7 +1,11 @@
+/* eslint-disable import/first */
 import Taro, {Component} from '@tarojs/taro';
-import {View, Text, Image, ScrollView} from '@tarojs/components';
+import {View, Text, Image} from '@tarojs/components';
+
+import Menu from './menu/index';
 
 import './index.scss';
+
 
 class Buy extends Component {
   config = {
@@ -11,7 +15,7 @@ class Buy extends Component {
   render() {
     return (
       <View className='buy'>
-        <Text className='title'>Buy</Text>
+        <Menu />
       </View>
     );
   }

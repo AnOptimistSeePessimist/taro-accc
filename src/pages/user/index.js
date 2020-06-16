@@ -1,9 +1,7 @@
 import Taro, {Component} from '@tarojs/taro';
-import {View, ScrollView} from '@tarojs/components';
+import {View} from '@tarojs/components';
 import {connect} from '@tarojs/redux';
 import { AtButton } from 'taro-ui';
-
-import {getWindowHeight} from '@utils/style';
 import { add } from '@actions/counter';
 import Profile from './profile';
 import Menu from './menu';
@@ -22,11 +20,12 @@ class User extends Component {
 
   render() {
     const {userInfo} = this.props;
+    console.log('userInfo.login: ', userInfo.login);
     return (
-      <View className='user' style={{height: getWindowHeight()}}>
+      <View className='user'>
         <Profile userInfo={userInfo} />
         <Menu userInfo={userInfo} />
-        <AtButton className='logout'>退出登录</AtButton>
+        {userInfo.login && <AtButton className='logout'>退出登录</AtButton>}
       </View>
     );
   }

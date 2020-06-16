@@ -1,8 +1,90 @@
 @import '@styles/theme.scss';
 
 .login {
-  background-color: gray;
-  .tip {
-    font-size: 20px;
+  @include wh(100%, 100%);
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  .title {
+    margin-top: 80px;
+    text-align: left;
+    font-weight: 600;
+    line-height: 60px;
+    padding-left: 40px;
+    font-size: 48px;
+  }
+  .form-top-wrapper {
+    width: 100%;
+    margin-top: 260px;
+    .login-wrapper {
+      margin: 0 auto 0 auto;
+      padding: 30px 40px 30px 40px;
+      position: relative;
+      .mobile {
+        height: 80px;
+        overflow: hidden;
+        margin: 20px auto 20px auto;
+        border-bottom: 1px solid #eeeeee;
+        input {
+          border: 0;
+          height: 80px;
+          font-size: 32px;
+          width: 100%;
+          outline: 0;
+          background-color: transparent;
+          -webkit-appearance: none;
+          overflow: hidden;
+          padding: 0 0 0 20px;
+          margin: 0;
+          text-align: left;
+          color: #333;
+        }
+      }
+    }
+    .validate-number {
+      display: flex;
+      flex-direction: row;
+      height: 80px;
+      margin: 20px 0 0px 0;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid #f8f8f8;
+      input {
+        flex: 1;
+        height: 80px;
+        font-size: 32px;
+        outline: 0;
+        background-color: transparent;
+        -webkit-appearance: none;
+        overflow: hidden;
+        padding: 0 0 0 20px;
+        margin: 0;
+        border: 0;
+        float: left;
+        text-align: left;
+        color: #333;
+      }
+      .fetch-button {
+        height: 80px;
+        border: 1px solid #ffffff;
+        font-size: 32px;
+        text-align: center;
+        line-height: 80px;
+        background: #fff;
+        color: #d64761;
+      }
+    }
+    .button {
+      height: 80px;
+      line-height: 80px;
+      padding: 0;
+      margin: 0 auto;
+      font-size: 32px;
+      color: #fff;
+      background: #333;
+      text-align: center;
+      font-weight: 600;
+      margin-top: 40px;
+    }
   }
 }
