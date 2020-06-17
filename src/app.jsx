@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 import Taro, { Component } from '@tarojs/taro'
 import { Provider } from '@tarojs/redux'
 
@@ -5,6 +6,7 @@ import Index from './pages/index/index'
 
 import configStore from './store'
 
+import 'taro-ui/dist/style/index.scss'; // 全局引入一次即可
 import './app.scss'
 
 // 如果需要在 h5 环境中开启 React Devtools
@@ -21,10 +23,10 @@ class App extends Component {
 
   config = {
     pages: [
-      'pages/user/index',
-      'pages/home/index',
       'pages/buy/index',
+      'pages/home/index',
       'pages/sell/index',
+      'pages/user/index',
       'pages/login/index',
     ],
     window: {
