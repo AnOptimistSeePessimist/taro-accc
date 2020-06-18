@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import './index.scss';
 
 const MENU_LIST = [
-  {key: 'buy1', text: '租人力', img: require('./assets/order.png'), path: '/pages/buy/lease/index'},
+  {key: 'buy1', text: '租人力', img: require('./assets/order.png'), path: '/pages/buy_lease/index'},
   {key: 'buy2', text: '买耗材', img: require('./assets/pin.png')},
   {key: 'buy3', text: '租叉车', img: require('./assets/bargain.png')},
   {key: 'buy4', text: '去拼车', img: require('./assets/credit.png')},

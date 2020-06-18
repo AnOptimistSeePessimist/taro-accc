@@ -5,8 +5,8 @@ import {drawerShowHide} from '../../actions/home'
 import {AtDrawer} from 'taro-ui'
 import './index.scss';
 
-@connect(({ drawerShow }) => ({
-  drawerShow
+@connect(({ home }) => ({
+  home
 }), (dispatch) => ({
   drawerShowHides(data) {
     dispatch(drawerShowHide(data))
@@ -26,10 +26,10 @@ class Home extends Component {
     return (
       <View className='home'>
         <Text className='title'>Home</Text>
-        {this.props.drawerShow.showHideDrawer}
+        {this.props.home.showHideDrawer}
         <Button onClick={this.todrawerShowHide}>测试抽屉</Button>
         <AtDrawer
-          show={this.props.drawerShow.showHideDrawer}
+          show={this.props.home.showHideDrawer}
           mask
           right
           items={['菜单1', '菜单2']}

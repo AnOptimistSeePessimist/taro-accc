@@ -5,7 +5,7 @@ import {
 const INITIAL_STATE = {
   showHideDrawer: false
 }
-export default function drawerShow(state = INITIAL_STATE, actions) {
+export default function home(state = INITIAL_STATE, actions) {
   switch (actions.type) {
     case TAROUI_DRAWER:
       return {
