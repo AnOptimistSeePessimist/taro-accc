@@ -1,6 +1,4 @@
-@import '../../styles/theme.scss';
-@import "~taro-ui/dist/style/components/drawer.scss";
-@import "~taro-ui/dist/style/components/list.scss";
+@import '@styles/theme.scss';
 .home {
   @include wh(100%, 100%);
   .title {
