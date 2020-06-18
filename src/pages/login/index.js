@@ -1,9 +1,16 @@
 import Taro, {Component} from '@tarojs/taro';
 import {View, Text, Input, Button} from '@tarojs/components';
+import {connect} from '@tarojs/redux';
+import {dispatchLogin} from '@actions/user';
 
 import './index.scss';
 
-export default class Login extends Component {
+@connect(state => state.user, (dispatch) => ({
+  login(payload) {
+    dispatch(dispatchLogin(payload));
+  },
+}))
+class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -65,12 +72,15 @@ export default class Login extends Component {
       return;
     }
 
-    const response = await Taro.showLoading({
+    Taro.showLoading({
       title: '正在登陆中',
       mask: true,
     });
-    console.log('response: ', response);
+
+    this.props.login({username: mobile, password: code});
+
     Taro.hideLoading();
+    Taro.navigateBack();
   };
 
   render() {
@@ -113,3 +123,5 @@ export default class Login extends Component {
     );
   }
 }
+
+export default Login;

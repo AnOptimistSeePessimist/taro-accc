@@ -8,29 +8,18 @@ const CODE_SUCCESS = '200'
  * 简易封装网络请求
  *
  */
-export default async function fetch(options) {
-  const {url, payload, method = 'GET', showToast = true, autoLogin = true} = options;
-  const header = {access_token: '这是token'};
+export default function fetch(options) {
+  const {url, payload, method = 'GET'} = options;
+  const header = {};
   if (method === 'POST') {
     header['content-type'] = 'application/json';
   }
 
-  try {
-    const res = await Taro.request({url, method, data: payload, header});
-    const {code, data} = res.data;
-    if (code !== CODE_SUCCESS) {
-      return Promise.reject(res.data);
-    }
-    return data;
-  } catch (err) {
-    if (showToast) {
-      Taro.showToast({
-        title: err && err.errorMsg,
-        icon: 'none',
-      });
-    }
-
-
-
-  }
+  return Taro.request({url, method, data: JSON.stringify(payload), header})
+    .then(res => {
+      return Promise.resolve(res);
+    })
+    .catch(err => {
+      return Promise.reject(err);
+    })
 }

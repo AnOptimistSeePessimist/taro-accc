@@ -7,7 +7,7 @@ const INITIAL_STATE = {
 
 export default function user(state = INITIAL_STATE, action) {
   switch (action.type) {
-    case USER_INFO: 
+    case USER_LOGIN: 
       return {
         ...state,
         userInfo: {
@@ -15,7 +15,7 @@ export default function user(state = INITIAL_STATE, action) {
           login: true,
         },
       };
-    case USER_LOGIN: 
+    case USER_INFO: 
       return {...state};
     case USER_LOGOUT:
       return {...INITIAL_STATE};
