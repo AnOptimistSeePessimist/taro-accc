@@ -20,9 +20,9 @@ export default class Menu extends Component {
 
     if (!userInfo.login) {
       Taro.navigateTo({url: '/pages/login/index'});
+    } else {
+    Taro.showToast({title: path, icon: 'none'});
     }
-
-    Taro.showToast({title: path});
   };
 
 
@@ -32,7 +32,7 @@ export default class Menu extends Component {
         {
           MENU_LIST.map((menu, index) => {
             return (
-              <View data-title={menu.text} key={menu.key} className='item' onClick={() => this.handleClick(menu.path)}>
+              <View data-title={menu.text} key={menu.key} className='item' onClick={() => this.handleClick(menu.text)}>
                 <View className='left'>
                   <Image
                     className='img'
