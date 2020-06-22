@@ -28,7 +28,8 @@ class App extends Component {
       'pages/buy/index',
       'pages/home/index',
       'pages/login/index',
-      'pages/user/index',
+      'pages/buy_lease/index',
+      'pages/user/index'
     ],
     window: {
       backgroundTextStyle: 'light',

@@ -1,0 +1,26 @@
+.example-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+}
+
+.AtTag-item {
+  margin-right: 60px;
+  margin-left: 50px;
+}
+
+.at-tag--active {
+  color: #E93B3D;
+  border-color: #E93B3D;
+}
+
+.panel-title {
+  position: relative;
+  margin-bottom: 40rpx;
+  padding-left: 60rpx;
+  color: #7F7F7F;
+  font-size: 32rpx;
+  font-weight: bold;
+  line-height: 1.5;
+}

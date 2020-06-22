@@ -1,5 +1,4 @@
-@import '../../styles/theme.scss';
-
+@import '@styles/theme.scss';
 .home {
   @include wh(100%, 100%);
   .title {

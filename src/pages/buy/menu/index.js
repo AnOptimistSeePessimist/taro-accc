@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import './index.scss';
 
 const MENU_LIST = [
-  {key: 'buy1', text: '租人力', img: 'iconrenli'},
+  {key: 'buy1', text: '租人力', img: 'iconrenli', path: '/pages/buy_lease/index'},
   {key: 'buy2', text: '买耗材', img: 'icontubiao-'},
   {key: 'buy3', text: '租叉车', img: 'iconchache1'},
   {key: 'buy4', text: '去拼车', img: 'iconpincheguanli'},
@@ -14,6 +14,16 @@ const MENU_LIST = [
 const COUNT_LINE = 2;
 
 export default class Menu extends Component {
+  handleClick = (path) => {
+    //const {userInfo} = this.props;
+
+    // if (!userInfo.login) {
+      
+    // }
+    Taro.navigateTo({url: path});
+    
+  }
+
   render() {
     return (
       <View className='menu'>
@@ -31,6 +41,7 @@ export default class Menu extends Component {
                   nth && 'item-nth',
                   lastLine && MENU_LIST.length % 2 === 1 && 'item-nth'
                 )}
+                onClick={() => this.handleClick(menu.path)}
               >
                 <View className={`iconfont ${menu.img} img`} />
                 <Text className='title'>{menu.text}</Text>
