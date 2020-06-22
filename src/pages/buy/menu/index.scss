@@ -15,8 +15,8 @@
     height: 180px;
     @include border(right bottom, 1px, solid, rgba(0, 0, 0, .15));
     .img {
-      width: 52px;
-      height: 52px;
+      font-size: 52px;
+      color: #fe871f;
     }
     .title {
       margin-top: 16px;
