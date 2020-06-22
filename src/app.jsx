@@ -23,23 +23,24 @@ class App extends Component {
 
   config = {
     pages: [
+      'pages/buy/index',
+      'pages/buy-manpower/index',
       'pages/sell/index',
       'pages/sell-manpower/index',
-      'pages/buy/index',
       'pages/home/index',
+      'pages/user/index',
       'pages/login/index',
-      'pages/buy_lease/index',
-      'pages/user/index'
+      'pages/buy-manpower-information/index',
     ],
     window: {
       backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#fe871f',
-      navigationBarTitleText: '空运帮',
-      navigationBarTextStyle: 'white'
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTitleText: '货运帮',
+      navigationBarTextStyle: 'black'
     },
     tabBar: {
       color: "#666",
-      selectedColor: "#fe871f",
+      selectedColor: "#b4282d",
       backgroundColor: "#fafafa",
       borderStyle: 'black',
       list: [{
@@ -49,14 +50,14 @@ class App extends Component {
         text: "首页"
       }, {
         pagePath: "pages/buy/index",
-        iconPath: "./assets/tab-bar/buy.png",
-        selectedIconPath: "./assets/tab-bar/buy-active.png",
-        text: "买家"
+        iconPath: "./assets/tab-bar/cate.png",
+        selectedIconPath: "./assets/tab-bar/cate-active.png",
+        text: "买"
       }, {
         pagePath: "pages/sell/index",
-        iconPath: "./assets/tab-bar/sell.png",
-        selectedIconPath: "./assets/tab-bar/sell-active.png",
-        text: "卖家"
+        iconPath: "./assets/tab-bar/cart.png",
+        selectedIconPath: "./assets/tab-bar/cart-active.png",
+        text: "卖"
       }, {
         pagePath: "pages/user/index",
         iconPath: "./assets/tab-bar/user.png",

@@ -5,10 +5,10 @@ import classNames from 'classnames';
 import './index.scss';
 
 const MENU_LIST = [
-  {key: 'buy3', text: '出租人力', img: 'iconLaw_manpower', path: '/pages/sell-manpower/index'},
-  {key: 'buy1', text: '出租叉车', img: 'iconchache'},
-  {key: 'buy2', text: '出租拼车', img: 'iconcar'},
-  {key: 'buy4', text: '售卖耗材', img: 'iconsuppliesinvoice'},
+  {key: 'buy3', text: '出租人力', img: require('./assets/order.png'), path: '/pages/sell-manpower/index'},
+  {key: 'buy1', text: '出租叉车', img: require('./assets/coupon.png')},
+  {key: 'buy2', text: '出租拼车', img: require('./assets/service.png')},
+  {key: 'buy4', text: '售卖耗材', img: require('./assets/feedback.png')},
 ];
 
 const COUNT_LINE = 2;
@@ -38,7 +38,10 @@ export default class Menu extends Component {
                 )}
                 onClick={() => this.handleClick(menu.path)}
               >
-                <View className={`iconfont ${menu.img} img`} />
+                <Image 
+                  className='img'
+                  src={menu.img}
+                />
                 <Text className='title'>{menu.text}</Text>
               </View>
             );

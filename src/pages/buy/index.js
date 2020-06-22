@@ -9,7 +9,7 @@ import './index.scss';
 @connect(state => state.user, {})
 class Buy extends Component {
   config = {
-    navigationBarTitleText: '买家'
+    navigationBarTitleText: '买'
   }
 
   render() {

@@ -11,7 +11,7 @@ class Sell extends Component {
   }
 
   config = {
-    navigationBarTitleText: '卖家'
+    navigationBarTitleText: '卖'
   }
 
   render() {
