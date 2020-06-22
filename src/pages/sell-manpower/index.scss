@@ -1,21 +1,113 @@
 @import '@styles/theme.scss';
 
+@mixin btbw {
+  border-top-width: 0;
+  border-bottom-width: 0;
+}
+
+@mixin btbwn {
+  border-bottom-width: 2px;
+  border-bottom-color: #eeeeee;
+}
+
 .sell-manpower {
   @include wh(100%, 100%);
   .wrapper {
     margin-top: 40px;
     background-color: #fff;
     .form {
-      display: flex;
-      flex-direction: column;
       margin-left: 20px;
       margin-right: 20px;
-      border-left: 1px solid red;
-      border-right: 1px solid red;
+      &::after {
+        @include btbw;
+      }
+      display: flex;
+      flex-direction: column;
       .date {
         flex: 1;
-        // width: 750px;
-        background-color: red;
+        .date-at-list {
+          &::after {
+            @include btbw;
+            @include btbwn;
+          }
+          .item-extra__info {
+            color: #000,
+          }
+          .item {
+            &::after {
+              @include btbw;
+            }
+          }
+        }
+      }
+      .divider {
+        height: 20px;
+      }
+      .work-time {
+        &::after {
+          @include btbw;
+        }
+        flex: 1;
+        .start-list {
+          &::after {
+            @include btbw;
+            @include btbwn;
+          }
+          .item-extra__info {
+            color: #000,
+          }
+          .start {
+            &::after {
+              @include btbw;
+            }
+          }
+        }
+      }
+      .out-of-work-time {
+        flex: 1;
+        &::after {
+          @include btbw;
+        }
+        .end-list {
+          &::after {
+            @include btbw;
+            @include btbwn;
+          }
+          .item-extra__info {
+            color: #000,
+          }
+          .end {
+            &::after {
+              @include btbw;
+            }
+          }
+        }
+      }
+      .setting-spec {
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 24px;
+        padding-right: 24px;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        align-items: center;
+        border-bottom: 1px solid #eeeeee;
+        .at-input-number {
+          border-color: #fe871f;
+          input {
+            border-color: #fe871f;
+          }
+          text {
+            color: #fe871f;
+          }
+        }
+      }
+      .release {
+        border-width: 0;
+        margin-top: 40px;
+        color: #fff;
+        background-color: #fe871f;
       }
     }
   }

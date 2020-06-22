@@ -10,9 +10,7 @@ import fetch from '@utils/request';
 export const dispatchLogin = payload => {
   return dispatch => {
     fetch({url: API_USER_LOGIN, method: 'POST', payload}).then((res) => {
-      console.log('payload: ', payload);
-      console.log('res: ', res.data);
-      dispatch({type: USER_LOGIN, payload: res.data});
+      dispatch({type: USER_LOGIN, payload: res.data.data});
     }).catch((error) => {
 
     });

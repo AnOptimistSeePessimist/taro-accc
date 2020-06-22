@@ -15,7 +15,7 @@ export default function fetch(options) {
     header['content-type'] = 'application/json';
   }
 
-  return Taro.request({url, method, data: JSON.stringify(payload), header})
+  return Taro.request({url, method, data: payload, header})
     .then(res => {
       return Promise.resolve(res);
     })

@@ -2,7 +2,6 @@ import {USER_INFO, USER_LOGIN, USER_LOGOUT} from '../constants/user';
 
 const INITIAL_STATE = {
   userInfo: {},
-  menu: {},
 };
 
 export default function user(state = INITIAL_STATE, action) {

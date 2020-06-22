@@ -14,7 +14,7 @@ import './index.scss';
 }))
 class Home extends Component {
   config = {
-    navigationBarTitleText: '货运帮'
+    navigationBarTitleText: '空运帮'
   }
 
   todrawerShowHide = (e) => {
