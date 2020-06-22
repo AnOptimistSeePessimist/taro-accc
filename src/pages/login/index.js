@@ -2,6 +2,8 @@ import Taro, {Component} from '@tarojs/taro';
 import {View, Text, Input, Button} from '@tarojs/components';
 import {connect} from '@tarojs/redux';
 import {dispatchLogin} from '@actions/user';
+import fetch from '@utils/request';
+import {API_USER_CODE} from '@constants/api';
 
 import './index.scss';
 
@@ -14,7 +16,7 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mobile: '', // 手机号
+      mobile: '12345678901', // 手机号
       code: '', // 验证码
       sending: 0, // 0 == 获取验证码 1 == 多少秒后重新发送验证码   2 == 重新获取验证码
       smsTime: 60, // 默认为 60s 再次重新获取验证码 
@@ -37,7 +39,17 @@ class Login extends Component {
       return;
     }
 
-    this.showToast('正在发送验证码');
+    Taro.showLoading({
+      title: '正在发送验证码'
+    });
+
+    fetch({url: API_USER_CODE, payload: {mobilePhone: '12345678901'}})
+      .then((res) => {
+        Taro.hideLoading();
+        this.setState({code: res.data.data});
+      }).catch((e) => {
+
+      });
   };
 
   showToast(title) {
@@ -55,9 +67,9 @@ class Login extends Component {
   };
 
   getCode = (e) => {
-    this.setState({
-      code: e.target.value,
-    });
+    // this.setState({
+    //   code: e.target.value,
+    // });
   }
 
   login = async () => {
@@ -65,8 +77,7 @@ class Login extends Component {
     if (
       mobile == '' ||
       mobile.length != 11 ||
-      code == '' ||
-      code.length != 6
+      code == ''
     ) {
       this.showToast('请输入有效的手机号或输入有效验证码！');
       return;
@@ -77,7 +88,7 @@ class Login extends Component {
       mask: true,
     });
 
-    this.props.login({username: mobile, password: code});
+    this.props.login({mobilePhone: '12345678901', password: code});
 
     Taro.hideLoading();
     Taro.navigateBack();
@@ -97,7 +108,7 @@ class Login extends Component {
                 name='mobile'
                 maxLength='11'
                 placeholder='请输入手机号'
-                value={mobile}
+                value={this.state.mobile}
                 onInput={this.getMobile}
               />
             </View>
@@ -105,7 +116,7 @@ class Login extends Component {
               <Input
                 type='number'
                 name='code'
-                maxLength='6'
+                // maxLength='4'
                 placeholder='请输入验证码'
                 value={code}
                 onInput={this.getCode}

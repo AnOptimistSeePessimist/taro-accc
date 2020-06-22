@@ -1,4 +1,5 @@
-const host = 'http://192.168.1.1';
+const host = 'http://172.21.118.79:8090/accc-openapi';
 
 // user
-export const API_USER_LOGIN = `http://rap2.taobao.org:38080/app/mock/258219/login`;
+export const API_USER_LOGIN = `${host}/login`;
+export const API_USER_CODE = `${host}/anon/sendCode`;

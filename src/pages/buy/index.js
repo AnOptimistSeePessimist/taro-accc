@@ -9,7 +9,7 @@ import './index.scss';
 
 class Buy extends Component {
   config = {
-    navigationBarTitleText: '买'
+    navigationBarTitleText: '买家'
   }
 
   render() {
