@@ -1,19 +1,19 @@
-.work-type {
+.work-at-tag {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-content: center;
 }
 
-.AtTag-item {
+.at-tag-item {
   padding: 10px;
   margin-right: 50px;
   margin-bottom: 50px;
 }
 
 .at-tag--active {
-  color: #E93B3D;
-  border-color: #E93B3D;
+  color: #fe871f;
+  border-color: #fe871f;
 }
 
 .at-list__item {
@@ -48,7 +48,7 @@
   font-weight: bold;
 }
 
-.ButtonStyle {
+.button-style {
   border-width: 0;
   margin-top: 40px;
   color: #fff;
@@ -67,4 +67,12 @@
     color: #7F7F7F;
     font-weight: bold;
   }
+}
+
+.worker-number{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-bottom: 1px solid #F1F6FA;
+  padding: 10px 10px;
 }

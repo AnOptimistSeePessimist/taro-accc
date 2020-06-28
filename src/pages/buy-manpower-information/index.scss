@@ -1,31 +1,15 @@
-.panel-title {
-  position: relative;
-  margin-bottom: 40rpx;
-  padding-left: 60rpx;
-  color: #7F7F7F;
-  font-size: 32rpx;
-  font-weight: bold;
-  line-height: 1.5;
+.buy-manpower {
+  background-color: #F4F4F4;
 }
 
 .information-title {
   width: 100%;
   display: flex;
   flex-direction: row;
-  align-items: center;
   justify-content: space-around;
-  flex-wrap: wrap;
 }
 
-.dataList {
+.data-list {
   min-width: 45%;
-  border: 1rpx solid blue;
-}
-
-.text {
-  width: 350rpx;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  font-size: 0.7rem;
+  margin-bottom: 20px;
 }

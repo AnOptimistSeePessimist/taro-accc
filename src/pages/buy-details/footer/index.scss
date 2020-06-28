@@ -1,0 +1,41 @@
+@import "@styles/theme.scss";
+
+$border-color: #dddddd;
+$text-color: #333333;
+
+.item-footer {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  background: #faf9fa;
+	border-top: 1px solid $border-color;
+}
+
+.item-footer-nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 96px;
+	border-right: 1px solid $border-color;
+
+  &-img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.item-footer-buy {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+	border-right: 1px solid $border-color;
+
+  &-txt {
+    color: $text-color;
+    font-size: 28px;
+    line-height: 28px;
+  }
+}
