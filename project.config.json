@@ -1,7 +1,7 @@
 {
 	"miniprogramRoot": "dist/",
 	"projectname": "taro-accc",
-	"description": "货运帮",
+	"description": "空运帮",
 	"appid": "wx3f61bb3e209a6ef1",
 	"setting": {
 		"urlCheck": false,
@@ -17,11 +17,13 @@
 		"checkInvalidKey": true,
 		"checkSiteMap": true,
 		"uploadWithSourceMap": true,
+		"compileHotReLoad": false,
 		"babelSetting": {
 			"ignore": [],
 			"disablePlugins": [],
 			"outputPath": ""
 		},
+		"useIsolateContext": true,
 		"useCompilerModule": false,
 		"userConfirmedUseCompilerModuleSwitch": true
 	},

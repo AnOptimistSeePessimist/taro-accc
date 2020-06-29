@@ -2,7 +2,7 @@
   "name": "taro-accc",
   "version": "1.0.0",
   "private": true,
-  "description": "货运帮",
+  "description": "空运帮",
   "templateInfo": {
     "name": "redux",
     "typescript": false,

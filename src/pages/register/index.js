@@ -1,22 +1,16 @@
 import Taro, {Component} from '@tarojs/taro';
 import {View, Text, Input, Button} from '@tarojs/components';
-import {connect} from '@tarojs/redux';
-import {dispatchLogin} from '@actions/user';
 import fetch from '@utils/request';
 import {API_USER_CODE} from '@constants/api';
 
 import './index.scss';
 
-@connect(state => state.user, (dispatch) => ({
-  login(payload) {
-    dispatch(dispatchLogin(payload));
-  },
-}))
-class Login extends Component {
+class Register extends Component {
   constructor(props) {
     super(props);
+    console.log('Register - props: ', props);
     this.state = {
-      mobilePhone: '', // 手机号
+      mobile: '12345678901', // 手机号
       code: '', // 验证码
       sending: 0, // 0 == 获取验证码 1 == 多少秒后重新发送验证码   2 == 重新获取验证码
       smsTime: 60, // 默认为 60s 再次重新获取验证码 
@@ -24,17 +18,17 @@ class Login extends Component {
   }
 
   config = {
-    navigationBarTitleText: '登录',
+    navigationBarTitleText: '注册',
   };
 
   // 发送验证码
   sendSms = () => {
-    const {sending, mobilePhone} = this.state;
+    const {sending, mobile} = this.state;
     if (sending === 1) {
       return;
     }
 
-    if (mobilePhone == '' || mobilePhone.length != 11) {
+    if (mobile == '' || mobile.length != 11) {
       this.showToast('请输入有效的手机号！');
       return;
     }
@@ -43,10 +37,10 @@ class Login extends Component {
       title: '正在发送验证码'
     });
 
-    fetch({url: API_USER_CODE + `/${this.state.mobilePhone}`})
+    fetch({url: API_USER_CODE + `/${12345678901}`})
       .then((res) => {
         Taro.hideLoading();
-        this.setState({code: res.data.data.toString()});
+        this.setState({code: res.data.data});
       }).catch((e) => {
 
       });
@@ -60,41 +54,45 @@ class Login extends Component {
   }
 
 
-  getMobilePhone = (e) => {
+  getMobile = (e) => {
     this.setState({
-      mobilePhone: e.target.value,
+      mobile: e.target.value,
     });
   };
 
   getCode = (e) => {
-    this.setState({
-      code: e.target.value,
-    });
+    // this.setState({
+    //   code: e.target.value,
+    // });
   }
 
-  login = async () => {
-    const {mobilePhone, code} = this.state;
+  register = async () => {
+    const {mobile, code} = this.state;
     if (
-      mobilePhone == '' ||
-      mobilePhone.length != 11 ||
+      mobile == '' ||
+      mobile.length != 11 ||
       code == ''
     ) {
       this.showToast('请输入有效的手机号或输入有效验证码！');
       return;
     }
 
-    this.props.login({mobilePhone, securityCode: code});
-  };
+    Taro.showLoading({
+      title: '正在登陆中',
+      mask: true,
+    });
 
-  handleRegister = () => {
-    Taro.navigateTo({url: '/pages/register/index'});
+    this.props.login({mobilePhone: '12345678901', password: code});
+
+    Taro.hideLoading();
+    Taro.navigateBack();
   };
 
   render() {
     const {sending, smsTime} = this.state;
     return (
       <View className='login'>
-        <Text className='title'>您好，请登录</Text>
+        <Text className='title'>您好，请注册</Text>
 
         <View className='form-top-wrapper'>
           <View className='login-wrapper'>
@@ -104,8 +102,8 @@ class Login extends Component {
                 name='mobile'
                 maxLength='11'
                 placeholder='请输入手机号'
-                value={this.state.mobilePhone}
-                onInput={this.getMobilePhone}
+                value={this.state.mobile}
+                onInput={this.getMobile}
               />
             </View>
             <View className='validate-number'>
@@ -121,10 +119,9 @@ class Login extends Component {
                 {sending === 0 ? '获取验证码' : sending === 1 ? `${smsTime}秒后重发` : '重新获取'}
               </View>
             </View>
-            <Button className='button' onClick={this.login}>
-              登录
+            <Button className='button' onClick={this.register}>
+              注册
             </Button>
-            <View className='register-btn' onClick={this.handleRegister}>注册</View>
           </View>
         </View>
       </View>
@@ -132,4 +129,4 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default Register;

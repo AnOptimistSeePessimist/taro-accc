@@ -35,7 +35,7 @@ class Profile extends Component {
             />
           </View>
           <View className='info' onClick={this.handleLogin}>
-            <Text className='name'>{userInfo.login ? userInfo.userDetails.username: '未登录'}</Text>
+            <Text className='name'>{userInfo.login ? userInfo.userDetails.id: '未登录'}</Text>
             <Text className='tip'>{userInfo.login ? userInfo.userDetails.mobilePhone : '点击登录账号'}</Text>
           </View>
         </View>

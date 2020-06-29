@@ -106,8 +106,49 @@
       .release {
         border-width: 0;
         margin-top: 40px;
+        margin-bottom: 40px;
         color: #fff;
         background-color: #fe871f;
+      }
+      .category {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        .tag-wrapper {
+          margin-top: 20px;
+          margin-bottom: 20px;
+          .tag {
+            margin: 10px;
+          }
+          .tag-active {
+            background-color: #fe871f;
+            border-color: #fe871f;
+          }
+        }
+      }
+      .manpower {
+        border-top: 1px solid #eeeeee;
+        border-bottom: 1px solid #eeeeee;
+        .manpower-label {
+          padding-top: 24px;
+          padding-bottom: 24px;
+          margin-left: 24px;
+        }
+        .manpower-list {
+          display: flex;
+          flex-direction: row;
+          // justify-content: flex-end;
+          flex-wrap: wrap;
+          .manpower-checkbox-wrapper {
+            display: flex;
+            justify-content: flex-start;
+            width: 50%;
+            margin-bottom: 10px;
+            // .manpower-checkbox-label {
+            // }
+          }
+        }
       }
     }
   }

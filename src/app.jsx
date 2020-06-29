@@ -23,14 +23,15 @@ class App extends Component {
 
   config = {
     pages: [
+      'pages/user/index',
+      'pages/sell/index',
+      'pages/home/index',
       'pages/buy/index',
       'pages/buy-manpower/index',
-      'pages/sell/index',
       'pages/sell-manpower/index',
-      'pages/home/index',
       'pages/login/index',
-      'pages/user/index',
       'pages/buy-manpower-information/index',
+      'pages/register/index',
     ],
     window: {
       backgroundTextStyle: 'light',

@@ -14,9 +14,11 @@ export default function fetch(options) {
   if (method === 'POST') {
     header['content-type'] = 'application/json';
   }
+  console.log('payload: ', payload);
 
   return Taro.request({url, method, data: payload, header})
     .then(res => {
+      console.log('res: ', res);
       return Promise.resolve(res);
     })
     .catch(err => {
