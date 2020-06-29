@@ -13,7 +13,14 @@ const MENU_LIST = [
 
 const COUNT_LINE = 2;
 
+
 export default class Menu extends Component {
+
+  constructor(props){
+    super(props);
+    Taro.navigateTo({url: '/pages/buy-manpower/index'})
+  }
+
   handleClick = (path) => {
     //const {userInfo} = this.props;
 

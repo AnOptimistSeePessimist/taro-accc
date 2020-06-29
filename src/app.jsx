@@ -32,6 +32,8 @@ class App extends Component {
       'pages/login/index',
       'pages/buy-manpower-information/index',
       'pages/register/index',
+      'pages/buy-confirm/index',
+      'pages/buy-details/index'
     ],
     window: {
       backgroundTextStyle: 'light',

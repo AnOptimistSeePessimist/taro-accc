@@ -11,7 +11,8 @@ class BuyManpower extends Component {
 	}
 
 
-	constructor() {
+	constructor(props) {
+		super(props);
 		this.state = {
 			hollowTagList: [
 				{ name: '装卸工', active: false, id: 1 },
@@ -23,7 +24,6 @@ class BuyManpower extends Component {
 			isOpenedModal: false,
 			startTime: '08:00',
 			endTiem: '16:00',
-			workers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000],
 			workersNum: 1
 		}
 	}
@@ -75,18 +75,19 @@ class BuyManpower extends Component {
 	}
 
 	btnChange = () => {
-		const { startTime, endTiem, workersNum, workerName } = this.state;
-		console.log('获取页面数据', startTime, endTiem, workersNum, workerName)
-		Taro.navigateTo({ url: '/pages/buy-manpower-information/index' })
+		const { date, startTime, endTiem, workersNum, workerName } = this.state;
+		console.log('获取页面数据', date, startTime, endTiem, workersNum, workerName)
+		const buyData = { date: date, startTime: startTime, endTiem: endTiem, workersNum: workersNum, workerName: workerName }
+		Taro.navigateTo({ url: `/pages/buy-manpower-information/index?buyData=${JSON.stringify(buyData)}` })
 	}
 
 	render() {
 		return (
 			<View className='panel'>
 				{/* <View className='panel-title' style={{ backgroundColor: '#F7F7F7', paddingTop: '5px', paddingBottom: '5px' }}>人力分类</View> */}
-				<View className='work-type'>
+				<View className='work-at-tag'>
 					{this.state.hollowTagList.map((item, index) => (
-						<View key={item.id} className='AtTag-item'>
+						<View key={item.id} className='at-tag-item'>
 							<AtTag
 								name={item.name}
 								active={item.active}
@@ -96,7 +97,7 @@ class BuyManpower extends Component {
 						</View>
 					))}
 				</View>
-				<View className='choose-date-time'>
+				<View className='date-time'>
 					<View>
 						<Picker mode='date' onChange={this.onDateChange}>
 							<AtList>
@@ -105,7 +106,7 @@ class BuyManpower extends Component {
 						</Picker>
 					</View>
 				</View>
-				<View className='choose-date-time'>
+				<View className='date-start-time'>
 					<View>
 						<Picker mode='time' onChange={this.onStartTimeChange}>
 							<AtList>
@@ -114,7 +115,7 @@ class BuyManpower extends Component {
 						</Picker>
 					</View>
 				</View>
-				<View className='choose-date-time'>
+				<View className='date-end-time'>
 					<View>
 						<Picker mode='time' onChange={this.onEndTimeChange}>
 							<AtList>
@@ -123,8 +124,8 @@ class BuyManpower extends Component {
 						</Picker>
 					</View>
 				</View>
-				<View className='choose-date-time'>
-					<View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderBottom: '1px solid #F1F6FA', padding: '10px 10px' }}>
+				<View className='date-workders-time'>
+					<View className='worker-number'>
 						<View className='workerText'>工人数量</View>
 						<AtInputNumber
 							className='at-input-number'
@@ -136,7 +137,7 @@ class BuyManpower extends Component {
 						/>
 					</View>
 				</View>
-				<AtButton className='ButtonStyle' formType='submit' onClick={this.btnChange}>查询</AtButton>
+				<AtButton className='button-style' formType='submit' onClick={this.btnChange}>查询</AtButton>
 			</View>
 		)
 	}
