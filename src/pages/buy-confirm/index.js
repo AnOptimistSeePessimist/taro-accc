@@ -1,19 +1,19 @@
-import Taro, {Component} from '@tarojs/taro'
-import {View, Text} from '@tarojs/components'
+import Taro, { Component } from '@tarojs/taro'
+import { View, Text } from '@tarojs/components'
 import './index.scss'
 
-export default class BuyConfirm extends Component{
+export default class BuyConfirm extends Component {
 
 	config = {
 		navigationBarTitleText: '下单确认'
 	}
 
-	componentWillMount(){
+	componentWillMount() {
 		console.log(JSON.parse(this.$router.params.buyData))
 	}
 
-	render(){
-		return(
+	render() {
+		return (
 			<View>
 				<Text>下单确认</Text>
 			</View>
