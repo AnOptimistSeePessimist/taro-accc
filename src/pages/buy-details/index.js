@@ -5,6 +5,7 @@ import InfoBase from './infoBase'
 import InfoParam from './infoParam'
 import Footer from './footer'
 import { getWindowHeight } from '@utils/style'
+import './index.scss'
 
 export default class BuyDetails extends Component {
 	constructor(props){
@@ -80,7 +81,7 @@ export default class BuyDetails extends Component {
   }
 
 	render(){
-		const height = '480px'
+		const height = getWindowHeight(false)
 		const {dataImg} = this.state
 		console.log('屏幕高度', height)
 		return(
@@ -93,7 +94,7 @@ export default class BuyDetails extends Component {
 					<Gallery list={dataImg}/>
 					<InfoBase />
 					<InfoParam />
-					<Text>图片展示</Text>
+				  <Text>图片展示</Text>
 				</ScrollView>
 
         <View className='item-footer'>
