@@ -23,9 +23,9 @@ class App extends Component {
 
   config = {
     pages: [
+      'pages/user-information/index',
       'pages/user/index',
       'pages/sell/index',
-      'pages/home/index',
       'pages/buy/index',
       'pages/buy-manpower/index',
       'pages/sell-manpower/index',
@@ -33,7 +33,9 @@ class App extends Component {
       'pages/buy-manpower-information/index',
       'pages/register/index',
       'pages/buy-confirm/index',
-      'pages/buy-details/index'
+      'pages/buy-details/index',
+      'pages/setting/index',
+      'pages/home/index',
     ],
     window: {
       backgroundTextStyle: 'light',

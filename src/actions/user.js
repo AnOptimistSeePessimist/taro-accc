@@ -8,7 +8,22 @@ import fetch from '@utils/request';
  * 用户登录
  * 
  */
-export const dispatchLogin = payload => {
+export const dispatchLogin = (payload) => ({type: USER_LOGIN, payload: payload}); 
+
+/**
+ * 
+ * 
+ * 用户退出登录
+ * 
+ */
+export const dispatchLogout = () => ({type: USER_LOGOUT});
+
+/**
+ * 
+ * 用户登录
+ * 
+ */
+export const login = payload => {
   Taro.showLoading({
     title: '正在登陆中',
     mask: true,
@@ -25,7 +40,7 @@ export const dispatchLogin = payload => {
       // 500	SecurityCodeError	验证码错误
       // 500	MobilePhoneNotFoundException	手机号未注册
       if (status === 200) {
-        dispatch({type: USER_LOGIN, payload: res.data.data});
+        dispatch(dispatchLogin(res.data.data));
         Taro.navigateBack();
       } else {
         if (code === 'SecurityCodeError') {
@@ -38,7 +53,7 @@ export const dispatchLogin = payload => {
             title: '手机号未注册',
             icon: 'none',
           });
-          Taro.navigateTo({url: '/pages/register/index?id=1'});
+          Taro.navigateTo({url: `/pages/register/index?mobilePhone=${payload.mobilePhone}`});
         }
       }
     }).catch((error) => {
@@ -49,8 +64,9 @@ export const dispatchLogin = payload => {
 
 /**
  * 
- * 
  * 用户退出登录
  * 
  */
-export const dispatchLogout = () => ({type: USER_LOGOUT});
+export const logout = payload => {
+  
+};

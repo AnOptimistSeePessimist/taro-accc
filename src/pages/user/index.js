@@ -1,7 +1,6 @@
 import Taro, {Component} from '@tarojs/taro';
 import {View} from '@tarojs/components';
 import {connect} from '@tarojs/redux';
-import { AtButton } from 'taro-ui';
 import { dispatchLogout } from '@actions/user';
 import Profile from './profile';
 import Menu from './menu';
@@ -27,7 +26,6 @@ class User extends Component {
       <View className='user'>
         <Profile userInfo={userInfo} />
         <Menu userInfo={userInfo} />
-        {userInfo.login && <AtButton className='logout' onClick={() => this.props.logout()}>退出登录</AtButton>}
       </View>
     );
   }

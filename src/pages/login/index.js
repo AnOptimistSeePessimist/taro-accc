@@ -1,7 +1,7 @@
 import Taro, {Component} from '@tarojs/taro';
 import {View, Text, Input, Button} from '@tarojs/components';
 import {connect} from '@tarojs/redux';
-import {dispatchLogin} from '@actions/user';
+import {login as loginFunc} from '@actions/user';
 import fetch from '@utils/request';
 import {API_USER_CODE} from '@constants/api';
 
@@ -9,7 +9,7 @@ import './index.scss';
 
 @connect(state => state.user, (dispatch) => ({
   login(payload) {
-    dispatch(dispatchLogin(payload));
+    dispatch(loginFunc(payload));
   },
 }))
 class Login extends Component {
@@ -59,7 +59,6 @@ class Login extends Component {
     });
   }
 
-
   getMobilePhone = (e) => {
     this.setState({
       mobilePhone: e.target.value,
@@ -100,6 +99,7 @@ class Login extends Component {
           <View className='login-wrapper'>
             <View className='mobile'>
               <Input
+                autoFocus={true}
                 type='number'
                 name='mobile'
                 maxLength='11'

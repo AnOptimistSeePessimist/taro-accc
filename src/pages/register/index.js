@@ -1,16 +1,24 @@
 import Taro, {Component} from '@tarojs/taro';
 import {View, Text, Input, Button} from '@tarojs/components';
 import fetch from '@utils/request';
-import {API_USER_CODE} from '@constants/api';
+import {connect} from '@tarojs/redux';
+import {dispatchLogin} from '@actions/user';
+import {API_USER_REGISTER, API_USER_CODE} from '@constants/api';
 
 import './index.scss';
 
+@connect(state => state.user, (dispatch) => ({
+  login(payload) {
+    dispatch(dispatchLogin(payload));
+  },
+}))
 class Register extends Component {
   constructor(props) {
     super(props);
-    console.log('Register - props: ', props);
+    console.log('Register - props', this.$router.params);
+    const mobilePhone = this.$router.params.mobilePhone;
     this.state = {
-      mobile: '12345678901', // 手机号
+      mobilePhone: mobilePhone ? mobilePhone : '', // 手机号
       code: '', // 验证码
       sending: 0, // 0 == 获取验证码 1 == 多少秒后重新发送验证码   2 == 重新获取验证码
       smsTime: 60, // 默认为 60s 再次重新获取验证码 
@@ -23,12 +31,12 @@ class Register extends Component {
 
   // 发送验证码
   sendSms = () => {
-    const {sending, mobile} = this.state;
+    const {sending, mobilePhone} = this.state;
     if (sending === 1) {
       return;
     }
 
-    if (mobile == '' || mobile.length != 11) {
+    if (mobilePhone == '' || mobilePhone.length != 11) {
       this.showToast('请输入有效的手机号！');
       return;
     }
@@ -37,10 +45,10 @@ class Register extends Component {
       title: '正在发送验证码'
     });
 
-    fetch({url: API_USER_CODE + `/${12345678901}`})
+    fetch({url: API_USER_CODE + `/${mobilePhone}`})
       .then((res) => {
         Taro.hideLoading();
-        this.setState({code: res.data.data});
+        this.setState({code: res.data.data.toString()});
       }).catch((e) => {
 
       });
@@ -54,23 +62,23 @@ class Register extends Component {
   }
 
 
-  getMobile = (e) => {
+  getMobilePhone = (e) => {
     this.setState({
-      mobile: e.target.value,
+      mobilePhone: e.target.value,
     });
   };
 
   getCode = (e) => {
-    // this.setState({
-    //   code: e.target.value,
-    // });
+    this.setState({
+      code: e.target.value,
+    });
   }
 
   register = async () => {
-    const {mobile, code} = this.state;
+    const {mobilePhone, code} = this.state;
     if (
-      mobile == '' ||
-      mobile.length != 11 ||
+      mobilePhone == '' ||
+      mobilePhone.length != 11 ||
       code == ''
     ) {
       this.showToast('请输入有效的手机号或输入有效验证码！');
@@ -78,14 +86,27 @@ class Register extends Component {
     }
 
     Taro.showLoading({
-      title: '正在登陆中',
-      mask: true,
+      title: '正在注册中',
+      icon: 'none',
     });
 
-    this.props.login({mobilePhone: '12345678901', password: code});
+    fetch({url: API_USER_REGISTER + `?mobilePhone=${mobilePhone}&securityCode=${code}`, method: 'POST'})
+    .then((res) => {
+      Taro.showLoading({
+        title: '正在登录中',
+        icon: 'none',
+      });
+      console.log('注册返回数据: ', res);
+      this.props.login(res.data.data);
+      setTimeout(() => {
+        Taro.hideLoading();
+        Taro.navigateBack({
+          delta: 2
+        })
+      }, 2000);
+    }).catch((e) => {
 
-    Taro.hideLoading();
-    Taro.navigateBack();
+    });
   };
 
   render() {
@@ -98,12 +119,13 @@ class Register extends Component {
           <View className='login-wrapper'>
             <View className='mobile'>
               <Input
+                autoFocus={true}
                 type='number'
                 name='mobile'
                 maxLength='11'
                 placeholder='请输入手机号'
-                value={this.state.mobile}
-                onInput={this.getMobile}
+                value={this.state.mobilePhone}
+                onInput={this.getMobilePhone}
               />
             </View>
             <View className='validate-number'>

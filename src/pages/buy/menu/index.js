@@ -18,7 +18,7 @@ export default class Menu extends Component {
 
   constructor(props){
     super(props);
-    Taro.navigateTo({url: '/pages/buy-manpower/index'})
+    // Taro.navigateTo({url: '/pages/buy-manpower/index'})
   }
 
   handleClick = (path) => {
