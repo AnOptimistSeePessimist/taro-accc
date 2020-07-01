@@ -9,12 +9,17 @@ import './index.scss';
 
 @connect(state => state.user, {})
 class Profile extends Component {
+  constructor(props) {
+    super(props);
+  }
 
   handleLogin = () => {
+    console.log('login: ', this.props.userInfo);
     if (this.props.userInfo.login) {
-      return;
+      Taro.navigateTo({url: '/pages/setting/index'});
+    } else {
+      Taro.navigateTo({url: '/pages/login/index'});
     }
-    Taro.navigateTo({url: '/pages/login/index'});
   };
 
   render() {

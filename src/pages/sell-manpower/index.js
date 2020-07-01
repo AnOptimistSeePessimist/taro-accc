@@ -19,7 +19,7 @@ import {
   AtModal,
   AtModalHeader,
   AtModalContent,
-  AtModalAction
+  AtModalAction,
 } from 'taro-ui';
 import classnames from 'classnames';
 import {formatTimeStampToTime} from '@utils/common';
@@ -145,7 +145,7 @@ class SellManpower extends Component {
         let manpowerTitle = '';
         item.checked = !item.checked;
         if (item.checked === false) {
-          manpower = [];  
+          manpower = [];
         } else {
           manpower = item.manpower;
           manpowerTitle = item.text;
@@ -194,8 +194,8 @@ class SellManpower extends Component {
                 </View>
             </View>
             <View className='manpower'>
-              <View 
-                className='manpower-label' 
+              <View
+                className='manpower-label'
                 onClick={() => {
                   if (this.state.manpower.length === 0) {
                     Taro.showToast({title: '请选择工种', icon: 'none'});
@@ -262,7 +262,7 @@ class SellManpower extends Component {
             <AtButton className='release' formType='submit'>立即发布</AtButton>
           </AtForm>
         </View>
-      </View>
+    </View>
     );
   }
 }

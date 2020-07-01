@@ -2,7 +2,7 @@
 	"miniprogramRoot": "dist/",
 	"projectname": "taro-accc",
 	"description": "空运帮",
-	"appid": "wx3f61bb3e209a6ef1",
+	"appid": "wx2b87f1d53511a14e",
 	"setting": {
 		"urlCheck": false,
 		"es6": false,

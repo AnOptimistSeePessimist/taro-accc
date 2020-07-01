@@ -1,17 +1,15 @@
 /* eslint-disable import/no-commonjs */
 /* eslint-disable no-unused-vars */
 import Taro, {Component} from '@tarojs/taro';
-import {View, Text, Image} from '@tarojs/components';
+import {View, Text} from '@tarojs/components';
 
 import './index.scss';
 
 const MENU_LIST = [
-  {key: 'favorite', text: '我的收藏', img: require('./assets/order.png'), path: '/pages/favorite/index'},
-  {key: 'distribution', text: '我的发布', img: require('./assets/pin.png'), path: '/pages/distribution/index'},
-  {key: 'information', text: '我的信息', img: require('./assets/bargain.png'), path: '/pages/information/index'},
-  {key: 'updatePassword', text: '修改密码', img: require('./assets/credit.png'), path: '/pages/updatePassword/index'},
-  {key: 'resources', text: '我的资源', img: require('./assets/service.png'), path: '/pages/resources/index'},
-  {key: 'transaction', text: '我的交易', img: require('./assets/location.png'), path: '/pages/transaction/index'}
+  {key: 'favorite', text: '我的收藏', img: 'iconfavorite', path: '/pages/favorite/index'},
+  {key: 'distribution', text: '我的发布', img: 'iconfabu', path: '/pages/distribution/index'},
+  {key: 'resources', text: '我的资源', img: 'iconresource', path: '/pages/resources/index'},
+  {key: 'transaction', text: '我的交易', img: 'iconjiaoyi', path: '/pages/transaction/index'}
 ];
 
 export default class Menu extends Component {
@@ -25,7 +23,6 @@ export default class Menu extends Component {
     }
   };
 
-
   render() {
     return (
       <View className='menu'>
@@ -34,10 +31,7 @@ export default class Menu extends Component {
             return (
               <View data-title={menu.text} key={menu.key} className='item' onClick={() => this.handleClick(menu.text)}>
                 <View className='left'>
-                  <Image
-                    className='img'
-                    src={menu.img}
-                  />
+                  <View className={`iconfont img ${menu.img}`} />
                   <Text>{menu.text}</Text>
                 </View>
                 <View className='right'>

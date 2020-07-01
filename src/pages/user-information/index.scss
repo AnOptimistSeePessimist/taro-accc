@@ -1,0 +1,40 @@
+@import '@styles/theme.scss';
+
+.user-information {
+  @include wh(100%, 100%);
+  .form {
+    margin-top: 40px;
+    margin-left: 20px;
+    margin-right: 20px;
+    &::after {
+      border-left: 2PX solid #bababa;
+      border-right: 2PX solid #bababa;
+      border-color: #bababa;
+      border-top-width: 2PX;
+      border-bottom-width: 2PX;
+      border-radius: 20px;
+    }
+    .id {
+      &::after {
+        border-top-width: 0;
+      }
+    }
+  }
+  .at-list-item {
+    .at-list__item-extra {
+      line-height: 1;
+      text-align: right;
+      max-width: none;
+      font-size: 32px;
+    }
+  }
+}
+
+.margin-to-padding {
+  margin-left: 0;
+  padding-left: 24px;
+  &::after {
+    border-color: #bababa;
+    border-width: 2PX;
+  }
+}

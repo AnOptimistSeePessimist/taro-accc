@@ -1,0 +1,13 @@
+@import '@styles/theme.scss';
+
+.setting {
+  @include wh(100%, 100%);
+  background-color: #eeeeee;
+  .logout {
+    border-radius: 0;
+    background-color: #fff;
+    border-color: #eeeeee;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+}
