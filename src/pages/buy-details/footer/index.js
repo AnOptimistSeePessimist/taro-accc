@@ -21,6 +21,7 @@ const NAV_LIST = [{
 
 export default class Footer extends Component {
   static defaultProps = {
+    data: {},
     onAdd: () => {}
   }
 
@@ -35,15 +36,25 @@ export default class Footer extends Component {
     }
   }
 
+  handShopping = () => {
+    Taro.showToast({
+        title: '敬请期待',
+        icon: 'none'
+      })
+  }
+
   handleBuy = () => {
     // Taro.showToast({
     //   title: '暂时只支持加入购物车',
     //   icon: 'none'
     // })
-    Taro.navigateTo({url: '/pages/buy-confirm/index'})
+    const {data} = this.props;
+    Taro.navigateTo({url: `/pages/buy-confirm/index?data=${JSON.stringify(data)}`})
   }
 
   render () {
+    const {data} = this.props;
+    console.log('购买',data)
     return (
       <View className='item-footer'>
         {NAV_LIST.map(item => (
@@ -58,18 +69,12 @@ export default class Footer extends Component {
             />
           </View>
         ))}
+        <View className='item-footer-shopping-cart' onClick={this.handShopping}>
+          <Text className='item-footer-buy-txt'>加入购物车</Text>
+        </View>
         <View className='item-footer-buy' onClick={this.handleBuy}>
           <Text className='item-footer-buy-txt'>立即购买</Text>
         </View>
-        <AtButton 
-          type='primary'
-          text='加入购物车'
-          // onClick={this.props.onAdd}
-          // compStyle={{
-          //   width: Taro.pxTransform(235),
-          //   height: Taro.pxTransform(100)
-          // }}
-        />
       </View>
     )
   }

@@ -91,14 +91,14 @@ export default class BuyDetails extends Component {
 					className='item-warp'
 					style={{height}}
 				>
-					<Gallery list={dataImg}/>
+					<Gallery list={dataImg.listImg}/>
 					<InfoBase />
 					<InfoParam />
-				  <Text>图片展示</Text>
+				  
 				</ScrollView>
 
         <View className='item-footer'>
-          <Footer onAdd={this.handleAdd} />
+          <Footer data={dataImg} onAdd={this.handleAdd} />
         </View>
 			</View>
 		)

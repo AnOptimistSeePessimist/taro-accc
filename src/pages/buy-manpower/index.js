@@ -1,147 +1,189 @@
-import Taro, { Component } from '@tarojs/taro'
-import { View, Text, Picker, Button } from '@tarojs/components'
-import { AtTag, AtInputNumber, AtList, AtListItem, AtButton } from 'taro-ui'
-import { formatTimeStampToTime } from '@utils/common';
-import './index.scss'
+import Taro, {Component} from '@tarojs/taro';
+import {
+  View,
+  Text,
+  Picker,
+  RadioGroup,
+  Label,
+  Radio,
+  Checkbox,
+  Button
+} from '@tarojs/components';
+import {
+  AtTag,
+  AtForm,
+  AtButton,
+  AtList,
+  AtListItem,
+  AtInputNumber,
+  AtModal,
+  AtModalHeader,
+  AtModalContent,
+  AtModalAction
+} from 'taro-ui';
+import classnames from 'classnames';
+import {formatTimeStampToTime} from '@utils/common';
+
+import './index.scss';
+
 class BuyManpower extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      date: formatTimeStampToTime(Date.now()),
+      startTime: '08:00',
+      endTime: '16:00',
+      value: '1',
+      list: [
+        {
+          id: 1,
+          value: '1',
+          text: '装卸工',
+          checked: false,
+        },
+        {
+          id: 2,
+          value: '2',
+          text: '叉车司机',
+          checked: false,
+        },
+        {
+          id: 3,
+          value: '3',
+          text: '组板工',
+          checked: false,
+        },
+        {
+          id: 4,
+          value: '4',
+          text: '杂工',
+          checked: false,
+        },
+      ]
+    };
+  }
 
-	config = {
-		navigationBarTitleText: '租人力'
+  config = {
+    navigationBarTitleText: '出租人力'
+  };
 
-	}
+  onSubmit = e => {
+    console.log('submit: ', e);
+  };
 
-
-	constructor(props) {
-		super(props);
-		this.state = {
-			hollowTagList: [
-				{ name: '装卸工', active: false, id: 1 },
-				{ name: '组板工', active: false, id: 2 },
-				{ name: '叉车司机', active: false, id: 3 },
-			],
-			workerName: '',
-			date: formatTimeStampToTime(Date.now()),
-			isOpenedModal: false,
-			startTime: '08:00',
-			endTiem: '16:00',
-			workersNum: 1
-		}
-	}
-
-	handleHollowClick = (data) => {
-		console.log(data)
-		const { hollowTagList } = this.state
-		hollowTagList.forEach((item) => {
-			if (item.name == data.name) {
-				item.active = !data.active
-				this.state.workerName = data.name
-			} else {
-				item.active = false
-			}
-		})
-		this.setState({
-			hollowTagList
-		})
-	}
-
-	dateClick = () => {
-		console.log('时间')
-		this.setState({
-			isOpenedModal: !this.state.isOpenedModal
-		})
-	}
-	onDateChange = e => {
-		console.log(e)
-		this.setState({
-			date: e.detail.value
-		})
-	}
-	onStartTimeChange = e => {
-		this.setState({
-			startTime: e.detail.value
-		})
-	}
-
-	onEndTimeChange = e => {
-		this.setState({
-			endTiem: e.detail.value
-		})
-	}
-
-	addworkers = value => {
-		this.setState({
-			workersNum: value
-		})
-	}
-
-	btnChange = () => {
-		const { date, startTime, endTiem, workersNum, workerName } = this.state;
-		console.log('获取页面数据', date, startTime, endTiem, workersNum, workerName)
-		const buyData = { date: date, startTime: startTime, endTiem: endTiem, workersNum: workersNum, workerName: workerName }
+	submit = () => {
+		const {date, startTime, endTime, value, list} = this.state;
+		const buyData = { date: date, startTime: startTime, endTime: endTime, workersNum: value, list: list }
 		Taro.navigateTo({ url: `/pages/buy-manpower-information/index?buyData=${JSON.stringify(buyData)}` })
 	}
 
-	render() {
-		return (
-			<View className='panel'>
-				{/* <View className='panel-title' style={{ backgroundColor: '#F7F7F7', paddingTop: '5px', paddingBottom: '5px' }}>人力分类</View> */}
-				<View className='work-at-tag'>
-					{this.state.hollowTagList.map((item, index) => (
-						<View key={item.id} className='at-tag-item'>
-							<AtTag
-								name={item.name}
-								active={item.active}
-								circle={true}
-								onClick={this.handleHollowClick}
-							>{item.name}</AtTag>
-						</View>
-					))}
-				</View>
-				<View className='date-time'>
-					<View>
-						<Picker mode='date' onChange={this.onDateChange}>
-							<AtList>
-								<AtListItem title='请选择日期' extraText={this.state.date} />
-							</AtList>
-						</Picker>
-					</View>
-				</View>
-				<View className='date-start-time'>
-					<View>
-						<Picker mode='time' onChange={this.onStartTimeChange}>
-							<AtList>
-								<AtListItem title='开始时间' extraText={this.state.startTime} />
-							</AtList>
-						</Picker>
-					</View>
-				</View>
-				<View className='date-end-time'>
-					<View>
-						<Picker mode='time' onChange={this.onEndTimeChange}>
-							<AtList>
-								<AtListItem title='结束时间' extraText={this.state.endTiem} />
-							</AtList>
-						</Picker>
-					</View>
-				</View>
-				<View className='date-workders-time'>
-					<View className='worker-number'>
-						<View className='workerText'>工人数量</View>
-						<AtInputNumber
-							className='at-input-number'
-							min={0}
-							max={100}
-							step={10}
-							value={this.state.workersNum}
-							onChange={this.addworkers}
-						/>
-					</View>
-				</View>
-				<AtButton className='button-style' formType='submit' onClick={this.btnChange}>查询</AtButton>
-			</View>
-		)
-	}
+  onDateChange = e => {
+    this.setState({
+      date: e.detail.value
+    });
+  };
+
+  onStartTimeChange = e => {
+    this.setState({
+      startTime: e.detail.value
+    });
+  };
+
+  onEndTimeChange = e => {
+    this.setState({
+      endTime: e.detail.value
+    });
+  };
+
+  handleValueChange = (value) => {
+    this.setState({value});
+  };
+
+  handleClickCatogory = (category) => {
+    const {list} = this.state;
+    const newList = list.slice();
+    newList.forEach((item) => {
+      if (item.id === category) {
+        item.checked = !item.checked;
+        this.setState({
+          list: newList,
+        });
+      } else {
+        item.checked = false;
+        this.setState({
+          list: newList,
+        });
+      }
+    });
+  };
+
+  render() {
+    return (
+      <View className='buy-manpower'>
+        <View className='wrapper'>
+          <AtForm
+            onSubmit={this.onSubmit}
+            onReset={this.onReset}
+            className='form'
+          >
+            <View className='category'>
+              <View className='at-article__h3'>工种</View>
+                <View className='tag-wrapper'>
+                  {
+                    this.state.list.map((item) => {
+                      return (
+                        <AtTag
+                          key={item.value}
+                          className={classnames('tag', item.checked && 'tag-active')}
+                          active={item.checked}
+                          type='primary'
+                          onClick={() => this.handleClickCatogory(item.id)}
+                        >
+                          {item.text}
+                        </AtTag>
+                      );
+                    })
+                  }
+                </View>
+            </View>
+          
+            <Picker
+              className='date'
+              mode='date'
+              onChange={this.onDateChange}
+              start={formatTimeStampToTime(Date.now())}
+            >
+              <AtList className='date-at-list'>
+                <AtListItem className='item' title='请选择日期' extraText={this.state.date} />
+              </AtList>
+            </Picker>
+            <Picker value={this.state.startTime} className='work-time' mode='time' onChange={this.onStartTimeChange}>
+              <AtList className='start-list'>
+                <AtListItem className='start' title='开始工作时间' extraText={this.state.startTime} />
+              </AtList>
+            </Picker>
+            <Picker value={this.state.endTime} className='out-of-work-time' mode='time' onChange={this.onEndTimeChange}>
+              <AtList className='end-list'>
+                <AtListItem className='end' title='结束工作时间' extraText={this.state.endTime} />
+              </AtList>
+            </Picker>
+            <View className='setting-spec'>
+              <Text>员工数量</Text>
+              <AtInputNumber
+                className='at-input-number'
+                min={1}
+                max={1000}
+                step={1}
+                value={this.state.value}
+                onChange={this.handleValueChange}
+              />
+            </View>
+            <AtButton className='release' formType='submit' onClick={this.submit}>查询</AtButton>
+          </AtForm>
+        </View>
+      </View>
+    );
+  }
 }
 
-export default BuyManpower
-
+export default BuyManpower;

@@ -21,9 +21,9 @@ export default class Menu extends Component {
 					src={listImg.imgSrc}
 				/>
 				<View className='text'>
-					<Text>￥{listImg.dollar}/小时</Text>
-					<Text>{listImg.workerType} {listImg.date} {listImg.startTime} - {listImg.endTime} ({listImg.time}小时)</Text>
-					<Text>{listImg.station} ({listImg.workerNum}人)</Text>
+					<Text className='text-hours'>￥{listImg.dollar}/小时</Text>
+					<Text className='text-time'>{listImg.workerType}  {listImg.startTime} - {listImg.endTime} ({listImg.time}小时) {listImg.date}</Text>
+					<Text className='text-worker'>{listImg.station} ({listImg.workerNum}人)</Text>
 				</View>
 			</View>
 		)

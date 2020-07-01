@@ -1,21 +1,33 @@
-import Taro, { Component } from '@tarojs/taro'
-import { View, Text } from '@tarojs/components'
+import Taro, {Component} from '@tarojs/taro'
+import {View, Text, ScrollView} from '@tarojs/components'
+import { getWindowHeight } from '@utils/style'
+import Address from './buy-address'
 import './index.scss'
 
-export default class BuyConfirm extends Component {
+export default class BuyConfirm extends Component{
 
 	config = {
 		navigationBarTitleText: '下单确认'
 	}
 
-	componentWillMount() {
-		console.log(JSON.parse(this.$router.params.buyData))
+	
+
+	componentWillMount(){
+		console.log(JSON.parse(this.$router.params.data))
 	}
 
-	render() {
-		return (
-			<View>
-				<Text>下单确认</Text>
+	render(){
+		const height = getWindowHeight(false)
+		return(
+			<View className='buy-comfirm'>
+
+			 <ScrollView
+					scrollY
+					className='item-warp'
+					style={{height}}
+				>
+				  <Address />
+				</ScrollView>
 			</View>
 		)
 	}

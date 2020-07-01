@@ -5,16 +5,42 @@
 }
 
 .text {
-  width: 350rpx;
+  width: 350px;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
   font-size: 0.7rem;
+  padding: 8px;
+  margin-left: 8px;
+
+  &-hours {
+    color: red;
+    font-size: 32px;
+    line-height: 48px;
+  }
+
+  &-time {
+    width: 350px;
+    color: #333333;
+    font-size: 30px;
+    line-height: 42px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &-worker {
+    color: #999999;
+    font-size: 28px;
+    line-height: 32px;
+    margin-bottom: 5px;
+  }
+
 }
 
 .img {
   width: 100%;
-  height: 300rpx;
+  height: 300px;
   background: #fff;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;

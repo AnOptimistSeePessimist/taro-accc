@@ -1,78 +1,155 @@
-.work-at-tag {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-content: center;
+@import '@styles/theme.scss';
+
+@mixin btbw {
+  border-top-width: 0;
+  border-bottom-width: 0;
 }
 
-.at-tag-item {
-  padding: 10px;
-  margin-right: 50px;
-  margin-bottom: 50px;
+@mixin btbwn {
+  border-bottom-width: 2px;
+  border-bottom-color: #eeeeee;
 }
 
-.at-tag--active {
-  color: #fe871f;
-  border-color: #fe871f;
-}
-
-.at-list__item {
-  font-size: 32px;
-  color: #7F7F7F;
-}
-
-.at-list__item::after {
-  border: 0px;
-}
-
-.item-content__info-title {
-  position: relative;
-  padding-left: 30rpx;
-  font-size: 32rpx;
-  font-weight: bold;
-  line-height: 1.5;
-}
-
-.item-extra {
-  padding-left: 60rpx;
-  color: #7F7F7F;
-  font-size: 32rpx;
-  font-weight: bold;
-  line-height: 1.5;
-}
-
-.workerText {
-  padding-left: 30px;
-  font-size: 32px;
-  color: #7F7F7F;
-  font-weight: bold;
-}
-
-.button-style {
-  border-width: 0;
-  margin-top: 40px;
-  color: #fff;
-  background-color: #fe871f;
-}
-.at-input-number {
-  border-color: #fe871f;
-
-  input {
-    border-color: #fe871f;
+.buy-manpower {
+  @include wh(100%, 100%);
+  .wrapper {
+    margin-top: 40px;
+    background-color: #fff;
+    .form {
+      margin-left: 20px;
+      margin-right: 20px;
+      &::after {
+        @include btbw;
+      }
+      display: flex;
+      flex-direction: column;
+      .date {
+        flex: 1;
+        .date-at-list {
+          &::after {
+            @include btbw;
+            @include btbwn;
+          }
+          .item-extra__info {
+            color: #000,
+          }
+          .item {
+            &::after {
+              @include btbw;
+            }
+          }
+        }
+      }
+      .divider {
+        height: 20px;
+      }
+      .work-time {
+        &::after {
+          @include btbw;
+        }
+        flex: 1;
+        .start-list {
+          &::after {
+            @include btbw;
+            @include btbwn;
+          }
+          .item-extra__info {
+            color: #000,
+          }
+          .start {
+            &::after {
+              @include btbw;
+            }
+          }
+        }
+      }
+      .out-of-work-time {
+        flex: 1;
+        &::after {
+          @include btbw;
+        }
+        .end-list {
+          &::after {
+            @include btbw;
+            @include btbwn;
+          }
+          .item-extra__info {
+            color: #000,
+          }
+          .end {
+            &::after {
+              @include btbw;
+            }
+          }
+        }
+      }
+      .setting-spec {
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 24px;
+        padding-right: 24px;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        align-items: center;
+        border-bottom: 1px solid #eeeeee;
+        .at-input-number {
+          border-color: #fe871f;
+          input {
+            border-color: #fe871f;
+          }
+          text {
+            color: #fe871f;
+          }
+        }
+      }
+      .release {
+        border-width: 0;
+        margin-top: 40px;
+        margin-bottom: 40px;
+        color: #fff;
+        background-color: #fe871f;
+      }
+      .category {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        .tag-wrapper {
+          margin-top: 20px;
+          margin-bottom: 20px;
+          .tag {
+            margin: 10px;
+          }
+          .tag-active {
+            background-color: #fe871f;
+            border-color: #fe871f;
+          }
+        }
+      }
+      .manpower {
+        border-top: 1px solid #eeeeee;
+        border-bottom: 1px solid #eeeeee;
+        .manpower-label {
+          padding-top: 24px;
+          padding-bottom: 24px;
+          margin-left: 24px;
+        }
+        .manpower-list {
+          display: flex;
+          flex-direction: row;
+          // justify-content: flex-end;
+          flex-wrap: wrap;
+          .manpower-checkbox-wrapper {
+            display: flex;
+            justify-content: flex-start;
+            width: 50%;
+            margin-bottom: 10px;
+            // .manpower-checkbox-label {
+            // }
+          }
+        }
+      }
+    }
   }
-
-  text {
-    padding-left: 30px;
-    font-size: 32px;
-    color: #7F7F7F;
-    font-weight: bold;
-  }
-}
-
-.worker-number{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  border-bottom: 1px solid #F1F6FA;
-  padding: 10px 10px;
 }
