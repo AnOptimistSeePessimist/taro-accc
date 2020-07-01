@@ -18,10 +18,7 @@ export default class Menu extends Component {
 
   constructor(props){
     super(props);
-<<<<<<< HEAD
-=======
     // Taro.navigateTo({url: '/pages/buy-manpower/index'})
->>>>>>> upload/master
   }
 
  componentDidMount() {
