@@ -119,7 +119,7 @@ class Register extends Component {
           <View className='login-wrapper'>
             <View className='mobile'>
               <Input
-                autoFocus={true}
+                focus={true}
                 type='number'
                 name='mobile'
                 maxLength='11'

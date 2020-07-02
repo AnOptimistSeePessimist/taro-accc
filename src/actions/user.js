@@ -1,5 +1,5 @@
 import Taro from '@tarojs/taro';
-import {USER_INFO, USER_LOGIN, USER_LOGOUT} from '@constants/user';
+import actionTypes from '@constants/actionTypes';
 import {API_USER_LOGIN} from '@constants/api';
 import fetch from '@utils/request';
 
@@ -8,7 +8,7 @@ import fetch from '@utils/request';
  * 用户登录
  * 
  */
-export const dispatchLogin = (payload) => ({type: USER_LOGIN, payload: payload}); 
+export const dispatchLogin = (payload) => ({type: actionTypes.USER_LOGIN, payload: payload}); 
 
 /**
  * 
@@ -16,7 +16,7 @@ export const dispatchLogin = (payload) => ({type: USER_LOGIN, payload: payload})
  * 用户退出登录
  * 
  */
-export const dispatchLogout = () => ({type: USER_LOGOUT});
+export const dispatchLogout = () => ({type: actionTypes.USER_LOGOUT});
 
 /**
  * 

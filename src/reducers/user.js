@@ -1,4 +1,4 @@
-import {USER_INFO, USER_LOGIN, USER_LOGOUT} from '../constants/user';
+import actionTypes from '../constants/actionTypes';
 
 const INITIAL_STATE = {
   userInfo: {},
@@ -6,7 +6,7 @@ const INITIAL_STATE = {
 
 export default function user(state = INITIAL_STATE, action) {
   switch (action.type) {
-    case USER_LOGIN: 
+    case actionTypes.USER_LOGIN: 
       return {
         ...state,
         userInfo: {
@@ -14,9 +14,9 @@ export default function user(state = INITIAL_STATE, action) {
           login: true,
         },
       };
-    case USER_INFO: 
+    case actionTypes.USER_INFO: 
       return {...state};
-    case USER_LOGOUT:
+    case actionTypes.USER_LOGOUT:
       return {...INITIAL_STATE};
     default:
       return state;
