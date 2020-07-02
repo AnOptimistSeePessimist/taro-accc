@@ -1,6 +1,6 @@
 import Taro from '@tarojs/taro';
 
-const CODE_SUCCESS = '200'
+const CODE_SUCCESS = '200';
 
 
 /**

@@ -8,7 +8,7 @@ import {API_USER_CODE} from '@constants/api';
 import './index.scss';
 
 @connect(state => state.user, (dispatch) => ({
-  login(payload) {
+  dispatchLogin(payload) {
     dispatch(loginFunc(payload));
   },
 }))
@@ -16,10 +16,10 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mobilePhone: '', // 手机号
+      mobilePhone: '18350863236', // 手机号
       code: '', // 验证码
       sending: 0, // 0 == 获取验证码 1 == 多少秒后重新发送验证码   2 == 重新获取验证码
-      smsTime: 60, // 默认为 60s 再次重新获取验证码 
+      smsTime: 60, // 默认为 60s 再次重新获取验证码
     };
   }
 
@@ -82,7 +82,7 @@ class Login extends Component {
       return;
     }
 
-    this.props.login({mobilePhone, securityCode: code});
+    this.props.dispatchLogin({mobilePhone, securityCode: code});
   };
 
   handleRegister = () => {
@@ -99,7 +99,7 @@ class Login extends Component {
           <View className='login-wrapper'>
             <View className='mobile'>
               <Input
-                autoFocus={true}
+                focus
                 type='number'
                 name='mobile'
                 maxLength='11'
@@ -114,7 +114,7 @@ class Login extends Component {
                 name='code'
                 // maxLength='4'
                 placeholder='请输入验证码'
-                value={code}
+                value={this.state.code}
                 onInput={this.getCode}
               />
               <View className='fetch-button' onClick={this.sendSms}>
