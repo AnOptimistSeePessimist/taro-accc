@@ -1,4 +1,11 @@
+@import '@styles/theme.scss';
+
 .buy-confirm {
 	position: relative;
-  overflow: hidden;
+	overflow: hidden;
+}
+
+.item-warp {
+  padding-bottom: 100px;
+  background: #F4F4F4;
 }

@@ -3,11 +3,6 @@ import {
   View,
   Text,
   Picker,
-  RadioGroup,
-  Label,
-  Radio,
-  Checkbox,
-  Button
 } from '@tarojs/components';
 import {
   AtTag,
@@ -16,10 +11,6 @@ import {
   AtList,
   AtListItem,
   AtInputNumber,
-  AtModal,
-  AtModalHeader,
-  AtModalContent,
-  AtModalAction
 } from 'taro-ui';
 import classnames from 'classnames';
 import {formatTimeStampToTime} from '@utils/common';

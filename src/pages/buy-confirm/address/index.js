@@ -1,8 +1,8 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View, Text, Icon} from '@tarojs/components'
+import { View, Text} from '@tarojs/components'
 import './index.scss'
 
-export default class BuyAddress extends Component {
+export default class Address extends Component {
 
 	static defaultProps = {
 		list: {}
@@ -24,10 +24,14 @@ export default class BuyAddress extends Component {
 		const { userName, phone, userAddress } = this.state.address
 		return (
 			<View className='buy-address'>
-				<Text>{userName}</Text>
-				<Text>{phone}</Text>
-				<Text>{userAddress}</Text>
-				<Icon size='30' type=''/>
+				<View className={`iconfont iconionc-- img`} />
+				<View className='buy-address-userName-phone-address'>
+					<View className='buy-address-userName-phone'>
+						<Text>{userName}</Text>
+						<Text className='buy-address-phone'>{phone}</Text>
+					</View>
+					<Text className='buy-address-address'>{userAddress}</Text>
+				</View>
 			</View>
 		)
 	}

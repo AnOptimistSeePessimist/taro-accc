@@ -1,0 +1,43 @@
+@import '@styles/theme.scss';
+
+
+.buy-address {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	background-color: #ffffff;
+	margin: 20px;
+	border-radius: 20px;
+
+	&-userName-phone-address {
+		display: flex;
+		flex-direction: column;
+		padding: 20px;
+		
+	}
+
+	&-userName-phone {
+		padding: 0 28px 28px 0;
+		font-size: 32px;
+		
+	}
+
+	&-phone {
+		font-size: 28px;
+		color: #999999;
+		margin-left: 20px;
+	}
+
+	&-address {
+		font-size: 28px;
+		padding-bottom: 45px;
+	}
+	
+}
+
+.img {
+	margin-top: 10px;
+	margin-left: 70px;
+	font-size: 52px;
+	color: #fe871f;
+}

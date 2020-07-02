@@ -1,8 +1,10 @@
 import Taro, {Component} from '@tarojs/taro'
 import {View, Text, ScrollView} from '@tarojs/components'
 import { getWindowHeight } from '@utils/style'
-import Address from './buy-address'
+import Address from './address'
+import Information from './information'
 import './index.scss'
+
 
 export default class BuyConfirm extends Component{
 
@@ -10,14 +12,24 @@ export default class BuyConfirm extends Component{
 		navigationBarTitleText: '下单确认'
 	}
 
+	constructor(props){
+		super(props)
+		this.state = {
+			listData: {}
+		}
+	}
 	
 
 	componentWillMount(){
 		console.log(JSON.parse(this.$router.params.data))
+		this.setState({
+			listData: JSON.parse(this.$router.params.data)
+		})
 	}
 
 	render(){
 		const height = getWindowHeight(false)
+		const listData = this.state.listData
 		return(
 			<View className='buy-comfirm'>
 
@@ -27,6 +39,7 @@ export default class BuyConfirm extends Component{
 					style={{height}}
 				>
 				  <Address />
+					<Information listData={listData} />
 				</ScrollView>
 			</View>
 		)
