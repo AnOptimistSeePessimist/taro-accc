@@ -1,0 +1,40 @@
+@import '@styles/theme.scss';
+
+.float-item {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &-title {
+    display: flex;
+    flex-direction: row;
+
+  }
+}
+
+.category {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-wrap: wrap;
+
+  .tag-wrapper {
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    .tag {
+      margin: 10px;
+    }
+  }
+}
+
+.float-item .category .tag-wrapper .tag-active {
+  background-color: #fe871f;
+  border-color: #fe871f;
+}
+.float-item .category .tag-wrapper .tag {
+	margin: 10px;
+}
+.at-tag--active.at-tag--primary {
+	color: #fff;
+}

@@ -1,8 +1,9 @@
 import Taro, {Component} from '@tarojs/taro'
-import {View, Text, ScrollView} from '@tarojs/components'
+import {View, Text, ScrollView, Button} from '@tarojs/components'
 import { getWindowHeight } from '@utils/style'
 import Address from './address'
 import Information from './information'
+import Footer from './footer'
 import './index.scss'
 
 
@@ -41,6 +42,9 @@ export default class BuyConfirm extends Component{
 				  <Address />
 					<Information listData={listData} />
 				</ScrollView>
+				<View className='item-footer'>
+						<Footer />
+				</View>
 			</View>
 		)
 	}

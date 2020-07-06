@@ -1,0 +1,37 @@
+@import '@styles/theme.scss';
+
+.footer-item {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	align-items: center;
+	margin-top: 15px;
+	text-align: center;
+
+	&-num {
+		font-size: 26px;
+		color: #999;
+		padding-right: 10px;
+	}
+
+	&-total {
+		font-size: 32px;
+		padding-left: 8px;
+	}
+
+	&-dollar {
+		font-size: 32px;
+		color: red;
+	}
+
+	&-btn {
+		margin: 0 25px 0 25px;
+		font-size: 32px;
+		padding-left: 40px;
+		padding-right: 40px;
+		border-radius: 50px;
+		color: #fff;
+		background-color: red;
+		
+	}
+}

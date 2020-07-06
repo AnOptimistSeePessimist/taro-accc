@@ -1,6 +1,7 @@
 @import '@styles/theme.scss';
 
 .information-item {
+
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
@@ -49,35 +50,31 @@
     font-size: 25px;
     display: flex;
     flex-direction: column;
-		margin-left: 10px;
-		align-items: flex-end;
+    margin-left: 10px;
+    align-items: flex-end;
 
+    &-workerNum {
+      color: #999999;
+      font-size: 24px;
+      padding: 10px;
+    }
+  }
 
-		&-workerNum {
-			color: #999999;
-			font-size: 24px;
-			padding: 10px;
-		}
-	}
+  .setting-spec {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 24px;
+    padding-right: 24px;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 1px solid #eeeeee;
+  }
 
-	
 }
 
 .img {
   width: 100%;
   height: 180px;
 }
-
-.setting-spec {
-	padding-top: 20px;
-	padding-bottom: 20px;
-	padding-left: 24px;
-	padding-right: 24px;
-	display: flex;
-	justify-content: space-around;
-	flex-direction: row;
-	align-items: center;
-	border-bottom: 1px solid #eeeeee;
-}
-
-
