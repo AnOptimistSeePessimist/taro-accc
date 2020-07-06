@@ -24,7 +24,11 @@ class LeaseInformation extends Component {
 				dollar: '100',
 				workerType: '装卸工人',
 				workerNum: '2',
-				imgSrc: 'https://picsum.photos/200/300'
+				imgSrc: 'https://picsum.photos/200/300',
+				listImg: [
+					{img: 'https://picsum.photos/200/300'},
+					{img: 'https://picsum.photos/200/300'},
+				]
 			}, {
 				id: 2,
 				date: '2020-06-23',
@@ -35,7 +39,11 @@ class LeaseInformation extends Component {
 				dollar: '60',
 				workerType: '装卸工人',
 				workerNum: '5',
-				imgSrc: 'https://picsum.photos/200/300'
+				imgSrc: 'https://picsum.photos/200/300',
+				listImg: [
+					{img: 'https://picsum.photos/200/300'},
+					{img: 'https://picsum.photos/200/300'},
+				]
 			}, {
 				id: 3,
 				date: '2020-06-23',
@@ -46,7 +54,11 @@ class LeaseInformation extends Component {
 				dollar: '120',
 				workerType: '装卸工人',
 				workerNum: '50',
-				imgSrc: 'https://picsum.photos/200/300'
+				imgSrc: 'https://picsum.photos/200/300',
+				listImg: [
+					{img: 'https://picsum.photos/200/300'},
+					{img: 'https://picsum.photos/200/300'},
+				]
 			}, {
 				id: 4,
 				date: '2020-06-23',
@@ -57,7 +69,11 @@ class LeaseInformation extends Component {
 				dollar: '10',
 				workerType: '装卸工人',
 				workerNum: '100',
-				imgSrc: 'https://picsum.photos/200/300'
+				imgSrc: 'https://picsum.photos/200/300',
+				listImg: [
+					{img: 'https://picsum.photos/200/300'},
+					{img: 'https://picsum.photos/200/300'},
+				]
 			}, {
 				id: 5,
 				date: '2020-06-23',
@@ -68,7 +84,11 @@ class LeaseInformation extends Component {
 				dollar: '2244',
 				workerType: '装卸工人',
 				workerNum: '12',
-				imgSrc: 'https://picsum.photos/200/300'
+				imgSrc: 'https://picsum.photos/200/300',
+				listImg: [
+					{img: 'https://picsum.photos/200/300'},
+					{img: 'https://picsum.photos/200/300'},
+				]
 			}, {
 				id: 6,
 				date: '2020-06-23',
@@ -79,7 +99,11 @@ class LeaseInformation extends Component {
 				dollar: '1',
 				workerType: '装卸工人',
 				workerNum: '1',
-				imgSrc: 'https://picsum.photos/200/300'
+				imgSrc: 'https://picsum.photos/200/300',
+				listImg: [
+					{img: 'https://picsum.photos/200/300'},
+					{img: 'https://picsum.photos/200/300'},
+				]
 			}, {
 				id: 7,
 				date: '2020-06-23',
@@ -90,7 +114,11 @@ class LeaseInformation extends Component {
 				dollar: '60',
 				workerType: '装卸工人',
 				workerNum: '5',
-				imgSrc: 'https://picsum.photos/200/300'
+				imgSrc: 'https://picsum.photos/200/300',
+				listImg: [
+					{img: 'https://picsum.photos/200/300'},
+					{img: 'https://picsum.photos/200/300'},
+				]
 			}]
 		}
 	}

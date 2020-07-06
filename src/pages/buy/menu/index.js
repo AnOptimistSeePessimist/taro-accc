@@ -21,6 +21,11 @@ export default class Menu extends Component {
     // Taro.navigateTo({url: '/pages/buy-manpower/index'})
   }
 
+ componentDidMount() {
+    Taro.navigateTo({url: '/pages/buy-manpower/index'});
+  }
+  
+
   handleClick = (path) => {
     //const {userInfo} = this.props;
 

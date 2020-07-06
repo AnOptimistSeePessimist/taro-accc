@@ -18,7 +18,6 @@ export default class Gallery extends Component {
 
   render () {
 		const { list } = this.props
-		console.log('传递数据', list)
     const { current } = this.state
     return (
       <View className='item-gallery'>
@@ -27,20 +26,21 @@ export default class Gallery extends Component {
           current={current}
           onChange={this.handleChange}
         >
-          {
+         {list.map((item, index) => (
             <SwiperItem
+              key={index}
               className='item-gallery-swiper-item'
             >
               <Image
                 className='item-gallery-swiper-item-img'
-                src={list.imgSrc}
+                src={item.img}
               />
             </SwiperItem>
-          }
+          ))}
         </Swiper>
         <View className='item-gallery-indicator'>
           <Text className='item-gallery-indicator-txt'>
-            {`${current + 1}`}
+            {`${current + 1}/${list.length}`}
           </Text>
         </View>
       </View>
