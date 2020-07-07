@@ -129,7 +129,7 @@ class LeaseInformation extends Component {
 		}
 	}
 
-	componentWillMount(){
+	componentDidMount(){
 		console.log(JSON.parse(this.$router.params.buyData))
 		this.setState({buyData: JSON.parse(this.$router.params.buyData)})
 	}

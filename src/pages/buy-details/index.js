@@ -48,7 +48,7 @@ export default class BuyDetails extends Component {
     navigationBarTitleText: '商品详情'
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { item } = this.$router.params
     this.setState({
       dataImg: JSON.parse(item)

@@ -28,7 +28,7 @@ export default class BuyConfirm extends Component{
 	}
 	
 
-	componentWillMount(){
+	componentDidMount(){
 		console.log(JSON.parse(this.$router.params.data))
 		this.setState({
 			listData: JSON.parse(this.$router.params.data),
