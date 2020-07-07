@@ -14,7 +14,6 @@ export default class Information extends Component {
 	constructor(props) {
 		super(props)
 		const {value} = props
-		console.log(value)
 		this.state = {
 			value,
 		}

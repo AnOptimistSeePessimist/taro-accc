@@ -17,7 +17,7 @@ export default class BuyConfirm extends Component{
 		super(props)
 		this.state = {
 			listData: {},
-			value: ''
+			value: this.$router.params.value
 		}
 	}
 
@@ -31,8 +31,7 @@ export default class BuyConfirm extends Component{
 	componentDidMount(){
 		console.log(JSON.parse(this.$router.params.data))
 		this.setState({
-			listData: JSON.parse(this.$router.params.data),
-			value: this.$router.params.value
+			listData: JSON.parse(this.$router.params.data),			
 		})
 	}
 
