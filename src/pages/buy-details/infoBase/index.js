@@ -8,16 +8,16 @@ export default class InfoBase extends Component {
     data: {}
   }
 
-  render () {
+  render() {
     const { data } = this.props
-    const { itemStar = {}, tagList = [] } = data
+    console.log('infoBase', data)
 
     return (
       <View className='item-info-base'>
         <View className='item-info-base-header'>
           <View className='item-info-base-header-wrap'>
-            <Text className='item-info-base-header-name'>人力出租（叉车工）</Text>
-            <Text className='item-info-base-header-desc'>随便写点东西，展示出来</Text>
+            <Text className='item-info-base-header-name'>人力出租（{data.workerType}）</Text>
+            <Text className='item-info-base-header-desc'>{data.station}</Text>
           </View>
           <View className='item-info-base-header-star'>
             <Text className='item-info-base-header-star-txt'>
@@ -32,15 +32,13 @@ export default class InfoBase extends Component {
           <Text className='item-info-base-price-symbol'>¥</Text>
           <Text className='item-info-base-price-txt'>
             {/* {data.activityPrice || data.retailPrice} */}
-						70
+						{data.dollar}
           </Text>
-          
-            <Text className='item-info-base-price-origin'>
-              ¥80
-            </Text>
-          
-        </View>
+          {/* <Text className='item-info-base-price-origin'>
+            ¥80
+          </Text> */}
 
+        </View>
       </View>
     )
   }

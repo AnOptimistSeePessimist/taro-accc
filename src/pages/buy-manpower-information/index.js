@@ -5,6 +5,12 @@ import './index.scss'
 
 const COUNT_LINE = 2;
 
+function listImgSrc(){
+	const num = Math.floor(Math.random()*(1 - 1000) + 1000)
+	//console.log(`https://picsum.photos/id/${num}/200/300`)
+	return `https://picsum.photos/id/${num}/200/300`
+}
+
 class LeaseInformation extends Component {
 
 	config = {
@@ -24,10 +30,10 @@ class LeaseInformation extends Component {
 				dollar: '100',
 				workerType: '装卸工人',
 				workerNum: '2',
-				imgSrc: 'https://picsum.photos/200/300',
+				imgSrc: listImgSrc(),
 				listImg: [
-					{img: 'https://picsum.photos/200/300'},
-					{img: 'https://picsum.photos/200/300'},
+					{img: listImgSrc()},
+					{img: listImgSrc()},
 				]
 			}, {
 				id: 2,
@@ -37,12 +43,12 @@ class LeaseInformation extends Component {
 				time: '8',
 				station: '上海浦东国际机场货站',
 				dollar: '60',
-				workerType: '装卸工人',
+				workerType: '叉车工',
 				workerNum: '5',
-				imgSrc: 'https://picsum.photos/200/300',
+				imgSrc: listImgSrc(),
 				listImg: [
-					{img: 'https://picsum.photos/200/300'},
-					{img: 'https://picsum.photos/200/300'},
+					{img: listImgSrc()},
+					{img: listImgSrc()},
 				]
 			}, {
 				id: 3,
@@ -52,12 +58,12 @@ class LeaseInformation extends Component {
 				time: '8',
 				station: '测试地点测试地点测试地点测试地点测试地点测试地点测试地点测试地点',
 				dollar: '120',
-				workerType: '装卸工人',
+				workerType: '组板工',
 				workerNum: '50',
-				imgSrc: 'https://picsum.photos/200/300',
+				imgSrc: listImgSrc(),
 				listImg: [
-					{img: 'https://picsum.photos/200/300'},
-					{img: 'https://picsum.photos/200/300'},
+					{img: listImgSrc()},
+					{img: listImgSrc()},
 				]
 			}, {
 				id: 4,
@@ -67,12 +73,12 @@ class LeaseInformation extends Component {
 				time: '8',
 				station: '上海国际机场货站测试地点测试地点',
 				dollar: '10',
-				workerType: '装卸工人',
+				workerType: '杂工',
 				workerNum: '100',
-				imgSrc: 'https://picsum.photos/200/300',
+				imgSrc: listImgSrc(),
 				listImg: [
-					{img: 'https://picsum.photos/200/300'},
-					{img: 'https://picsum.photos/200/300'},
+					{img: listImgSrc()},
+					{img: listImgSrc()},
 				]
 			}, {
 				id: 5,
@@ -84,10 +90,10 @@ class LeaseInformation extends Component {
 				dollar: '2244',
 				workerType: '装卸工人',
 				workerNum: '12',
-				imgSrc: 'https://picsum.photos/200/300',
+				imgSrc: listImgSrc(),
 				listImg: [
-					{img: 'https://picsum.photos/200/300'},
-					{img: 'https://picsum.photos/200/300'},
+					{img: listImgSrc()},
+					{img: listImgSrc()},
 				]
 			}, {
 				id: 6,
@@ -97,12 +103,12 @@ class LeaseInformation extends Component {
 				time: '8',
 				station: '上海国际机场货站测试地点测试地点测试地点测试地点测试地点测试地点测试地点',
 				dollar: '1',
-				workerType: '装卸工人',
+				workerType: '杂工',
 				workerNum: '1',
-				imgSrc: 'https://picsum.photos/200/300',
+				imgSrc: listImgSrc(),
 				listImg: [
-					{img: 'https://picsum.photos/200/300'},
-					{img: 'https://picsum.photos/200/300'},
+					{img: listImgSrc()},
+					{img: listImgSrc()},
 				]
 			}, {
 				id: 7,
@@ -112,28 +118,20 @@ class LeaseInformation extends Component {
 				time: '8',
 				station: '上海国际机场货站测试地点',
 				dollar: '60',
-				workerType: '装卸工人',
+				workerType: '叉车工',
 				workerNum: '5',
-				imgSrc: 'https://picsum.photos/200/300',
+				imgSrc: listImgSrc(),
 				listImg: [
-					{img: 'https://picsum.photos/200/300'},
-					{img: 'https://picsum.photos/200/300'},
+					{img: listImgSrc()},
+					{img: listImgSrc()},
 				]
 			}]
 		}
 	}
 
-	componentWillMount(){
+	componentDidMount(){
 		console.log(JSON.parse(this.$router.params.buyData))
 		this.setState({buyData: JSON.parse(this.$router.params.buyData)})
-	}
-
-
-
-	confirm = (item) => {
-		// console.log('跳转', this.state.buyData)
-		//Taro.navigateTo({url: `/pages/buy-details/index?buyData=${JSON.stringify(this.state.buyData)}`})
-		Taro.navigateTo({url: `/pages/buy-details/index?details=${JSON.stringify(item)}`})
 	}
 
 	render() {

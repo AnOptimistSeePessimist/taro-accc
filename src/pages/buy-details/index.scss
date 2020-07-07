@@ -101,4 +101,9 @@ view, text, scroll-view {
 .btn {
   width: 100%;
   background-color: #fe871f;
+  border-radius: 0;
+}
+
+.at-float-layout .layout-body{
+  padding: 0;
 }

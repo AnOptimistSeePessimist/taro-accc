@@ -48,7 +48,7 @@ export default class BuyDetails extends Component {
     navigationBarTitleText: '商品详情'
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { item } = this.$router.params
     this.setState({
       dataImg: JSON.parse(item)
@@ -125,9 +125,9 @@ export default class BuyDetails extends Component {
     //   title: '暂时只支持加入购物车',
     //   icon: 'none'
     // })
-    const { data } = this.props;
-    console.log('传入数据', data)
-    Taro.navigateTo({ url: `/pages/buy-confirm/index?data=${JSON.stringify(data)}` })
+    const { dataImg } = this.state;
+    console.log('传入数据', dataImg)
+    Taro.navigateTo({ url: `/pages/buy-confirm/index?data=${JSON.stringify(dataImg)}&value=${this.state.value}` })
 
   }
 
@@ -151,13 +151,13 @@ export default class BuyDetails extends Component {
   };
 
   handleValueChange = (value) => {
-    this.setState({ value });
+    this.setState({ value,});
   };
 
   render() {
     const height = getWindowHeight(false)
     const { dataImg, isOpeneds, list, textTitle } = this.state
-    
+    console.log(dataImg)
     console.log('屏幕高度', height)
     return (
       <View className='buy-details'>
@@ -167,7 +167,7 @@ export default class BuyDetails extends Component {
           style={{ height }}
         >
           <Gallery list={dataImg.listImg} />
-          <InfoBase />
+          <InfoBase data={dataImg}/>
           <InfoParam />
         </ScrollView>
         {/* <Float isOpened={isOpeneds}  onHandleClose={this.handleClose} data={dataImg}/> */}
@@ -216,7 +216,7 @@ export default class BuyDetails extends Component {
               <AtInputNumber
                 className='at-input-number'
                 min={1}
-                max={1000}
+                max={parseInt(dataImg.workerNum)}
                 step={1}
                 value={this.state.value}
                 onChange={this.handleValueChange}
