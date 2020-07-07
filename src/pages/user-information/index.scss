@@ -15,8 +15,22 @@
       border-radius: 20px;
     }
     .id {
-      &::after {
-        border-top-width: 0;
+      input {
+        text-align: right;
+        padding-right: 30px;
+      }
+    }
+    .work-type {
+      input {
+        text-align: right;
+        margin-right: 30px;
+        color: #999;
+      }
+    }
+    .username {
+      input {
+        text-align: right;
+        padding-right: 30px;
       }
     }
   }
@@ -70,7 +84,7 @@
 
 .button {
   &::after {
-    border: 1px solid #fe871f;
+    border: 0px;
   }
   height: 80px;
   line-height: 80px;
@@ -81,4 +95,41 @@
   background: #fe871f;
   text-align: center;
   font-weight: 600;
+}
+
+.at-list-passarea {
+  &::after {
+    border-top-width: 0px;
+    border-bottom: 0px;
+  }
+  .at-list-passarea-item {
+    &::after {
+      border-bottom-width: 0px;
+    }
+    .at-list__item-extra {
+      line-height: 1;
+      text-align: right;
+      max-width: none;
+      font-size: 32px;
+    }
+  }
+}
+
+.at-list-sex {
+  &::after {
+    border-color: #bababa;
+    border-width: 2PX;
+    border-top-width: 0px;
+  }
+  .at-list-sex-item {
+    &::after {
+      border-bottom-width: 0px;
+    }
+    .at-list__item-extra {
+      line-height: 1;
+      text-align: right;
+      max-width: none;
+      font-size: 32px;
+    }
+  }
 }

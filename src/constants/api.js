@@ -11,3 +11,9 @@ export const API_COMPANY_ALL = `${host}/company/all`; // 查询全部公司
 
 // work-type
 export const API_COMP_WORK_TYPE = `${host}/work-type/all/companyCode`; // 查询工作类型
+
+// passarea
+export const API_PASSAREA_ALL = `${host}/passarea/all/companyCode`; // 获取公司所有通行证
+
+// hres
+export const API_HRES_SAVE = `${host}/hres/save`; // 创建员工

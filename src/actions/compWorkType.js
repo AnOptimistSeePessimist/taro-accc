@@ -5,14 +5,14 @@ import fetch from '@utils/request';
 
 export const dispatchCompWorkType = (payload) => ({type: actionTypes.COMP_WORK_TYPE, payload});
 
-export const compWorkType = (payload) => {
+export const compWorkType = (payload, callback) => {
   Taro.showLoading({
     title: '正在获取工种数据',
     mask: true,
   });
 
   return function (dispatch, getState, extraArgument) {
-    fetch({
+    return fetch({
       url: API_COMP_WORK_TYPE + `/${payload.companyCode}`,
       accessToken: payload.accessToken
     })
@@ -24,6 +24,7 @@ export const compWorkType = (payload) => {
           item.checked = false;
           return item;
         });
+        callback(workTypeList);
         dispatch(dispatchCompWorkType(workTypeList));
       })
       .catch(() => {})

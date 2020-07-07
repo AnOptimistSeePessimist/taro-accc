@@ -25,7 +25,9 @@
 		},
 		"useIsolateContext": true,
 		"useCompilerModule": false,
-		"userConfirmedUseCompilerModuleSwitch": true
+		"userConfirmedUseCompilerModuleSwitch": true,
+		"packNpmManually": false,
+		"packNpmRelationList": []
 	},
 	"compileType": "miniprogram",
 	"simulatorType": "wechat",
