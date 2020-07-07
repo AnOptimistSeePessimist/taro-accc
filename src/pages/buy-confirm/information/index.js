@@ -6,25 +6,30 @@ import './index.scss';
 
 export default class Information extends Component {
 	static defaultProps = {
-		listData: {}
+		listData: {},
+		value: '',
+		onhandNum: () => {}
 	}
 
 	constructor(props) {
 		super(props)
-		const listData = props
+		const {value} = props
+		console.log(value)
 		this.state = {
-			value: listData.listData.workerNum,
+			value,
 		}
 	}
 
 	handleValueChange = (value) => {
 		this.setState({ value });
+		this.props.onhandNum(value)
 	};
 
 	render() {
-		const listData = this.props
-		const { dollar, time, workerNum, imgSrc, startTime, endTime, station, workerType } = listData.listData
-		console.log('详细信息Information', listData.listData)
+		const {listData} = this.props
+		const {value} = this.state
+		const { dollar, time, workerNum, imgSrc, startTime, endTime, station, workerType } = listData
+		console.log('详细信息Information', value, listData)
 		return (
 			<View className='information-item'>
 				<Text className='information-item-station'>{station}</Text>
@@ -40,8 +45,8 @@ export default class Information extends Component {
 					<Text className='information-item-text-type'>规格：时间从{startTime} 至 {endTime} {time}小时</Text>
 				</View>
 				<View className='information-item-dollar'>
-					<Text className='information-item-dollar-money'>￥60.00</Text>
-					<Text className='information-item-dollar-workerNum'>×{workerNum}</Text>
+		<Text className='information-item-dollar-money'>￥{dollar}</Text>
+					<Text className='information-item-dollar-workerNum'>×{value}</Text>
 				</View>
 			</View>
 			<View className='setting-spec'>
@@ -49,9 +54,9 @@ export default class Information extends Component {
 				<AtInputNumber
 					className='at-input-number'
 					min={1}
-					max={1000}
+					max={parseInt(workerNum)}
 					step={1}
-					value={this.state.value}
+					value={value}
 					onChange={this.handleValueChange}
 				/>
 			</View>
