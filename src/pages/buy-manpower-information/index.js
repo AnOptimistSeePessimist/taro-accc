@@ -3,12 +3,8 @@ import { View, Text } from '@tarojs/components'
 import Menu from './menu'
 import './index.scss'
 
-const COUNT_LINE = 2;
-
 function listImgSrc(){
-	const num = Math.floor(Math.random()*(1 - 1000) + 1000)
-	//console.log(`https://picsum.photos/id/${num}/200/300`)
-	return `https://picsum.photos/id/${num}/200/300`
+  return `https://picsum.photos/seed/${Math.ceil(Math.random() * 100)}/110/70`
 }
 
 class LeaseInformation extends Component {

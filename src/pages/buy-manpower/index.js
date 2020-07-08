@@ -55,7 +55,7 @@ class BuyManpower extends Component {
   }
 
   config = {
-    navigationBarTitleText: '出租人力'
+    navigationBarTitleText: '租人力'
   };
 
   onSubmit = e => {

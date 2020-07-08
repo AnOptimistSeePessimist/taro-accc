@@ -7,9 +7,7 @@ import Menu from './menu'
 import './index.scss';
 
 function listImgSrc(){
-	const num = Math.floor(Math.random()*(1 - 1000) + 1000)
-	//console.log(`https://picsum.photos/id/${num}/200/300`)
-	return `https://picsum.photos/id/${num}/200/300`
+  return `https://picsum.photos/seed/${Math.ceil(Math.random() * 100)}/110/70`
 }
 
 
@@ -155,7 +153,7 @@ class Home extends Component {
       //   ></AtDrawer>
       // </View>
 
-      <View className='home'>
+      <ScrollView className='home'>
 				{/* <View className='panel-title' style={{ backgroundColor: '#F7F7F7', paddingTop: '5px', paddingBottom: '5px' }}>人力信息</View> */}
 				<View className='information-title'>
 					<View className='data-list'>
@@ -183,7 +181,7 @@ class Home extends Component {
 					</View>
 
 				</View>
-			</View>
+			</ScrollView>
     );
   }
 }
