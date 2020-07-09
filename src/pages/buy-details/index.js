@@ -6,19 +6,22 @@ import InfoParam from './infoParam'
 import Footer from './footer'
 import classnames from 'classnames'
 import { getWindowHeight } from '@utils/style'
-import { AtFloatLayout, AtTag, AtInputNumber } from 'taro-ui'
+import { AtFloatLayout, AtTag, AtInputNumber, AtButton} from 'taro-ui'
 
 import './index.scss'
 
 export default class BuyDetails extends Component {
   constructor(props) {
     super(props);
+    const eventChannel = this.$scope
+    console.log(eventChannel)
     this.state = {
       value: '1',
       isOpeneds: false,
       loaded: false,
       selected: {},
       dataImg: {},
+      dataList: '',
       textTitle: '请选择:规格',
       dollar: '',
       list: [
@@ -45,17 +48,31 @@ export default class BuyDetails extends Component {
         },
       ]
     }
+
   }
 
   config = {
     navigationBarTitleText: '商品详情'
   }
 
-  componentDidMount() {
-    const item  = JSON.parse(this.$router.params.item)
-    console.log('>>>>>',(item.dollar * 4 + '-' +item.dollar * 8))
+  // componentWillMount () {
+  //   const item  = JSON.parse(this.$router.params.item)
+  //   console.log('>>>>>',(item.dollar * 4 + '-' +item.dollar * 8))
+  //   this.setState({
+  //     dataImg: item,
+  //     dollar: item.dollar * 4 + '-' +item.dollar * 8
+  //   })
+
+  // }
+
+  componentWillPreload (params) {
+    return this.fetchData(params.item)
+  }
+
+  fetchData (item) {
+    console.log('《《《《',JSON.parse(item))
     this.setState({
-      dataImg: item,
+      dataImg: JSON.parse(item),
       dollar: item.dollar * 4 + '-' +item.dollar * 8
     })
   }
@@ -236,8 +253,7 @@ export default class BuyDetails extends Component {
                 onChange={this.handleValueChange}
               />
             </View>
-
-            <Button className='btn' onClick={this.handleBuy}>确定</Button>
+            <AtButton className='release' formType='submit' onClick={this.handleBuy}>确定</AtButton>
           </View>
         </AtFloatLayout>
         <View className='item-footer'>

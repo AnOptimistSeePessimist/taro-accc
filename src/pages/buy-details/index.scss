@@ -99,9 +99,13 @@ view, text, scroll-view {
   height: 180px;
 }
 
-.btn {
-  width: 100%;
+.release {
+  border-width: 0;
+  color: #fff;
   background-color: #fe871f;
+}
+
+.at-button {
   border-radius: 0;
 }
 
