@@ -1,58 +1,79 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View, Text, Swiper, SwiperItem, ScrollView } from '@tarojs/components'
+import { View, Text, Swiper, SwiperItem, ScrollView, Button } from '@tarojs/components'
 import Gallery from './gallery'
 import InfoBase from './infoBase'
 import InfoParam from './infoParam'
 import Footer from './footer'
-import Float from './float'
 import classnames from 'classnames'
 import { getWindowHeight } from '@utils/style'
-import { AtFloatLayout, AtTag, AtInputNumber } from 'taro-ui'
+import { AtFloatLayout, AtTag, AtInputNumber, AtButton} from 'taro-ui'
 
 import './index.scss'
 
 export default class BuyDetails extends Component {
   constructor(props) {
     super(props);
+    const eventChannel = this.$scope
+    console.log(eventChannel)
     this.state = {
       value: '1',
       isOpeneds: false,
       loaded: false,
       selected: {},
       dataImg: {},
-      textTitle: '规格',
+      dataList: '',
+      textTitle: '请选择:规格',
+      dollar: '',
       list: [
         {
           id: 1,
           value: '1',
           text: '08:00-16:00 (共计8小时)',
           checked: false,
+          time: 8,
         },
         {
           id: 2,
           value: '2',
           text: '08:00 - 12:00 (共计4小时) ',
           checked: false,
+          time: 4,
         },
         {
           id: 3,
           value: '3',
           text: '12:00 - 16:00 (共计4小时)',
           checked: false,
+          time: 4,
         },
       ]
     }
+
   }
 
   config = {
     navigationBarTitleText: '商品详情'
   }
 
-  componentDidMount() {
-    const { item } = this.$router.params
-    this.setState({
-      dataImg: JSON.parse(item)
+  // componentWillMount () {
+  //   const item  = JSON.parse(this.$router.params.item)
+  //   console.log('>>>>>',(item.dollar * 4 + '-' +item.dollar * 8))
+  //   this.setState({
+  //     dataImg: item,
+  //     dollar: item.dollar * 4 + '-' +item.dollar * 8
+  //   })
 
+  // }
+
+  componentWillPreload (params) {
+    return this.fetchData(params.item)
+  }
+
+  fetchData (item) {
+    console.log('《《《《',JSON.parse(item))
+    this.setState({
+      dataImg: JSON.parse(item),
+      dollar: item.dollar * 4 + '-' +item.dollar * 8
     })
   }
 
@@ -127,19 +148,29 @@ export default class BuyDetails extends Component {
     // })
     const { dataImg } = this.state;
     console.log('传入数据', dataImg)
-    Taro.navigateTo({ url: `/pages/buy-confirm/index?data=${JSON.stringify(dataImg)}&value=${this.state.value}` })
+    Taro.navigateTo({ url: `/pages/buy-confirm/index?data=${JSON.stringify(dataImg)}&value=${this.state.value}&dollar=${this.state.dollar}&textTitle=${this.state.textTitle}` })
 
   }
 
   handleClickCatogory = (category) => {
-    const { list } = this.state;
+    const {dataImg, list } = this.state;
     const newList = list.slice();
     newList.forEach((item) => {
       if (item.id === category) {
         item.checked = !item.checked;
+        if(item.checked){
+          this.setState({
+            textTitle: `已选：${item.text}`,
+            dollar: dataImg.dollar * item.time
+          })
+        } else {
+          this.setState({
+            textTitle: '请选择:规格',
+            dollar: dataImg.dollar * 4 + '-' + dataImg.dollar * 8
+          })
+        }
         this.setState({
           list: newList,
-          textTitle: item.text
         });
       } else {
         item.checked = false;
@@ -156,7 +187,7 @@ export default class BuyDetails extends Component {
 
   render() {
     const height = getWindowHeight(false)
-    const { dataImg, isOpeneds, list, textTitle } = this.state
+    const { dataImg, isOpeneds, textTitle, dollar } = this.state
     console.log(dataImg)
     console.log('屏幕高度', height)
     return (
@@ -185,8 +216,8 @@ export default class BuyDetails extends Component {
                 />
               </View>
               <View className='float-item-title-text'>
-                <Text className='dollar'>￥{dataImg.dollar * 4} - {dataImg.dollar * 8}</Text>
-                <Text>请选择： {textTitle}</Text>
+                <Text className='dollar'>￥{dollar}</Text>
+                <Text>{textTitle}</Text>
               </View>
             </View>
 
@@ -222,8 +253,7 @@ export default class BuyDetails extends Component {
                 onChange={this.handleValueChange}
               />
             </View>
-
-            <Button className='btn' onClick={this.handleBuy}>确定</Button>
+            <AtButton className='release' formType='submit' onClick={this.handleBuy}>确定</AtButton>
           </View>
         </AtFloatLayout>
         <View className='item-footer'>

@@ -17,7 +17,9 @@ export default class BuyConfirm extends Component{
 		super(props)
 		this.state = {
 			listData: {},
-			value: this.$router.params.value
+			value: this.$router.params.value,
+			dollar: this.$router.params.dollar,
+			textTitle: this.$router.params.textTitle,
 		}
 	}
 
@@ -37,8 +39,7 @@ export default class BuyConfirm extends Component{
 
 	render(){
 		const height = getWindowHeight(false)
-		const listData = this.state.listData
-		const value = this.state.value
+		const {listData, value, dollar, textTitle} = this.state
 		return(
 			<View className='buy-comfirm'>
 
@@ -48,10 +49,10 @@ export default class BuyConfirm extends Component{
 					style={{height}}
 				>
 				  <Address />
-					<Information listData={listData} value={value} onhandNum={this.handNum}/>
+					<Information listData={listData} textTitle={textTitle} dollar={dollar} value={value} onhandNum={this.handNum}/>
 				</ScrollView>
 				<View className='item-footer'>
-						<Footer value={value} listData={listData}/>
+						<Footer value={value} dollar={dollar}/>
 				</View>
 			</View>
 		)

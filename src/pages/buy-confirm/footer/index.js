@@ -5,13 +5,13 @@ import './index.scss'
 
 export default class Footer extends Component {
 	static defaultProps = {
-		listData: {},
-		value: ''
+		value: '',
+		dollar: Number
 	}
 
 	render() {
-		const { value, listData } = this.props
-		const { dollar } = listData
+		const { value, dollar } = this.props
+		
 		return (
 			<View className='footer-item'>
 				<Text className='footer-item-num'>共{value}件,</Text>
