@@ -71,9 +71,10 @@ export default class BuyDetails extends Component {
 
   fetchData (item) {
     console.log('《《《《',JSON.parse(item))
+    const data = JSON.parse(item)
     this.setState({
-      dataImg: JSON.parse(item),
-      dollar: item.dollar * 4 + '-' +item.dollar * 8
+      dataImg: data,
+      dollar: data.dollar * 4 + '-' +data.dollar * 8
     })
   }
 
