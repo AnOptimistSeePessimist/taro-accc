@@ -1,5 +1,5 @@
 import {
-  TAROUI_DRAWER
+  TAROUI_DRAWER, HOME_PAGE_LIST
 } from '../constants/home'
 
 const INITIAL_STATE = {
@@ -11,6 +11,11 @@ export default function home(state = INITIAL_STATE, actions) {
       return {
         ...state,
         showHideDrawer: actions.data
+      };
+    case HOME_PAGE_LIST: 
+      return {
+        ...state,
+        pageList: actions.payload
       }
       default:
         return state

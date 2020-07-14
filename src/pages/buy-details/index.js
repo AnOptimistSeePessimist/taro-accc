@@ -24,6 +24,7 @@ export default class BuyDetails extends Component {
       dataList: '',
       textTitle: '请选择:规格',
       dollar: '',
+      safety: '',
       list: [
         {
           id: 1,
@@ -55,15 +56,9 @@ export default class BuyDetails extends Component {
     navigationBarTitleText: '商品详情'
   }
 
-  // componentWillMount () {
-  //   const item  = JSON.parse(this.$router.params.item)
-  //   console.log('>>>>>',(item.dollar * 4 + '-' +item.dollar * 8))
-  //   this.setState({
-  //     dataImg: item,
-  //     dollar: item.dollar * 4 + '-' +item.dollar * 8
-  //   })
-
-  // }
+  componentDidMount() {
+    this.getSystemInfoSync()
+  }
 
   componentWillPreload (params) {
     return this.fetchData(params.item)
@@ -71,9 +66,10 @@ export default class BuyDetails extends Component {
 
   fetchData (item) {
     console.log('《《《《',JSON.parse(item))
+    const data = JSON.parse(item)
     this.setState({
-      dataImg: JSON.parse(item),
-      dollar: item.dollar * 4 + '-' +item.dollar * 8
+      dataImg: data,
+      dollar: data.price * 4 + '-' +data.price * 8
     })
   }
 
@@ -161,12 +157,12 @@ export default class BuyDetails extends Component {
         if(item.checked){
           this.setState({
             textTitle: `已选：${item.text}`,
-            dollar: dataImg.dollar * item.time
+            dollar: dataImg.price * item.time
           })
         } else {
           this.setState({
             textTitle: '请选择:规格',
-            dollar: dataImg.dollar * 4 + '-' + dataImg.dollar * 8
+            dollar: dataImg.price * 4 + '-' + dataImg.price * 8
           })
         }
         this.setState({
@@ -185,9 +181,18 @@ export default class BuyDetails extends Component {
     this.setState({ value,});
   };
 
+  getSystemInfoSync = () => {
+    const res = Taro.getSystemInfoSync()
+    const safety = res.screenHeight - res.safeArea.bottom
+    this.setState({
+      safety
+    })
+  }
+
+
   render() {
     const height = getWindowHeight(false)
-    const { dataImg, isOpeneds, textTitle, dollar } = this.state
+    const { dataImg, isOpeneds, textTitle, dollar, safety } = this.state
     console.log(dataImg)
     console.log('屏幕高度', height)
     return (
@@ -195,7 +200,7 @@ export default class BuyDetails extends Component {
         <ScrollView
           scrollY
           className='item-warp'
-          style={{ height }}
+          style={{ height, paddingBottom: `${safety+40}px` }}
         >
           <Gallery list={dataImg.listImg} />
           <InfoBase data={dataImg}/>
@@ -247,7 +252,7 @@ export default class BuyDetails extends Component {
               <AtInputNumber
                 className='at-input-number'
                 min={1}
-                max={parseInt(dataImg.workerNum)}
+                max={dataImg.rsNum}
                 step={1}
                 value={this.state.value}
                 onChange={this.handleValueChange}
@@ -256,8 +261,8 @@ export default class BuyDetails extends Component {
             <AtButton className='release' formType='submit' onClick={this.handleBuy}>确定</AtButton>
           </View>
         </AtFloatLayout>
-        <View className='item-footer'>
-          <Footer onAdd={this.handleAdd} onIsOpened={this.handleOpened} />
+        <View className='item-footer' style={{paddingBottom: `${safety}px`}}>
+          <Footer onAdd={this.handleAdd} onIsOpened={this.handleOpened}/>
         </View>
       </View>
     )

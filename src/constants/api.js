@@ -22,4 +22,4 @@ export const API_HRES_LIST = `${host}/hres/list`; // 查询某个工种下的全
 
 // rspublish
 export const API_RSPUBLISH_SAVE = `${host}/rspublish/save`; // 创建人力资源发布
-export const API_REPUBLISH_LIST = `${host}/rspublish/list`; // 发布列表
+export const API_RSPUBLISH_LIST = `${host}/rspublish/list`; // 发布列表
