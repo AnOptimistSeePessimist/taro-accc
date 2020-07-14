@@ -54,7 +54,6 @@ const sexList = [
 class UserInfomation extends Component {
   constructor(props) {
     super(props);
-    console.log('UserInformation: ', props);
     this.state = {
       companyList: [],
       checkedCompany: '',
@@ -172,7 +171,13 @@ class UserInfomation extends Component {
       companyCode: companyCode,
       accessToken:  (this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken) || accessToken
     }, (workTypeList) => {
-      console.log('workTypeList: ', workTypeList);
+      // 将工种列表缓存
+      try {
+        Taro.setStorageSync('workType', workTypeList);
+      } catch (e) {
+
+      }
+      // console.log('workTypeList: ', workTypeList);
       const {userInfo} = this.props;
 
       const workTypeRecId =  userInfo.hresDto && userInfo.hresDto.worktypeRecid; 
@@ -329,13 +334,16 @@ class UserInfomation extends Component {
         }
       } else {
         item.checked = false;
-        if (typeRecId === '') {
-          checkedItem = {};
-        }
+        // if (typeRecId === '') {
+        //   checkedItem = {};
+        // }
       }
       this.setState({
         compWorkTypes: newCompWorkType,
         checkedItem
+      }, () => {
+        this.setState({isOpened: false});
+        this.bindCompanyRole();
       });
     });
   };
@@ -381,7 +389,7 @@ class UserInfomation extends Component {
             <View>
               <AtInput
                 className='margin-to-padding work-type'
-                title='工种'
+                title='职业'
                 type='text'
                 editable={false}
                 border={false}
@@ -399,7 +407,7 @@ class UserInfomation extends Component {
                   });
                 }}
               />
-              <AtModal isOpened={this.state.isOpened} closeOnClickOverlay={false}>
+              <AtModal isOpened={this.state.isOpened} closeOnClickOverlay={true}>
                 <AtModalHeader>请选择工种</AtModalHeader>
                 <AtModalContent>
                   <View className='tag-wrapper'>
@@ -420,10 +428,10 @@ class UserInfomation extends Component {
                     }
                   </View>
                 </AtModalContent>
-                <AtModalAction>
+                {/* <AtModalAction>
                   <Button onClick={() => {
                     this.setState({isOpened: false});
-                    this.handleClickWorkType('');
+                    // this.handleClickWorkType('');
                   }}
                   >
                     取消
@@ -434,8 +442,8 @@ class UserInfomation extends Component {
                   }}
                   >
                     保存
-                  </Button>
-                </AtModalAction>
+                  </Button> 
+                </AtModalAction>*/}
               </AtModal>
             </View>
           </AtForm>

@@ -1,6 +1,6 @@
 import Taro from '@tarojs/taro';
 import actionTypes from '@constants/actionTypes';
-import {API_USER_LOGIN} from '@constants/api';
+import {API_USER_LOGIN, API_USER_LOGOUT} from '@constants/api';
 import fetch from '@utils/request';
 
 /**
@@ -22,15 +22,16 @@ export const dispatchLogout = () => ({type: actionTypes.USER_LOGOUT});
  * 
  * 用户登录
  * 
+ * action creator
+ * 
  */
 export const login = payload => {
-  Taro.showLoading({
-    title: '正在登陆中',
-    mask: true,
-  });
-  console.log('payload: ', payload);
   return dispatch => {
-    return fetch({url: API_USER_LOGIN + `?mobilePhone=${payload.mobilePhone}&securityCode=${payload.securityCode}`, method: 'POST', payload}).then((res) => {
+    Taro.showLoading({
+      title: '正在登陆中',
+      mask: true,
+    });
+    fetch({url: API_USER_LOGIN + `?mobilePhone=${payload.mobilePhone}&securityCode=${payload.securityCode}`, method: 'POST', payload}).then((res) => {
       Taro.hideLoading();
       console.log('login: ', res);
       const {data: {code, data, message, status}} = res;
@@ -66,7 +67,32 @@ export const login = payload => {
  * 
  * 用户退出登录
  * 
+ * action creator
+ * 
  */
-export const logout = payload => {
-  
+export const logout = () => {
+  return (dispatch, getState, extraArgument) => {
+    Taro.showLoading({
+      title: '退出登录中',
+      mask: true,
+    });
+    const {user: {userInfo: {userToken: {accessToken}}}} = getState();
+    fetch({url: API_USER_LOGOUT, accessToken})
+      .then((res)=> {
+        const {data: {status}} = res;
+        if (status === 200) {
+          dispatch(dispatchLogout());
+          Taro.navigateBack();
+          Taro.hideLoading();
+        }
+      })
+      .catch(() => {
+          Taro.hideLoading();
+          Taro.showToast({
+            title: '退出登录失败',
+            icon: 'none',
+            duration: 2000,
+          });
+      });
+  };
 };

@@ -23,13 +23,16 @@ class App extends Component {
 
   config = {
     pages: [
+      'pages/user/index',
+      'pages/sell-manpower-success/index',
+      'pages/sell/index',
+      'pages/sell-manpower/index',
       'pages/home/index',
       'pages/user-information/index',
-      'pages/user/index',
-      'pages/sell/index',
+      'pages/user-release/index',
+      'pages/user-release-details/index',
       'pages/buy/index',
       'pages/buy-manpower/index',
-      'pages/sell-manpower/index',
       'pages/login/index',
       'pages/buy-manpower-information/index',
       'pages/register/index',
@@ -42,7 +45,7 @@ class App extends Component {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fe871f',
       navigationBarTitleText: '空运帮',
-      navigationBarTextStyle: 'white'
+      navigationBarTextStyle: 'white',
     },
     tabBar: {
       color: "#666",

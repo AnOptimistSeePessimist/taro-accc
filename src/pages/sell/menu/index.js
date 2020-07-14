@@ -1,6 +1,7 @@
 import Taro, {Component} from '@tarojs/taro';
 import {View, Text} from '@tarojs/components';
 import classNames from 'classnames';
+import {connect} from '@tarojs/redux';
 
 import './index.scss';
 
@@ -13,13 +14,25 @@ const MENU_LIST = [
 
 const COUNT_LINE = 2;
 
-export default class Menu extends Component {
+@connect(state => ({
+  userInfo: state.user.userInfo,
+}), {})
+class Menu extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   handleClick = (path) => {
-    Taro.navigateTo({url: path});
+    if (!this.props.userInfo.login) {
+      Taro.navigateTo({url: '/pages/login/index'});
+    } else {
+      Taro.navigateTo({url: path});
+    }
   };
 
 
   render() {
+    console.log('Menu - props: ', this.props.userInfo);
     return (
       <View className='menu'>
         {
@@ -48,3 +61,5 @@ export default class Menu extends Component {
     );
   }
 }
+
+export default Menu;

@@ -1,5 +1,5 @@
 import Taro, {Component} from '@tarojs/taro';
-import {View, Text, Image} from '@tarojs/components';
+import {View, Text, Image, Button} from '@tarojs/components';
 import { connect } from '@tarojs/redux';
 
 import bg from './assets/bg.png';
@@ -13,8 +13,13 @@ class Profile extends Component {
     super(props);
   }
 
-  handleLogin = () => {
-    console.log('login: ', this.props.userInfo);
+  getUserInformation = (res) => {
+    // Taro.getUserInfo({
+    //   success: function(res) {
+    //     console.log('userInfo: ', res.userInfo);
+    //   }
+    // });
+    console.log('userInfo: ', res);
     if (this.props.userInfo.login) {
       Taro.navigateTo({url: '/pages/setting/index'});
     } else {
@@ -22,29 +27,60 @@ class Profile extends Component {
     }
   };
 
+
+  // handleLogin = () => {
+  //   Taro.getSetting({
+  //     success: (res) => {
+  //       console.log('authSetting: ', res);
+  //       if (res.authSetting['scope.userInfo'] === true) {
+  //         // this.getUserInformation();
+  //       } else {
+  //         Taro.authorize({
+  //           scope: 'scope.userInfo',
+  //           success: () => {
+  //             console.log('authorize: ', 'authorize');
+  //             // 用户已经同意小程序使用录音功能，后续调用 Taro.startRecord 接口不会弹窗询问
+  //             // Taro.startRecord()
+  //             // this.getUserInformation();
+  //           }
+  //         })
+  //       }
+  //     }
+  //   });
+  // };
+
   render() {
     const {userInfo} = this.props;
     return (
-      <View className='profile'>
-        <Image
-          className='bg'
-          src={bg}
-          mode='widthFix'
-        />
-        <View className='wrapper'>
-          <View className='avatar'>
-            <Image
-              src={userInfo.avatar || defaultAvatar}
-              className='img'
-              onClick={this.handleLogin}
-            />
-          </View>
-          <View className='info' onClick={this.handleLogin}>
-            <Text className='name'>{userInfo.login ? userInfo.auth.id: '未登录'}</Text>
-            <Text className='tip'>{userInfo.login ? userInfo.auth.mobilePhone : '点击登录账号'}</Text>
+      <Button
+        className='userInfo'
+        openType="getUserInfo"
+        hoverClass="none"
+        onGetUserInfo={(e) => {
+          this.getUserInformation(e);
+        }}
+      >
+        <View className='profile'>
+          <Image
+            className='bg'
+            src={bg}
+            mode='widthFix'
+          />
+          <View className='wrapper'>
+            <View className='avatar'>
+              <Image
+                src={userInfo.avatar || defaultAvatar}
+                className='img'
+                // onClick={this.handleLogin}
+              />
+            </View>
+            <View className='info'>
+              <Text className='name'>{userInfo.login ? userInfo.auth.id: '未登录'}</Text>
+              <Text className='tip'>{userInfo.login ? userInfo.auth.mobilePhone : '点击登录账号'}</Text>
+            </View>
           </View>
         </View>
-      </View>
+      </Button>
     );
   }
 }

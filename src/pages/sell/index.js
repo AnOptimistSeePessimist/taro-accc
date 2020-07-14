@@ -4,13 +4,15 @@ import {View, Text, Image, ScrollView} from '@tarojs/components';
 import Menu from './menu/index';
 import './index.scss';
 
+
 class Sell extends Component {
   componentDidMount() {
-    Taro.navigateTo({url: '/pages/sell-manpower/index'});
+    const res = Taro.getSystemInfoSync();
+    console.log('getSystemInfoSync: ', res);
   }
 
   config = {
-    navigationBarTitleText: '卖家'
+    navigationBarTitleText: '卖家',
   }
 
   render() {

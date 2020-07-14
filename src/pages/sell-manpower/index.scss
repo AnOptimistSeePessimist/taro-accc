@@ -23,9 +23,9 @@
       }
       display: flex;
       flex-direction: column;
-      .date {
+      .start-date {
         flex: 1;
-        .date-at-list {
+        .start-date-at-list {
           &::after {
             @include btbw;
             @include btbwn;
@@ -33,7 +33,24 @@
           .item-extra__info {
             color: #000,
           }
-          .item {
+          .start-item {
+            &::after {
+              @include btbw;
+            }
+          }
+        }
+      }
+      .end-date {
+        flex: 1;
+        .end-date-at-list {
+          &::after {
+            @include btbw;
+            @include btbwn;
+          }
+          .item-extra__info {
+            color: #000,
+          }
+          .end-item {
             &::after {
               @include btbw;
             }
@@ -120,6 +137,7 @@
           margin-bottom: 20px;
           .tag {
             margin: 10px;
+            min-width: 20%;
           }
           .tag-active {
             background-color: #fe871f;
@@ -135,18 +153,44 @@
           padding-bottom: 24px;
           margin-left: 24px;
         }
-        .manpower-list {
-          display: flex;
-          flex-direction: row;
-          // justify-content: flex-end;
-          flex-wrap: wrap;
-          .manpower-checkbox-wrapper {
+        .at-modal-content {
+          padding-left: 0px;
+          padding-right: 0px;
+          padding-top: 0px;
+          padding-bottom: 0px;
+          .manpower-list {
             display: flex;
-            justify-content: flex-start;
-            width: 50%;
-            margin-bottom: 10px;
-            // .manpower-checkbox-label {
-            // }
+            flex-direction: row;
+            // justify-content: flex-end;
+            flex-wrap: wrap;
+            .manpower-checkbox-wrapper {
+              display: flex;
+              justify-content: flex-start;
+              width: 50%;
+              margin-bottom: 10px;
+              // .manpower-checkbox-label {
+              // }
+            }
+            .curr-at-checkbox {
+              &::after {
+                border-bottom-width: 0px;
+              }
+              &::before {
+                border-top-width: 0px;
+              }
+              display: flex;
+              flex-direction: row;
+              flex-wrap: wrap;
+              .at-checkbox__option {
+                padding-left: 0px;
+                .at-checkbox__option-wrap {
+                  &::after {
+                    border-top-width: 0px;
+                  }
+                  padding: 16px 20px 16px 20px;
+                }
+              }
+            }
           }
         }
       }

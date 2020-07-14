@@ -2,7 +2,7 @@ import Taro, {Component} from '@tarojs/taro';
 import {View, Text} from '@tarojs/components';
 import {connect} from '@tarojs/redux';
 import Menu from './menu/index';
-import { dispatchLogout } from '@actions/user';
+import { logout } from '@actions/user';
 import { AtButton } from 'taro-ui';
 
 import './index.scss';
@@ -10,8 +10,8 @@ import './index.scss';
 @connect(state => ({
   compWorkType: state.compWorkType,
 }), (dispatch) => ({
-  logout() {
-    dispatch(dispatchLogout());
+  dispatchLogout() {
+    dispatch(logout());
   }
 }))
 class Setting extends Component {
@@ -24,8 +24,7 @@ class Setting extends Component {
   }
 
   logout = () => {
-    this.props.logout();
-    Taro.navigateBack();
+    this.props.dispatchLogout();
   };
 
   render() {

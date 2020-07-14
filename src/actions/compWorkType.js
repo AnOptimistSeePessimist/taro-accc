@@ -11,7 +11,7 @@ export const compWorkType = (payload, callback) => {
     mask: true,
   });
 
-  return function (dispatch, getState, extraArgument) {
+  return (dispatch, getState, extraArgument) => {
     return fetch({
       url: API_COMP_WORK_TYPE + `/${payload.companyCode}`,
       accessToken: payload.accessToken
@@ -27,6 +27,6 @@ export const compWorkType = (payload, callback) => {
         callback(workTypeList);
         dispatch(dispatchCompWorkType(workTypeList));
       })
-      .catch(() => {})
+      .catch(() => {});
   }
 }

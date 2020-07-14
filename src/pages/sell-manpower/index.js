@@ -3,10 +3,6 @@ import {
   View,
   Text,
   Picker,
-  RadioGroup,
-  Label,
-  Radio,
-  Checkbox,
   Button
 } from '@tarojs/components';
 import {
@@ -20,69 +16,72 @@ import {
   AtModalHeader,
   AtModalContent,
   AtModalAction,
+  AtCheckbox,
 } from 'taro-ui';
 import classnames from 'classnames';
 import {formatTimeStampToTime} from '@utils/common';
+import {API_HRES_LIST, API_COMP_WORK_TYPE, API_RSPUBLISH_SAVE} from '@constants/api';
+import fetch from '@utils/request';
+import {connect} from '@tarojs/redux';
+import intersectionWith from 'lodash.intersectionwith';
 
 import './index.scss';
 
+@connect(state => ({
+  userInfo: state.user.userInfo,
+}), {})
 class SellManpower extends Component {
   constructor(props) {
     super(props);
+    const date = new Date(); 
+    date.setDate(date.getDate()  + 1);
+    const nextDate = formatTimeStampToTime(date);
+
     this.state = {
-      date: formatTimeStampToTime(Date.now()),
+      startDate: nextDate,
+      endDate: nextDate,
       startTime: '08:00',
-      endTime: '16:00',
-      value: '10',
-      list: [
-        {
-          id: 1,
-          value: '1',
-          text: '装卸工',
-          checked: false,
-          manpower: [
-            {id: 1, value: '1', text: '张一', checked: false},
-            {id: 2, value: '2', text: '李一', checked: false},
-            {id: 3, value: '3', text: '王一', checked: false},
-            {id: 4, value: '4', text: '赵一', checked: false},
-          ],
-        },
-        {
-          id: 2,
-          value: '2',
-          text: '叉车司机',
-          checked: false,
-          manpower: [
-            {id: 1, value: '1', text: '张二', checked: false},
-            {id: 2, value: '2', text: '李二', checked: false},
-            {id: 3, value: '3', text: '王二', checked: false},
-          ],
-        },
-        {
-          id: 3,
-          value: '3',
-          text: '组板工',
-          checked: false,
-          manpower: [
-            {id: 1, value: '1', text: '张三', checked: false},
-            {id: 2, value: '2', text: '李三', checked: false},
-          ],
-        },
-        {
-          id: 4,
-          value: '4',
-          text: '杂工',
-          checked: false,
-          manpower: [
-            {id: 1, value: '1', text: '张四', checked: false},
-          ],
-        },
-      ],
+      endTimeList: ['12:00', '16:00'],
+      endTimeIndex: 1,
+      value: 10,
+      workTypeList: Taro.getStorageSync('workType') || (new Array(8).fill)({}),
+      checkedWorkTypeRecId: -1,
       isOpened: false, // 是否打开人员选择模态
       manpowerTitle: '', // 人员模态框标题
       manpower: [], // 当前模态框可选人力
       checkedManpower: [], // 选中的人力
+      displayCheckedManpower: '' // 显示在界面中的人力
     };
+  }
+
+  componentDidMount() {
+    console.log('workTypeList: ', this.state.workTypeList);
+    if (this.state.workTypeList[0].typeRecId === undefined) {
+      Taro.showLoading({
+        title: '正在获取工种'
+      });
+
+      const {hresDto, userToken} = this.props.userInfo;
+
+      fetch({
+        url: API_COMP_WORK_TYPE + `/${hresDto.companyCode}`,
+        accessToken: userToken.accessToken,
+      })
+        .then((res) => {
+          const {data: {data}} = res;
+          setTimeout(Taro.hideLoading, 1000);
+          console.log('compWorkType: ', res);
+          const workTypeList = data.map((item) => {
+            item.checked = false;
+            return item;
+          });
+          Taro.setStorageSync('workType', workTypeList);
+          this.setState({
+            workTypeList,
+          });
+        })
+        .catch(() => {});
+    }
   }
 
   config = {
@@ -97,21 +96,49 @@ class SellManpower extends Component {
 
   };
 
-  onDateChange = e => {
+  onStartDateChange = e => {
     this.setState({
-      date: e.detail.value
+      startDate: formatTimeStampToTime(e.detail.value)
+    }, () => {
+      if (this.state.startDate >= this.state.endDate) {
+        this.setState({
+          endDate: formatTimeStampToTime(e.detail.value)
+        });
+      }
     });
   };
 
   onStartTimeChange = e => {
     this.setState({
       startTime: e.detail.value
+    }, () => {
+      console.log('startTime: ', this.state.startTime);
+      const time = this.state.startTime.split(':');
+      const hour = time[0];
+      const minute = time[1];
+      const endTimeList = [];
+      const workOneHour = Number(hour) + 4;
+      const workTwoHour = Number(hour) + 8;
+      const oneDay = 24;
+      const workOne = (workOneHour.toString().length === 1 ? `0${workOneHour}` : (workOneHour >= oneDay ? ((workOneHour - 24).toString().length === 1 ? `0${workOneHour - oneDay}` : workOneHour - oneDay) : workOneHour)) + ':' + minute;
+      const workTwo = (workTwoHour.toString().length === 1 ? `0${workTwoHour}` : (workTwoHour >= oneDay ? ((workTwoHour - 24).toString().length === 1 ? `0${workTwoHour - oneDay}` : workTwoHour - oneDay) : workTwoHour)) + ':' + minute;
+      endTimeList.push(workOne, workTwo);
+      this.setState({
+        endTimeList,
+        endTimeIndex: 1,
+      });
+    });
+  };
+
+  onEndDateChange = e => {
+    this.setState({
+      endDate: formatTimeStampToTime(e.detail.value)
     });
   };
 
   onEndTimeChange = e => {
     this.setState({
-      endTime: e.detail.value
+      endTimeIndex: e.detail.value
     });
   };
 
@@ -136,35 +163,148 @@ class SellManpower extends Component {
     this.setOpen(false);
   };
 
-  handleClickCatogory = (category) => {
-    const {list} = this.state;
-    const newList = list.slice();
+  handleClickWorkType = (typeRecId) => {
+    const {workTypeList, checkedWorkTypeRecId} = this.state;
+
+    if (checkedWorkTypeRecId === typeRecId) {
+      this.setOpen(true);
+      return;
+    }
+
+    const newList = workTypeList.slice();
+    let checkedWorkType;
+    let currCheckedWorkTypeRecId;
+    let manpowerTitle;
+
     newList.forEach((item) => {
-      if (item.id === category) {
-        let manpower;
-        let manpowerTitle = '';
-        item.checked = !item.checked;
-        if (item.checked === false) {
-          manpower = [];
-        } else {
-          manpower = item.manpower;
-          manpowerTitle = item.text;
-        }
-        this.setState({
-          list: newList,
-          manpower,
-          manpowerTitle,
-        });
-      } else {
-        item.checked = false;
-        this.setState({
-          list: newList,
-        });
-      }
+      item.checked = false;
+      if (item.typeRecId === typeRecId) {
+        item.checked = true;
+        manpowerTitle = item.workTypeName;
+        checkedWorkType = item;
+        currCheckedWorkTypeRecId = item.typeRecId;
+      } 
+    });
+
+
+    this.setState({
+      workTypeList: newList,
+      manpowerTitle,
+      checkedWorkTypeRecId: currCheckedWorkTypeRecId,
+      checkedManpower: [],
+      displayCheckedManpower: '',
+    }, () => {
+      this.fetchManpower(checkedWorkType);
     });
   };
 
+  fetchManpower = (checkedWorkType) => {
+    Taro.showLoading({title: `正在获取${checkedWorkType.workTypeName}`});
+    const {hresDto: {companyCode}, userToken: {accessToken}} = this.props.userInfo;
+    fetch({url: API_HRES_LIST + `?companyCode=${companyCode}&worktypeRecid=${checkedWorkType.typeRecId}`, accessToken})
+      .then((res) => {
+        Taro.hideLoading();
+        console.log('获取人力资源: ', res);
+        const newManpower = (res.data.data.list || []).map((item) => {
+          item.label = item.name;
+          item.value = item.hresRecid;
+          return item;
+        });
+        this.setState({
+          manpower: newManpower,
+        }, () => {
+          console.log('setOpen 方法已经执行');
+          this.setOpen(true);
+        });
+      })
+      .catch(() => {});
+  };
+
+  handleManpowerChange = (checkedManpower) => {
+    console.log('handleManpowerChange: ', checkedManpower);
+    const {manpower} = this.state;
+    const newCheckedManpower = checkedManpower.map(value => ({hresRecid: value}));
+
+
+    const newIntersection = intersectionWith(manpower, newCheckedManpower, function (arrVal, othVal) {
+      return arrVal.hresRecid === othVal.hresRecid;
+    });
+
+    const manpowerName =  newIntersection.map(item => item.name);
+
+    console.log('newIntersection: ', newIntersection);
+
+    this.setState({
+      checkedManpower,
+      displayCheckedManpower: manpowerName.toString()
+    });
+  };
+
+  // 发布人力
+  release = () => {
+    const {
+      startDate, 
+      endDate,
+      startTime, 
+      endTimeList, 
+      endTimeIndex, 
+      checkedWorkTypeRecId,
+      value,
+      checkedManpower,
+    } = this.state;
+    const {userInfo: {auth: {id}, userToken: {accessToken}}} = this.props;
+    const payload = {
+      dateStart: startDate,
+      dateEnd: endDate,
+      timeStart: startTime + ':00',
+      timeEnd: endTimeList[endTimeIndex] + ':00',
+      worktype: checkedWorkTypeRecId,
+      price: value,
+      rsId: checkedManpower.toString(),
+      rsNum: checkedManpower.length,
+      contentType: 1,
+      publishBy: id,
+      publishType: 1,  
+      iscancel: 'N'
+    };
+
+    console.log('发布的数据: ', payload);
+
+    Taro.showLoading({
+      title: '正在发布人力中',
+    });
+
+    fetch({
+      url: API_RSPUBLISH_SAVE,
+      method: 'POST',
+      payload,
+      accessToken,
+    })
+      .then((res) => {
+        const {status, data} = res.data;
+        Taro.hideLoading();
+
+        if (status === 200) {
+          Taro.navigateTo({
+            url: '/pages/sell-manpower-success/index?publishId=' + `${data.publishRecid}`
+          });
+        }
+
+        console.log('发布成功返回数据: ', res);
+      })
+      .catch((e) => {
+        Taro.hideLoading();
+        Taro.showToast({
+          title: '人力发布失败',
+          icon: 'success',
+          duration: 2000,
+        });
+      });
+  }
+
   render() {
+    // console.log('workTypeList: ',  this.state.workTypeList);
+    // console.log('render - manpower: ', this.state.manpower);
     return (
       <View className='sell-manpower'>
         <View className='wrapper'>
@@ -177,16 +317,16 @@ class SellManpower extends Component {
               <View className='at-article__h3'>工种</View>
                 <View className='tag-wrapper'>
                   {
-                    this.state.list.map((item) => {
+                    this.state.workTypeList.map((item) => {
                       return (
                         <AtTag
-                          key={item.value}
+                          key={item.typeRecId}
                           className={classnames('tag', item.checked && 'tag-active')}
                           active={item.checked}
                           type='primary'
-                          onClick={() => this.handleClickCatogory(item.id)}
+                          onClick={() => this.handleClickWorkType(item.typeRecId)}
                         >
-                          {item.text}
+                          {item.workTypeName}
                         </AtTag>
                       );
                     })
@@ -198,54 +338,76 @@ class SellManpower extends Component {
                 className='manpower-label'
                 onClick={() => {
                   if (this.state.manpower.length === 0) {
-                    Taro.showToast({title: '请选择工种', icon: 'none'});
+                    Taro.showToast({title: '请选择职业', icon: 'none'});
                     return;
                   }
                   this.setOpen(true);
                 }}
-              >人员</View>
+              >
+                人员: <Text>{this.state.displayCheckedManpower}</Text>
+              </View>
               <AtModal
                 isOpened={this.state.isOpened}
-                closeOnClickOverlay={false}
+                closeOnClickOverlay={true}
               >
                   <AtModalHeader>{this.state.manpowerTitle}</AtModalHeader>
-                  <AtModalContent>
+                  <AtModalContent className='at-modal-content'>
                     <View className='manpower-list'>
-                      {this.state.manpower.map((item, i) => {
-                        return (
-                          <View className='manpower-checkbox-wrapper' key={item.value}>
-                            <Label className='manpower-checkbox-label' for={i}>
-                              <Checkbox color='#fe871f' className='checkbox-list__checkbox' value={item.value} checked={item.checked}>{item.text}</Checkbox>
-                            </Label>
-                          </View>
-                        )
-                      })}
+                      <AtCheckbox
+                        className='curr-at-checkbox'
+                        options={this.state.manpower}
+                        selectedList={this.state.checkedManpower}
+                        onChange={this.handleManpowerChange}
+                      />
                     </View>
                   </AtModalContent>
                   <AtModalAction>
-                    <Button onClick={() => this.handleCancel()}>取消</Button>
+                    {/* <Button onClick={() => this.handleCancel()}>取消</Button> */}
                     <Button onClick={() => this.handleConfirm()}>确定</Button>
                   </AtModalAction>
               </AtModal>
             </View>
             <Picker
-              className='date'
+              className='start-date'
               mode='date'
-              onChange={this.onDateChange}
+              onChange={this.onStartDateChange}
+              value={this.state.startDate}
               start={formatTimeStampToTime(Date.now())}
             >
-              <AtList className='date-at-list'>
-                <AtListItem className='item' title='请选择日期' extraText={this.state.date} />
+              <AtList className='start-date-at-list'>
+                <AtListItem className='start-item' title='开始日期' extraText={this.state.startDate} />
               </AtList>
             </Picker>
-            <Picker value={this.state.startTime} className='work-time' mode='time' onChange={this.onStartTimeChange}>
+            <Picker
+              className='end-date'
+              mode='date'
+              start={this.state.startDate}
+              onChange={this.onEndDateChange}
+              value={this.state.endDate}
+            >
+              <AtList className='end-date-at-list'>
+                <AtListItem className='end-item' title='结束日期' extraText={this.state.endDate} />
+              </AtList>
+            </Picker>
+            <Picker 
+              value={this.state.startTime} 
+              className='work-time' 
+              mode='time' 
+              onChange={this.onStartTimeChange}
+            >
               <AtList className='start-list'>
-                <AtListItem className='start' title='开始工作时间' extraText={this.state.startTime} />
+                <AtListItem className='start' title='开始时间' extraText={this.state.startTime} />
               </AtList>
             </Picker>
-            <Picker value={this.state.endTime} className='out-of-work-time' mode='time' onChange={this.onEndTimeChange}>
+            <Picker 
+              value={this.state.endTimeIndex}
+              range={this.state.endTimeList} 
+              className='out-of-work-time' 
+              mode='selector' 
+              onChange={this.onEndTimeChange}
+            >
               <AtList className='end-list'>
-                <AtListItem className='end' title='结束工作时间' extraText={this.state.endTime} />
+                <AtListItem className='end' title='结束时间' extraText={this.state.endTimeList[this.state.endTimeIndex]} />
               </AtList>
             </Picker>
             <View className='setting-spec'>
@@ -259,7 +421,7 @@ class SellManpower extends Component {
                 onChange={this.handleValueChange}
               />
             </View>
-            <AtButton className='release' formType='submit'>立即发布</AtButton>
+            <AtButton className='release' formType='submit' onClick={this.release}>立即发布</AtButton>
           </AtForm>
         </View>
     </View>
