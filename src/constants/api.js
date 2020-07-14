@@ -17,3 +17,6 @@ export const API_PASSAREA_ALL = `${host}/passarea/all/companyCode`; // 获取公
 
 // hres
 export const API_HRES_SAVE = `${host}/hres/save`; // 创建员工
+
+//rspublish
+export const API_RSPUBLISH_LIST = `${host}/rspublish/list` //分页条件查询

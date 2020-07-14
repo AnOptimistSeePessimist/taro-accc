@@ -11,12 +11,12 @@ export default class InfoBase extends Component {
   render() {
     const { data } = this.props
     console.log('infoBase', data)
-
+    data.station = '上海浦东国际机场货站'
     return (
       <View className='item-info-base'>
         <View className='item-info-base-header'>
           <View className='item-info-base-header-wrap'>
-            <Text className='item-info-base-header-name'>人力出租（{data.workerType}）</Text>
+            <Text className='item-info-base-header-name'>人力出租（{data.workTypeName}）</Text>
             <Text className='item-info-base-header-desc'>{data.station}</Text>
           </View>
           <View className='item-info-base-header-star'>
@@ -32,7 +32,7 @@ export default class InfoBase extends Component {
           <Text className='item-info-base-price-symbol'>¥</Text>
           <Text className='item-info-base-price-txt'>
             {/* {data.activityPrice || data.retailPrice} */}
-						{data.dollar}
+						{data.price}
           </Text>
           {/* <Text className='item-info-base-price-origin'>
             ¥80
