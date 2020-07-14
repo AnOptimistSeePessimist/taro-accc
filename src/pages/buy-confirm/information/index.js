@@ -3,7 +3,6 @@ import { View, Text } from '@tarojs/components';
 import { AtInputNumber } from 'taro-ui';
 
 import './index.scss';
-import list from 'dist/npm/taro-ui/dist/weapp/components/list';
 
 export default class Information extends Component {
 	static defaultProps = {
