@@ -1,5 +1,6 @@
 import {
-  TAROUI_DRAWER
+  TAROUI_DRAWER,
+  HOME_PAGE_LIST
 } from '../constants/home'
 
 export const drawerShowHide = (data) => {
@@ -8,3 +9,14 @@ export const drawerShowHide = (data) => {
     data: data
   }
 }
+
+export const dispatchPageList = (payload) => ({type: HOME_PAGE_LIST, payload: payload})
+
+export const dataPageList = (payload) => {
+  console.log('测试',payload)
+  return dispatch => {
+    dispatch(dispatchPageList(payload))
+  }
+  
+}
+

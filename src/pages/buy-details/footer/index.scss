@@ -17,7 +17,7 @@ $border-color: #dddddd;
   align-items: center;
   width: 96px;
 	border-right: 1px solid $border-color;
-
+  border-bottom: 1px solid $border-color;
   &-img {
     width: 40px;
     height: 40px;
@@ -30,13 +30,13 @@ $border-color: #dddddd;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-	border-right: 1px solid $border-color;
   background-color: red;
 
   &-txt {
     color: #eeeeee;
     font-size: 28px;
     line-height: 28px;
+    padding: 30px;
   }
   
 }
@@ -47,7 +47,6 @@ $border-color: #dddddd;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-	border-right: 1px solid $border-color;
   background-color: #fe871f;
 
   &-txt {

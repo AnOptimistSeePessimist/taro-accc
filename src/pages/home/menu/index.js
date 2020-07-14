@@ -14,6 +14,7 @@ export default class Menu extends Component {
 	}
 	render() {
 		const { listImg } = this.props
+		const time = parseInt(listImg.timeEnd) - parseInt(listImg.timeStart)
 		return (
 			<View className='data-img' onClick={this.confirm}>
 				<Image
@@ -21,10 +22,10 @@ export default class Menu extends Component {
 					src={listImg.imgSrc}
 				/>
 				<View className='text'>
-					<Text className='text-workerName'>{listImg.workerType} </Text>
-					<Text className='text-hours'>{listImg.startTime} - {listImg.endTime} ({listImg.time}小时) {listImg.date}</Text>
-					<Text className='text-dollar'>￥{listImg.dollar}/小时</Text>
-					<Text className='text-workerStation'>{listImg.station} ({listImg.workerNum}人)</Text>
+					<Text className='text-workerName'>{listImg.workTypeName} </Text>
+					<Text className='text-hours'>{listImg.timeStart} - {listImg.timeEnd} ({time}小时) {listImg.dateStart}</Text>
+					<Text className='text-dollar'>￥{listImg.price}/小时</Text>
+					<Text className='text-workerStation'> ({listImg.rsNum}人)</Text>
 				</View>
 			</View>
 		)
