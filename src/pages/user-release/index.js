@@ -2,7 +2,7 @@ import Taro, {Component} from '@tarojs/taro';
 import {View, Text, Image, ScrollView} from '@tarojs/components';
 import {connect} from '@tarojs/redux';
 import fetch from '@utils/request';
-import {API_REPUBLISH_LIST} from '@constants/api';
+import {API_RSPUBLISH_LIST} from '@constants/api';
 import { getWindowHeight } from '@utils/style';
 
 import './index.scss';
@@ -25,7 +25,7 @@ class UserRelease extends Component {
   };
 
   componentDidMount() {
-    fetch({url: API_REPUBLISH_LIST, accessToken: this.props.userInfo.userToken.accessToken})
+    fetch({url: API_RSPUBLISH_LIST, accessToken: this.props.userInfo.userToken.accessToken})
       .then((res) => {
         console.log('publishList: ', res);
         const {data: {data: {list}, status}} = res;
@@ -46,11 +46,29 @@ class UserRelease extends Component {
     console.log('renderItem');
     const {publishList} = this.state;
     return publishList.map((publish, key) => {
+      const {
+        rspublishDto: 
+          {
+            price, 
+            dateEnd, 
+            dateStart,
+            iscancel, 
+            timeEnd, 
+            timeStart,
+            rsId,
+            workTypeName,
+          }
+      } = publish;
       return (
         <View 
           className='publish-item' 
           key='a' 
           style={{'padding-bottom': key === publishList.length - 1 ? Taro.pxTransform(15) : '0px'}}
+          onClick={() => {
+            Taro.navigateTo({
+              url: '/pages/user-release-details/index'
+            });
+          }}
         >
           <View className='left-image'>
           <Image
@@ -59,7 +77,14 @@ class UserRelease extends Component {
           />
           </View>
           <View className='right-information'>
-            
+            <Text>价格: {price}</Text>
+            <Text>结束日期: {dateEnd}</Text>
+            <Text>开始日期: {dateStart}</Text>
+            <Text>是否已作废: {iscancel}</Text>
+            <Text>人员: {rsId}</Text>
+            <Text>工种: {workTypeName}</Text>
+            <Text>开始时间{timeStart}</Text>
+            <Text>结束时间{timeEnd}</Text>
           </View>
         </View>
       );

@@ -17,7 +17,7 @@ class SellManpowerSuccess extends Component {
   render() {
     const navStyle = {
       'background-color': '#fe871f',
-      'padding-top': Taro.getSystemInfoSync().safeArea.top + 'px'
+      'padding-top': Taro.pxTransform(Taro.getSystemInfoSync().safeArea.top)
     };
     return (
       <View className="sell-manpower-success">

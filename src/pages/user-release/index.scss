@@ -5,25 +5,30 @@
   .publish-item {
     width: 100%;
     display: flex;
-    background-color: blue;
     flex-direction: row;
     flex-wrap: nowrap;
     padding-top: 15px;
+    align-items: center;
+    border-bottom: 1px solid gray;
     .left-image {
-      background-color: red;
+      background-color: #eeeeee;
       margin-left: 15px;
       margin-right: 15px;
       width: 200px;
       height: 200px;
+      border-radius: 15px;
       .image {
+        border-radius: 15px;
         width: 200px;
         height: 200px;
       }
     }
     .right-information {
       flex: 1;
-      background-color: green;
+      background-color: white;
       margin-right: 15px;
+      display: flex;
+      flex-direction: column;
     }
   }
 }

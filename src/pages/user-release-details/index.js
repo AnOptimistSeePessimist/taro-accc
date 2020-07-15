@@ -15,9 +15,10 @@ class UserReleaseDetails extends Component {
   };
 
   render() {
+    console.log('');
     const navStyle = {
       'background-color': '#fe871f',
-      'padding-top': Taro.getSystemInfoSync().safeArea.top + 'px'
+      'padding-top':  Taro.getSystemInfoSync().safeArea == undefined ? 0 :  Taro.getSystemInfoSync().safeArea.top + 'px',
     };
     return (
       <View className='user-release-details'>
@@ -27,8 +28,10 @@ class UserReleaseDetails extends Component {
           leftIconType="chevron-left"
           // onClickRgIconSt={() => {}}
           // onClickRgIconNd={() => {}}
-          // onClickLeftIcon={() => {}}
-          color='#fe871f'
+          onClickLeftIcon={() => {
+            Taro.navigateBack();
+          }}
+          color='white'
           // title='NavBar 导航栏示例'
           // leftText='返回'
           // rightFirstIconType='bullet-list'
