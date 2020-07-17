@@ -282,11 +282,13 @@ class SellManpower extends Component {
     })
       .then((res) => {
         const {status, data} = res.data;
+        
         Taro.hideLoading();
 
         if (status === 200) {
+          this.$preload('data', data);
           Taro.navigateTo({
-            url: '/pages/sell-manpower-success/index?publishId=' + `${data.publishRecid}`
+            url: '/pages/sell-manpower-success/index'
           });
         }
 

@@ -65,6 +65,10 @@ class UserRelease extends Component {
           key='a' 
           style={{'padding-bottom': key === publishList.length - 1 ? Taro.pxTransform(15) : '0px'}}
           onClick={() => {
+            this.$preload({
+              flag: 1,
+              data: publish,
+            });
             Taro.navigateTo({
               url: '/pages/user-release-details/index'
             });
