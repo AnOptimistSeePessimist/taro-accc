@@ -31,6 +31,7 @@ class App extends Component {
       'pages/user-information/index',
       'pages/user-release/index',
       'pages/user-release-details/index',
+      'pages/user-resource/index',
       'pages/buy/index',
       'pages/buy-manpower/index',
       'pages/login/index',

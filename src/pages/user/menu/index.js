@@ -7,7 +7,7 @@ import {connect} from '@tarojs/redux';
 import './index.scss';
 
 const MENU_LIST = [
-  {key: 'resources', text: '我的资源', img: 'iconresource', path: '/pages/resources/index'},
+  {key: 'resources', text: '我的资源', img: 'iconresource', path: '/pages/user-resource/index'},
   {key: 'order', text: '我的订单', img: 'iconemaxcitygerenxinxitubiaoji03', path: '/pages/order/index'},
   {key: 'workOrder', text: '我的工单', img: 'icongongdan', path: '/pages/work-order/index'},
   {key: 'release', text: '我的发布', img: 'iconfabu', path: '/pages/user-release/index'},

@@ -15,10 +15,12 @@ class SellManpowerSuccess extends Component {
   };
 
   render() {
+    const {safeArea = {}, statusBarHeight} = Taro.getSystemInfoSync();
     const navStyle = {
       'background-color': '#fe871f',
-      'padding-top': Taro.pxTransform(Taro.getSystemInfoSync().safeArea.top)
+      'height':  statusBarHeight + 'px',
     };
+
     return (
       <View className="sell-manpower-success">
         <View style={navStyle} />
@@ -60,8 +62,12 @@ class SellManpowerSuccess extends Component {
                 size='normal' 
                 className='release'
                 onClick={() => {
+                  this.$preload({
+                    flag: 2,
+                    data: this.$router.preload.data
+                  });
                   Taro.navigateTo({
-                    url: '/pages/user-release-details/index?id=1'
+                    url: '/pages/user-release-details/index'
                   });
                 }}
               >
