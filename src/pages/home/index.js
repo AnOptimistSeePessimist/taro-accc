@@ -76,15 +76,18 @@ class Home extends Component {
           <View className='data-list'>
             {this.state.dataList.map((item, index) => {
               const evenNum = index % 2 === 0
-              item.imgSrc = listImgSrc()
-              item.listImg = [
+              
+             
+              const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
+              rspublishDto.imgSrc = listImgSrc()
+              rspublishDto.listImg = [
                 { img: listImgSrc() },
                 { img: listImgSrc() }
               ]
-              const { publishRecid } = item
+              // console.log('返回的数据',hresCargostationMap)
               if (evenNum) {
                 return (
-                  <Menu listImg={item} key={publishRecid} />
+                  <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} />
                 )
               }
             })}
@@ -93,15 +96,16 @@ class Home extends Component {
           <View className='data-list'>
             {this.state.dataList.map((item, index) => {
               const evenNum = index % 2 === 1
-              const { publishRecid } = item
-              item.imgSrc = listImgSrc()
-              item.listImg = [
+              const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
+              rspublishDto.imgSrc = listImgSrc()
+              rspublishDto.listImg = [
                 { img: listImgSrc() },
                 { img: listImgSrc() }
               ]
+             
               if (evenNum) {
                 return (
-                  <Menu listImg={item} key={publishRecid} />
+                  <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap}/>
                 )
               }
             })}

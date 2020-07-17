@@ -57,7 +57,7 @@ class LeaseInformation extends Component {
 					<View className='data-list'>
 						{this.state.dataList.map((item, index) => {
 							const evenNum = index % 2 === 0
-							const {publishRecid} = item
+							const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
 							item.imgSrc = listImgSrc()
               item.listImg = [
                 { img: listImgSrc() },
@@ -65,7 +65,7 @@ class LeaseInformation extends Component {
               ]
 							if (evenNum) {
 								return (
-									<Menu listImg={item} key={publishRecid}/>
+									<Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} />
 								)
 							}
 						})}
@@ -74,7 +74,7 @@ class LeaseInformation extends Component {
 					<View className='data-list'>
 						{this.state.dataList.map((item, index) => {
 							const evenNum = index % 2 === 1
-							const {publishRecid} = item
+							const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
 							item.imgSrc = listImgSrc()
               item.listImg = [
                 { img: listImgSrc() },
@@ -82,7 +82,7 @@ class LeaseInformation extends Component {
               ]
 							if (evenNum) {
 								return (
-									<Menu listImg={item} key={publishRecid}/>
+									<Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} />
 								)
 							}
 						})}
