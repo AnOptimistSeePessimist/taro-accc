@@ -1,12 +1,13 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View, Text, Swiper, SwiperItem, ScrollView, Button } from '@tarojs/components'
+import { View, Text, Swiper, SwiperItem, ScrollView, Button, Picker } from '@tarojs/components'
 import Gallery from './gallery'
 import InfoBase from './infoBase'
 import InfoParam from './infoParam'
 import Footer from './footer'
 import classnames from 'classnames'
 import { getWindowHeight } from '@utils/style'
-import { AtFloatLayout, AtTag, AtInputNumber, AtButton} from 'taro-ui'
+import { AtFloatLayout, AtTag, AtInputNumber, AtButton, AtList,
+  AtListItem,} from 'taro-ui'
 
 import './index.scss'
 
@@ -25,6 +26,7 @@ export default class BuyDetails extends Component {
       textTitle: '请选择:规格',
       dollar: '',
       safety: '',
+      endTime: [['a', 'b'], [['c','d','e'], ['s','r','t']]],
       list: [
         {
           id: 1,
@@ -248,7 +250,7 @@ export default class BuyDetails extends Component {
             </View>
 
             <View className='setting-spec'>
-              <Text>员工数量</Text>
+              <Text>工人人数</Text>
               <AtInputNumber
                 className='at-input-number'
                 min={1}
@@ -258,6 +260,13 @@ export default class BuyDetails extends Component {
                 onChange={this.handleValueChange}
               />
             </View>
+
+            <Picker value={0} range={this.state.endTime} className='out-of-work-time' mode='multiSelector' >
+              <AtList className='end-list'>
+                <AtListItem className='end' title='结束工作时间' extraText={this.state.endTime} />
+              </AtList>
+            </Picker>
+            
             <AtButton className='release' formType='submit' onClick={this.handleBuy}>确定</AtButton>
           </View>
         </AtFloatLayout>
