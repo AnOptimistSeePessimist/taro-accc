@@ -81,14 +81,14 @@ class UserRelease extends Component {
           />
           </View>
           <View className='right-information'>
-            <Text>价格: {price}</Text>
-            <Text>结束日期: {dateEnd}</Text>
-            <Text>开始日期: {dateStart}</Text>
-            <Text>是否已作废: {iscancel}</Text>
-            <Text>人员: {rsId}</Text>
+            <Text className='dollar'>￥{price}</Text>
             <Text>工种: {workTypeName}</Text>
-            <Text>开始时间{timeStart}</Text>
-            <Text>结束时间{timeEnd}</Text>
+            <Text className='data-start-end'>日期范围: {dateStart} 至 {dateEnd}</Text>
+            {/* <Text>开始日期: </Text> */}
+            <Text className='time-start-end'>时间范围: {timeStart} 至 {timeEnd}</Text>
+            {/* <Text>结束时间</Text> */}
+            {/* <Text>是否已作废: {iscancel}</Text> */}
+            {/* <Text>人员: {rsId}</Text> */}
           </View>
         </View>
       );
