@@ -81,11 +81,27 @@ class UserRelease extends Component {
           />
           </View>
           <View className='right-information'>
-            <Text className='dollar'>￥{price}</Text>
-            <Text>工种: {workTypeName}</Text>
-            <Text className='data-start-end'>日期范围: {dateStart} 至 {dateEnd}</Text>
+            <View className='dollar-worker-date-time'>
+              {/* <View className={`iconfont iconqian img`}></View> */}
+              <View className='dollar'>￥{price}</View>
+            </View>
+            
+            <View className='dollar-worker-date-time'>
+              {/* <View className={`iconfont iconrenyuan img`}></View> */}
+              <View className='worker'>{workTypeName}</View>
+            </View>
+            <View className='dollar-worker-date-time'>
+              {/* <View className={`iconfont iconrili img`}></View> */}
+              <View className='data-start-end'>{dateStart} 至 {dateEnd}</View>
+            </View>
+            <View className='dollar-worker-date-time'>
+              {/* <View className={`iconfont icontime img`}></View> */}
+              <View className='time-start-end'>{timeStart} 至 {timeEnd}</View>
+            </View>
+            
+            
             {/* <Text>开始日期: </Text> */}
-            <Text className='time-start-end'>时间范围: {timeStart} 至 {timeEnd}</Text>
+            {/* <Text className='time-start-end'>时间范围: {timeStart} 至 {timeEnd}</Text> */}
             {/* <Text>结束时间</Text> */}
             {/* <Text>是否已作废: {iscancel}</Text> */}
             {/* <Text>人员: {rsId}</Text> */}

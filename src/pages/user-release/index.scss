@@ -29,14 +29,25 @@
       margin-right: 15px;
       display: flex;
       flex-direction: column;
-      .dollar {
-        color: red;
-      }
-      .data-start-end {
-        font-size: 32px;
-      }
-      .time-start-end{
-        font-size: 32px;
+      .dollar-worker-date-time{
+        display: flex;
+        flex-direction: row;
+        padding: 10px;
+        .img {
+          margin-top: 10px;
+          margin-left: 70px;
+          font-size: 52px;
+          color: #fe871f;
+        }
+        .dollar {
+          color: red;
+        }
+        .data-start-end {
+          font-size: 32px;
+        }
+        .time-start-end{
+          font-size: 32px;
+        }
       }
     }
   }
