@@ -29,6 +29,15 @@
       margin-right: 15px;
       display: flex;
       flex-direction: column;
+      .dollar {
+        color: red;
+      }
+      .data-start-end {
+        font-size: 32px;
+      }
+      .time-start-end{
+        font-size: 32px;
+      }
     }
   }
 }
