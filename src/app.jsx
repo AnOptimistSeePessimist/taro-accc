@@ -2,7 +2,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { Provider } from '@tarojs/redux'
 
-import Index from './pages/index/index'
+import User from './pages/user/index'
 
 import configStore from './store'
 
@@ -87,7 +87,7 @@ class App extends Component {
   render () {
     return (
       <Provider store={store}>
-        <Index />
+        <User />
       </Provider>
     )
   }
