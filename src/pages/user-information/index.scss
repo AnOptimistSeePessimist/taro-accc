@@ -33,6 +33,13 @@
         padding-right: 30px;
       }
     }
+    .nickname {
+      border-top: 1PX solid #bababa;
+      input {
+        text-align: right;
+        padding-right: 30px;
+      }
+    }
   }
   .at-list-company {
     &::after {
@@ -97,21 +104,33 @@
   font-weight: 600;
 }
 
-.at-list-passarea {
-  &::after {
-    border-top-width: 0px;
-    border-bottom: 0px;
+// .at-list-passarea {
+//   &::after {
+//     border-top-width: 0px;
+//     border-bottom: 0px;
+//   }
+//   .at-list-passarea-item {
+//     &::after {
+//       border-bottom-width: 0px;
+//     }
+//     .at-list__item-extra {
+//       line-height: 1;
+//       text-align: right;
+//       max-width: none;
+//       font-size: 32px;
+//     }
+//   }
+// }
+.passarea {
+  padding: 24px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  .passarea-title {
+    width: 172px;
   }
-  .at-list-passarea-item {
-    &::after {
-      border-bottom-width: 0px;
-    }
-    .at-list__item-extra {
-      line-height: 1;
-      text-align: right;
-      max-width: none;
-      font-size: 32px;
-    }
+  .passarea-value {
+
   }
 }
 
@@ -130,6 +149,52 @@
       text-align: right;
       max-width: none;
       font-size: 32px;
+    }
+  }
+}
+
+.at-float-layout-container {
+  height: 100%;
+  .layout-body {
+    font-size: 28px;
+    padding: 18px 0 18px 0;
+    max-height: 828px;
+    min-height: 514px;
+  }
+  padding: 9px 0 9px 0;
+  .passarea-wrapper {
+    width: 100%;
+    // height: 750px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    .station {
+      width: 100%;
+      // background-color: yellow;
+      .station-item {
+        border-radius: 3px;
+        color: black;
+        background-color: #eeeeee;
+        display: flex;
+        flex-direction: row;
+        padding: 12px 15px;
+        // border-top: 1px solid gray;
+        // border-left: 1px solid gray;
+        // border-right: 1px solid gray;
+      }
+      .area {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        .area-item {
+          .area-checkbox {
+            padding: 20px 20px;
+          }
+          // border-top: 1px solid gray;
+          // border-left: 1px solid gray;
+          // border-right: 1px solid gray;
+        }
+      }
     }
   }
 }

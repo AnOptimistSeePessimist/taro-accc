@@ -15,10 +15,13 @@ class UserReleaseDetails extends Component {
   };
 
   render() {
-    console.log('');
+    const {safeArea = {}, statusBarHeight} = Taro.getSystemInfoSync();
+    console.log('Taro.getSystemInfoSync(): ', Taro.getSystemInfoSync().statusBarHeight);
     const navStyle = {
+      'width': '100%',
       'background-color': '#fe871f',
-      'padding-top':  Taro.getSystemInfoSync().safeArea == undefined ? 0 :  Taro.getSystemInfoSync().safeArea.top + 'px',
+      // Taro.pxTransform(
+      'height':  statusBarHeight + 'px',
     };
     return (
       <View className='user-release-details'>

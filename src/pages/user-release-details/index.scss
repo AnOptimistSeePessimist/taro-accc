@@ -1,6 +1,7 @@
 @import '@styles/theme.scss';
 
 .user-release-details {
+  @include wh(100%, 100%);
   .nav-bar {
     background-color: #fe871f;
     .nav-bar-title {
