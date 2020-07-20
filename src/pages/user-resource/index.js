@@ -1,10 +1,15 @@
 import Taro, {Component} from '@tarojs/taro';
-import {View, Text} from '@tarojs/components';
+import {View, Text, Button} from '@tarojs/components';
 import {connect} from '@tarojs/redux';
 import {API_HRES_LIST} from '@constants/api';
 import fetch from '@utils/request';
 
 import './index.scss';
+
+const sexList = [
+  {name: '女', code: 'F'},
+  {name: '男', code: 'M'}
+];
 
 @connect(state => ({userInfo: state.user.userInfo}), {})
 class UserResource extends Component {
@@ -48,11 +53,21 @@ class UserResource extends Component {
     const {resource} = this.state;
   
     return resource.map((resourceItem) => {
-      const {hresRecid, } = resourceItem;
+      const {hresRecid, name, worktypeRecid, isverify, sex} = resourceItem;
       return (
         <View className='resource-item' key={hresRecid}>
+          <View className='left-details'>
+            <View><Text className='name-label'>姓名:</Text>{name}</View>
+            <View><Text className='sex-label'>性别:</Text> {sexList.find(sexItem => sexItem.code === sex).name}</View>
+            <View><Text className='work-type-label'>工种:</Text> {worktypeRecid}</View>
+            <View><Text className='verify-label'>是否验证:</Text> {isverify === 'Y' ? '是' : '否'}</View>
+          </View>
           <View>
-            {JSON.stringify(resourceItem)}
+            {isverify !== 'Y' && (
+              <View >
+                <Button type='primary'>点击验证</Button>
+              </View>
+            )}
           </View>
         </View>
       );

@@ -3,6 +3,34 @@
 .user-resource {
   @include wh(100%, 100%);
   .resource-item {
-    
+    display: flex;
+    flex-direction: row;
+    margin: 20px 20px;
+    padding: 10px 10px;
+    // border-bottom: 1px solid #eeeeee;
+    border: 1px solid #bababa;
+    border-radius: 10px;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 34px;
+    .left-details {
+      padding-left: 20px;
+      .name-label {
+        padding-right: 5px;
+        // color: #bababa;
+      }
+      .sex-label {
+        // color: #bababa;
+        padding-right: 5px;
+      }
+      .work-type-label {
+        // color: #bababa;
+        padding-right: 5px;
+      }
+      .verify-label {
+        // color: #bababa;
+        padding-right: 5px;
+      }
+    }
   }
 }

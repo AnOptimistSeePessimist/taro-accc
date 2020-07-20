@@ -553,7 +553,7 @@ class UserInfomation extends Component {
             <View>
               <AtInput
                 className='margin-to-padding work-type'
-                title='职业'
+                title='职位'
                 type='text'
                 editable={false}
                 border={false}
