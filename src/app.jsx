@@ -24,18 +24,9 @@ class App extends Component {
   config = {
     pages: [
       'pages/user/index',
-      'pages/sell-manpower-success/index',
       'pages/sell/index',
-      'pages/sell-manpower/index',
       'pages/home/index',
-      'pages/user-information/index',
-      'pages/user-release/index',
-      'pages/user-release-details/index',
-      'pages/user-resource/index',
-      'pages/buy/index',
-      'pages/login/index',
-      'pages/register/index',
-      'pages/setting/index',
+      'pages/buy/index'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -79,6 +70,25 @@ class App extends Component {
           'pages/buy-confirm/index',
           'pages/buy-details/index',
           'pages/buy-material/index',
+        ]
+      },
+      {
+        root: 'user',
+        pages: [
+          'pages/user-information/index',
+          'pages/user-release/index',
+          'pages/user-release-details/index',
+          'pages/user-resource/index',
+          'pages/user-login/index',
+          'pages/user-register/index',
+          'pages/user-setting/index',
+        ]
+      },
+      {
+        root: 'sell',
+        pages: [
+          'pages/sell-manpower/index',
+          'pages/sell-manpower-success/index',
         ]
       }
     ]
