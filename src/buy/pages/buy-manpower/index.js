@@ -65,7 +65,7 @@ class BuyManpower extends Component {
 	submit = () => {
 		const {date, startTime, endTime, value, list} = this.state;
 		const buyData = { date: date, startTime: startTime, endTime: endTime, workersNum: value, list: list }
-		Taro.navigateTo({ url: `/pages/buy-manpower-information/index?buyData=${JSON.stringify(buyData)}` })
+		Taro.navigateTo({ url: `/buy/pages/buy-manpower-information/index?buyData=${JSON.stringify(buyData)}` })
 	}
 
   onDateChange = e => {

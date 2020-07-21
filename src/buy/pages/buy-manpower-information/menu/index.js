@@ -33,7 +33,7 @@ export default class Menu extends Component {
 	confirm = () => {
 		const { listImg } = this.props
 		console.log('Menu测试数据', listImg)
-		Taro.navigateTo({ url: `/pages/buy-details/index?item=${JSON.stringify(listImg)}` })
+		Taro.navigateTo({ url: `/buy/pages/buy-details/index?item=${JSON.stringify(listImg)}` })
 	}
 	render() {
 		const { listImg, hresCargostationMap } = this.props

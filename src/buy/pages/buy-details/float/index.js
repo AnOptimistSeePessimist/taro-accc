@@ -50,7 +50,7 @@ export default class Float extends Component {
 		// })
 		const { data } = this.props;
 		console.log('传入数据', data)
-		Taro.navigateTo({ url: `/pages/buy-confirm/index?data=${JSON.stringify(data)}` })
+		Taro.navigateTo({ url: `/buy/pages/buy-confirm/index?data=${JSON.stringify(data)}` })
 
 	}
 
