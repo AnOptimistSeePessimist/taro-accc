@@ -71,7 +71,7 @@ class UserRelease extends Component {
               data: publish,
             });
             Taro.navigateTo({
-              url: '/pages/user-release-details/index'
+              url: '/user/pages/user-release-details/index'
             });
           }}
         >

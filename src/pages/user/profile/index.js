@@ -21,9 +21,9 @@ class Profile extends Component {
     // });
     console.log('userInfo: ', res);
     if (this.props.userInfo.login) {
-      Taro.navigateTo({url: '/pages/setting/index'});
+      Taro.navigateTo({url: '/user/pages/user-setting/index'});
     } else {
-      Taro.navigateTo({url: '/pages/login/index'});
+      Taro.navigateTo({url: '/user/pages/user-login/index'});
     }
   };
 

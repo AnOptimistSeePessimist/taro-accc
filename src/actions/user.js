@@ -54,7 +54,7 @@ export const login = payload => {
             title: '手机号未注册',
             icon: 'none',
           });
-          Taro.navigateTo({url: `/pages/register/index?mobilePhone=${payload.mobilePhone}`});
+          Taro.navigateTo({url: `/user/pages/user-register/index?mobilePhone=${payload.mobilePhone}`});
         }
       }
     }).catch((error) => {

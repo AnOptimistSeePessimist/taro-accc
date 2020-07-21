@@ -67,7 +67,7 @@ class SellManpowerSuccess extends Component {
                     data: this.$router.preload.data
                   });
                   Taro.navigateTo({
-                    url: '/pages/user-release-details/index'
+                    url: '/user/pages/user-release-details/index'
                   });
                 }}
               >

@@ -288,7 +288,7 @@ class SellManpower extends Component {
         if (status === 200) {
           this.$preload('data', data);
           Taro.navigateTo({
-            url: '/pages/sell-manpower-success/index'
+            url: '/sell/pages/sell-manpower-success/index'
           });
         }
 

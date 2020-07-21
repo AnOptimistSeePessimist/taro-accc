@@ -6,7 +6,7 @@ import {connect} from '@tarojs/redux';
 import './index.scss';
 
 const MENU_LIST = [
-  {key: 'buy3', text: '出租人力', img: 'iconLaw_manpower', path: '/pages/sell-manpower/index'},
+  {key: 'buy3', text: '出租人力', img: 'iconLaw_manpower', path: '/sell/pages/sell-manpower/index'},
   {key: 'buy1', text: '出租叉车', img: 'iconchache'},
   {key: 'buy2', text: '出租拼车', img: 'iconcar'},
   {key: 'buy4', text: '售卖耗材', img: 'iconsuppliesinvoice'},
@@ -24,7 +24,7 @@ class Menu extends Component {
 
   handleClick = (path) => {
     if (!this.props.userInfo.login) {
-      Taro.navigateTo({url: '/pages/login/index'});
+      Taro.navigateTo({url: '/user/pages/user-login/index'});
     } else {
       Taro.navigateTo({url: path});
     }

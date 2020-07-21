@@ -86,7 +86,7 @@ class Login extends Component {
   };
 
   handleRegister = () => {
-    Taro.navigateTo({url: '/pages/register/index'});
+    Taro.navigateTo({url: '/user/pages/user-register/index'});
   };
 
   render() {

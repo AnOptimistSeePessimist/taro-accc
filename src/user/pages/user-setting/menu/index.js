@@ -6,8 +6,8 @@ import {View, Text} from '@tarojs/components';
 import './index.scss';
 
 const MENU_LIST = [
-  {key: 'information', text: '我的信息', img: 'iconinfo', path: '/pages/user-information/index'},
-  {key: 'updatePassword', text: '修改密码', img: 'iconxiugaimima', path: '/pages/updatePassword/index'}
+  {key: 'information', text: '我的信息', img: 'iconinfo', path: '/user/pages/user-information/index'},
+  {key: 'updatePassword', text: '修改密码', img: 'iconxiugaimima', path: '/user/pages/user-updatePassword/index'}
 ];
 
 export default class Menu extends Component {

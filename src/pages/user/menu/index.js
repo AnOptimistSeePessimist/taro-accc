@@ -7,11 +7,11 @@ import {connect} from '@tarojs/redux';
 import './index.scss';
 
 const MENU_LIST = [
-  {key: 'resources', text: '我的资源', img: 'iconresource', path: '/pages/user-resource/index'},
-  {key: 'order', text: '我的订单', img: 'iconemaxcitygerenxinxitubiaoji03', path: '/pages/order/index'},
-  {key: 'workOrder', text: '我的工单', img: 'icongongdan', path: '/pages/work-order/index'},
-  {key: 'release', text: '我的发布', img: 'iconfabu', path: '/pages/user-release/index'},
-  {key: 'transaction', text: '我的交易', img: 'iconjiaoyi', path: '/pages/transaction/index'},
+  {key: 'resources', text: '我的资源', img: 'iconresource', path: '/user/pages/user-resource/index'},
+  {key: 'order', text: '我的订单', img: 'iconemaxcitygerenxinxitubiaoji03', path: '/user/pages/user-order/index'},
+  {key: 'workOrder', text: '我的工单', img: 'icongongdan', path: '/user/pages/user-work-order/index'},
+  {key: 'release', text: '我的发布', img: 'iconfabu', path: '/user/pages/user-release/index'},
+  {key: 'transaction', text: '我的交易', img: 'iconjiaoyi', path: '/user/pages/user-transaction/index'},
 ];
 
 @connect(state => ({userInfo: state.user.userInfo}), {})
@@ -21,7 +21,7 @@ export default class Menu extends Component {
     console.log('User-Menu: ', userInfo);
 
     if (!userInfo.login) {
-      Taro.navigateTo({url: '/pages/login/index'});
+      Taro.navigateTo({url: '/user/pages/user-login/index'});
     } else {
       Taro.navigateTo({url: path});
     }
