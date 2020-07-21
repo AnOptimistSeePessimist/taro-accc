@@ -61,7 +61,7 @@ class BuyMaterial extends Component {
 	submit = () => {
 		const {list, widthValue, heightValue} = this.state;
 		const buyData = {list: list, widthValue: widthValue, heightValue: heightValue}
-		Taro.navigateTo({ url: `/pages/buy-manpower-information/index?buyData=${JSON.stringify(buyData)}` })
+		Taro.navigateTo({ url: `/buy/pages/buy-manpower-information/index?buyData=${JSON.stringify(buyData)}` })
 	}
 
 

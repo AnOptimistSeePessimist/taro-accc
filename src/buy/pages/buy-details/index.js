@@ -146,7 +146,7 @@ export default class BuyDetails extends Component {
     // })
     const { dataImg } = this.state;
     console.log('传入数据', dataImg)
-    Taro.navigateTo({ url: `/pages/buy-confirm/index?data=${JSON.stringify(dataImg)}&value=${this.state.value}&dollar=${this.state.dollar}&textTitle=${this.state.textTitle}` })
+    Taro.navigateTo({ url: `/buy/pages/buy-confirm/index?data=${JSON.stringify(dataImg)}&value=${this.state.value}&dollar=${this.state.dollar}&textTitle=${this.state.textTitle}` })
 
   }
 

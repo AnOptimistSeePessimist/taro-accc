@@ -22,7 +22,7 @@ export default class Menu extends Component {
   }
 
  componentDidMount() {
-    Taro.navigateTo({url: '/pages/buy-manpower/index'});
+    Taro.navigateTo({url: '/buy/pages/buy-manpower/index'});
     //Taro.navigateTo({url: '/pages/buy-material/index'});
   }
   
