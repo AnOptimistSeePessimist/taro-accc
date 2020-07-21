@@ -35,9 +35,10 @@ class UserRelease extends Component {
             this.setState({
               publishList: list,
             });
+          } else {
+            Taro.navigateBack();
           }
         }
-
       })
       .catch(() => {});
   }
@@ -74,6 +75,7 @@ class UserRelease extends Component {
             });
           }}
         >
+<<<<<<< HEAD
           <View className='left-image'>
           <Image
             className='image'
@@ -105,6 +107,31 @@ class UserRelease extends Component {
             {/* <Text>结束时间</Text> */}
             {/* <Text>是否已作废: {iscancel}</Text> */}
             {/* <Text>人员: {rsId}</Text> */}
+=======
+          <View 
+            className='publish-item-wrapper' 
+            style={{
+              'margin-top': key === 0 ? Taro.pxTransform(14) : Taro.pxTransform(7),
+              'opacity': iscancel === 'N' ? '1' : '0.5'
+              }}
+            >
+            <View className='left-image'>
+            <Image
+              className='image'
+              src={getRandomImage()}
+            />
+            </View>
+            <View className='right-information'>
+              <Text className='work-type'>
+                {workTypeName}
+                <Text className='dollar'>({price}元/每小时)</Text>
+              </Text>
+              <Text className='data-start-end'>{dateStart} 至 {dateEnd}</Text>
+              <Text className='time-start-end'>{timeStart} 至 {timeEnd}</Text>
+              {/* <Text>人员: {rsId}</Text> */}
+              {/* <Text>是否已作废: {iscancel}</Text> */}
+            </View>
+>>>>>>> upload/master
           </View>
         </View>
       );
@@ -119,7 +146,15 @@ class UserRelease extends Component {
         scrollY
         style={{height: getWindowHeight()}}
       >
-        {publishList.length !== 0 && this.renderItem()}
+        
+        {publishList.length === 0 ? 
+          (
+            <View className='loading'>
+          <Text>正在加载中...</Text>
+        </View>
+          ) 
+          : this.renderItem()
+        }
       </ScrollView>
     );
   }

@@ -20,6 +20,7 @@ export const API_PASSAREA_ALL = `${host}/passarea/all/companyCode`; // 获取公
 // hres
 // export const API_HRES_SAVE = `${host}/hres/save`; // 创建员工
 export const API_HRES_LIST = `${host}/hres/list`; // 查询某个工种下的全部员工
+export const API_HRES_VERIFY = `${host}/hres/verify` // 设置员工审核状态
 
 // rspublish
 export const API_RSPUBLISH_SAVE = `${host}/rspublish/save`; // 创建人力资源发布

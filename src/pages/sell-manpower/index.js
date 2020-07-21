@@ -305,8 +305,6 @@ class SellManpower extends Component {
   }
 
   render() {
-    // console.log('workTypeList: ',  this.state.workTypeList);
-    // console.log('render - manpower: ', this.state.manpower);
     return (
       <View className='sell-manpower'>
         <View className='wrapper'>
@@ -319,7 +317,10 @@ class SellManpower extends Component {
               <View className='at-article__h3'>工种</View>
                 <View className='tag-wrapper'>
                   {
-                    this.state.workTypeList.map((item) => {
+                    this.state.workTypeList.filter((item) => {
+                      return item.workTypeName !== "销售员";
+                    })
+                    .map((item) => {
                       return (
                         <AtTag
                           key={item.typeRecId}
@@ -346,7 +347,7 @@ class SellManpower extends Component {
                   this.setOpen(true);
                 }}
               >
-                人员: <Text>{this.state.displayCheckedManpower}</Text>
+                人员 <Text>{this.state.displayCheckedManpower}</Text>
               </View>
               <AtModal
                 isOpened={this.state.isOpened}

@@ -1,5 +1,15 @@
 @import '@styles/theme.scss';
 
+@mixin btbw {
+  border-top-width: 0;
+  border-bottom-width: 0;
+}
+
+@mixin btbwn {
+  border-bottom-width: 2px;
+  border-bottom-color: #eeeeee;
+}
+
 .user-release-details {
   @include wh(100%, 100%);
   .nav-bar {
@@ -9,7 +19,172 @@
       font-weight: 500;
     }
   }
-  .user-release-details-content {
-
+  .form-wrapper {
+    margin-top: 40px;
+    background-color: #fff;
+    .category {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      .tag-wrapper {
+        margin-right: 50px;
+        // width: 100%;
+        // margin-top: 20px;
+        // margin-bottom: 20px;
+        // .tag {
+        //   margin: 10px;
+        //   min-width: 20%;
+        // }
+        // .tag-active {
+        //   background-color: #fe871f;
+        //   border-color: #fe871f;
+        // }
+      }
+    }
+    .manpower {
+      border-top: 1px solid #eeeeee;
+      border-bottom: 1px solid #eeeeee;
+      .manpower-label {
+        padding-top: 24px;
+        padding-bottom: 24px;
+        margin-left: 24px;
+      }
+      .at-modal-content {
+        padding-left: 0px;
+        padding-right: 0px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        .manpower-list {
+          display: flex;
+          flex-direction: row;
+          // justify-content: flex-end;
+          flex-wrap: wrap;
+          .manpower-checkbox-wrapper {
+            display: flex;
+            justify-content: flex-start;
+            width: 50%;
+            margin-bottom: 10px;
+            // .manpower-checkbox-label {
+            // }
+          }
+          .curr-at-checkbox {
+            &::after {
+              border-bottom-width: 0px;
+            }
+            &::before {
+              border-top-width: 0px;
+            }
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            .at-checkbox__option {
+              padding-left: 0px;
+              .at-checkbox__option-wrap {
+                &::after {
+                  border-top-width: 0px;
+                }
+                padding: 16px 20px 16px 20px;
+              }
+            }
+          }
+        }
+      }
+    }
+    .start-date {
+      flex: 1;
+      .start-date-at-list {
+        &::after {
+          @include btbw;
+          @include btbwn;
+        }
+        .item-extra__info {
+          color: #000,
+        }
+        .start-item {
+          &::after {
+            @include btbw;
+          }
+        }
+      }
+    }
+    .end-date {
+      flex: 1;
+      .end-date-at-list {
+        &::after {
+          @include btbw;
+          @include btbwn;
+        }
+        .item-extra__info {
+          color: #000,
+        }
+        .end-item {
+          &::after {
+            @include btbw;
+          }
+        }
+      }
+    }
+    .work-time {
+      &::after {
+        @include btbw;
+      }
+      flex: 1;
+      .start-list {
+        &::after {
+          @include btbw;
+          @include btbwn;
+        }
+        .item-extra__info {
+          color: #000,
+        }
+        .start {
+          &::after {
+            @include btbw;
+          }
+        }
+      }
+    }
+    .out-of-work-time {
+      flex: 1;
+      &::after {
+        @include btbw;
+      }
+      .end-list {
+        &::after {
+          @include btbw;
+          @include btbwn;
+        }
+        .item-extra__info {
+          color: #000,
+        }
+        .end {
+          &::after {
+            @include btbw;
+          }
+        }
+      }
+    }
+    .setting-spec {
+      padding-top: 20px;
+      padding-bottom: 20px;
+      padding-left: 24px;
+      padding-right: 24px;
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row;
+      align-items: center;
+      border-bottom: 1px solid #eeeeee;
+      .at-input-number {
+        border-color: #fe871f;
+        input {
+          border-color: #fe871f;
+        }
+        text {
+          color: #fe871f;
+        }
+      }
+    }
   }
 }

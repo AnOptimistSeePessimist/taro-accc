@@ -8,6 +8,7 @@ import { AtButton } from 'taro-ui';
 import './index.scss';
 
 @connect(state => ({
+  userInfo: state.user.userInfo,
   compWorkType: state.compWorkType,
 }), (dispatch) => ({
   dispatchLogout() {
@@ -29,6 +30,7 @@ class Setting extends Component {
 
   render() {
     console.log('Setting: ', this.props.compWorkType);
+    console.log('Setting- userInfo: ', this.props.userInfo);
     return (
       <View className='setting'>
         <Menu />

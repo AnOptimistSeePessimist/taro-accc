@@ -1,10 +1,21 @@
 import Taro, {Component} from '@tarojs/taro';
-import {View, Text} from '@tarojs/components';
+import {View, Text, Button} from '@tarojs/components';
 import {connect} from '@tarojs/redux';
-import {API_HRES_LIST} from '@constants/api';
+import {API_HRES_LIST, API_HRES_VERIFY} from '@constants/api';
 import fetch from '@utils/request';
+import {
+  AtModal,
+  AtModalHeader,
+  AtModalContent,
+  AtModalAction,
+} from 'taro-ui';
 
 import './index.scss';
+
+const sexList = [
+  {name: '女', code: 'F'},
+  {name: '男', code: 'M'}
+];
 
 @connect(state => ({userInfo: state.user.userInfo}), {})
 class UserResource extends Component {
@@ -12,6 +23,8 @@ class UserResource extends Component {
     super(props);
     this.state = {
       resource: [],
+      isOpened: false,
+      hresRecId: '',
     };
   }
 
@@ -44,26 +57,94 @@ class UserResource extends Component {
       .catch(() => {});
   };
 
+  validate = (hresRecId) => {
+    this.setState({
+      isOpened: true,
+      hresRecId: hresRecId,
+    });
+  };
+
   renderResource = () => {
     const {resource} = this.state;
   
     return resource.map((resourceItem) => {
-      const {hresRecid, } = resourceItem;
+      const {hresRecid, name, worktypeRecid, isverify, sex, workTypeDesc} = resourceItem;
       return (
         <View className='resource-item' key={hresRecid}>
+          <View className='left-details'>
+            <View>{name}({sexList.find(sexItem => sexItem.code === sex).name}, {workTypeDesc})</View>
+          </View>
           <View>
-            {JSON.stringify(resourceItem)}
+          <View>
+            <Button
+              className='validate-button' 
+              disabled={isverify === 'Y'}
+              onClick={() => this.validate(hresRecid)}
+            >
+              {isverify === 'Y' ? '已审核' : '待审核'}
+            </Button>
+          </View>
           </View>
         </View>
       );
     });
-  
+  };
+
+  handleCancel = () => {
+    this.setState({
+      isOpened: false,
+      hresRecId: '',
+    });
+  };
+
+  handleConfirm = () => {
+    this.setState({
+      isOpened: false,
+    }, () => {
+      Taro.showLoading({title: '正在审核资源中'});
+      const {hresRecId} = this.state;
+      const {userToken: {accessToken}} = this.props.userInfo;
+      fetch({url: API_HRES_VERIFY + `/${hresRecId}`, accessToken})
+        .then((res) => {
+          const {data: {status}} = res;
+          console.log('handleConfirm: ', res);
+
+          if (status === 200) {
+            const {resource} = this.state;
+            const newResource = resource.map((resourceItem) => {
+              if (resourceItem.hresRecid === hresRecId) {
+                resourceItem.isverify = 'Y';
+                return resourceItem;
+              }
+              return resourceItem;
+            });
+            this.setState({
+              resource: newResource
+            }, () => {
+              Taro.hideLoading();
+            });
+          }
+        })
+        .catch(() => {
+          Taro.hideLoading();
+        });
+    });
   };
 
   render() {
     return (
       <View className='user-resource'>
         {this.renderResource()}
+        <AtModal
+          isOpened={this.state.isOpened}
+          title='是否审核该用户'
+          cancelText='取消'
+          confirmText='确认'
+          onCancel={ this.handleCancel }
+          onConfirm={ this.handleConfirm }
+          content=''
+          closeOnClickOverlay={false}
+        />
       </View>
     );
   }

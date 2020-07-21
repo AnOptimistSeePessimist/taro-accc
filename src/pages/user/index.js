@@ -13,7 +13,9 @@ import './index.scss';
   }
 }))
 class User extends Component {
- componentDidMount() {}
+ componentDidMount() {
+   
+ }
 
   config = {
     navigationBarTitleText: '我的'
