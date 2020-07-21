@@ -263,7 +263,7 @@ export default class BuyDetails extends Component {
 
             <Picker value={0} range={this.state.endTime} className='out-of-work-time' mode='multiSelector' >
               <AtList className='end-list'>
-                <AtListItem className='end' title='结束工作时间' extraText={this.state.endTime} />
+                <AtListItem className='end' title='工作地点-' extraText={this.state.endTime} />
               </AtList>
             </Picker>
             
