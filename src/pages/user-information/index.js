@@ -35,6 +35,7 @@ import {
   dispatchCompWorkType
 } from '@actions/compWorkType';
 import {dispatchLogin} from '@actions/user';
+import cloneDeep from 'lodash.clonedeep';
 
 import './index.scss';
 
@@ -68,7 +69,7 @@ class UserInfomation extends Component {
       checkedItem: {},
       passarea: [], // 通行证列表
       passareaList: [], // 通行证适用区域列表
-      displayCheckedPassareaList: {}, // 显示在界面上的通行证适用区域
+      displayCheckedPassareaList: cloneDeep(props.userInfo.stationArea), // 显示在界面上的通行证适用区域
       // stationList: [], // 站点列表
       // areaList: [], // 区域列表
       checkedPassarea: '',
@@ -327,7 +328,7 @@ class UserInfomation extends Component {
         hresRecid: hresRecId,
         hresareaDtoList,
         idcard: idCard, // 身份证号
-        isverify: "N", // 是否已审核
+        // isverify: "N", // 是否已审核
         name,
         sex: sexList[sexId].code, // 性别
         status: 1, // 在职状态
@@ -459,25 +460,25 @@ class UserInfomation extends Component {
     const newPassareaList = passareaList.slice();
     try {
       newPassareaList.forEach((station) => {
-        const {recid, stationdsc, passareaDtoList} = station;
+        const {recid, stationcode, stationdsc, passareaDtoList} = station;
         if (recid === stationId) {
           passareaDtoList.forEach(area => {
             if (area.recId === areaId) {
-              if (!!!displayCheckedPassarea[stationdsc]) {
-                displayCheckedPassarea[stationdsc] = [];
+              if (!!!displayCheckedPassarea[stationcode]) {
+                displayCheckedPassarea[stationcode] = [];
               }
               area.checked = !area.checked;
               if (area.checked) {
-                displayCheckedPassarea[stationdsc].push(area.areaCode);
+                displayCheckedPassarea[stationcode].push(area.areaCode);
               } else {
-                displayCheckedPassarea[stationdsc].forEach((areaCode1, index) => {
+                displayCheckedPassarea[stationcode].forEach((areaCode1, index) => {
                   if (areaCode1 === area.areaCode) {
-                    displayCheckedPassarea[stationdsc].splice(index, 1);
+                    displayCheckedPassarea[stationcode].splice(index, 1);
                   }
                 });
-                displayCheckedPassarea[stationdsc].splice();
-                if (displayCheckedPassarea[stationdsc].length === 0) {
-                  delete displayCheckedPassarea[stationdsc];
+                displayCheckedPassarea[stationcode].splice();
+                if (displayCheckedPassarea[stationcode].length === 0) {
+                  delete displayCheckedPassarea[stationcode];
                 }
               }
               throw new Error('完成更新');
@@ -496,9 +497,9 @@ class UserInfomation extends Component {
   };
 
   renderPassarea = () => {
-    const {passareaList} = this.state;
+    const {passareaList, displayCheckedPassareaList: displayCheckedPassarea} = this.state;
     return passareaList.map((stationItem) => {
-      const {recid: stationId, stationdsc, passareaDtoList} = stationItem;
+      const {recid: stationId, stationcode, stationdsc, passareaDtoList} = stationItem;
       return (
         <View className='station' key={stationId}>
           <View className='station-item'>
@@ -509,6 +510,18 @@ class UserInfomation extends Component {
               passareaDtoList.map((areaItem) => {
                 // console.log('stationItem: ', stationItem);
                 const {recId, areaCode, checked} = areaItem;
+
+                Object.keys(displayCheckedPassarea).forEach((passareaItem) => {
+                  if (stationItem.stationcode === passareaItem) {
+                    displayCheckedPassarea[passareaItem].forEach((areaVal) => {
+                      if (areaCode === areaVal) {
+                        areaItem.checked = true;
+                      }
+                    });
+                  }
+                });
+
+
                 return (
                   <View className='area-item' key={recId}>
                     <CheckboxGroup 
@@ -516,7 +529,13 @@ class UserInfomation extends Component {
                       data-area-id={recId} 
                       onChange={this.handlePassareaChange}
                     >
-                      <Checkbox className='area-checkbox' value="还未给" checked={checked}>{areaCode}</Checkbox>
+                      <Checkbox 
+                        className='area-checkbox' 
+                        value="还未给" 
+                        checked={checked}
+                      >
+                        {areaCode}
+                      </Checkbox>
                     </CheckboxGroup>
                   </View>
                 );
@@ -531,6 +550,8 @@ class UserInfomation extends Component {
   render() {
     const systemInfo = Taro.getSystemInfoSync();
     const paddingBottom = systemInfo.safeArea == undefined ? 0 : systemInfo.screenHeight - systemInfo.safeArea.bottom;
+
+    console.log('stationcode: ', this.props.userInfo.stationArea);
 
     return (
       <View className='user-information'>
@@ -693,10 +714,17 @@ class UserInfomation extends Component {
                 >
                   <Text className='passarea-title'>通行证{'\n'}适用区域</Text>
                   <View className='passarea-value'>
-                    {Object.keys(this.state.displayCheckedPassareaList).map(passarea => {
+                    {
+                      this.state.passareaList.length !== 0 && Object.keys(this.state.displayCheckedPassareaList).map(passarea => {
+                        let desc = '';
+                        this.state.passareaList.forEach((passareaItem) => {
+                          if (passarea === passareaItem.stationcode) {
+                            desc = passareaItem.stationdsc;
+                          }
+                        });
                       return (
                         <View key={passarea}>
-                          {passarea + '...'}
+                          {desc + '...'}
                         </View>
                       );
                     })}

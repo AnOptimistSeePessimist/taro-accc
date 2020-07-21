@@ -347,7 +347,7 @@ class SellManpower extends Component {
                   this.setOpen(true);
                 }}
               >
-                人员: <Text>{this.state.displayCheckedManpower}</Text>
+                人员 <Text>{this.state.displayCheckedManpower}</Text>
               </View>
               <AtModal
                 isOpened={this.state.isOpened}

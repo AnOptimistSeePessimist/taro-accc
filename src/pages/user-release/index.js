@@ -35,9 +35,10 @@ class UserRelease extends Component {
             this.setState({
               publishList: list,
             });
+          } else {
+            Taro.navigateBack();
           }
         }
-
       })
       .catch(() => {});
   }
@@ -111,7 +112,15 @@ class UserRelease extends Component {
         scrollY
         style={{height: getWindowHeight()}}
       >
-        {publishList.length !== 0 && this.renderItem()}
+        
+        {publishList.length === 0 ? 
+          (
+            <View className='loading'>
+          <Text>正在加载中...</Text>
+        </View>
+          ) 
+          : this.renderItem()
+        }
       </ScrollView>
     );
   }

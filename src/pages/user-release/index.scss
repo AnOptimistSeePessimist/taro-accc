@@ -2,6 +2,12 @@
 
 .user-release {
   @include wh(100%, 100%);
+  .loading {
+    @include wh(100%, 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   .publish-item {
     width: 100%;
     display: flex;

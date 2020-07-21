@@ -43,7 +43,6 @@ export default class Menu extends Component {
           return !(myMenu.menuName === "我的信息" || myMenu.menuName === "修改密码");
         });
       }
-
     }
 
     return (
