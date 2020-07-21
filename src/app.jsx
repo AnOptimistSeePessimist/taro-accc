@@ -33,14 +33,9 @@ class App extends Component {
       'pages/user-release-details/index',
       'pages/user-resource/index',
       'pages/buy/index',
-      'pages/buy-manpower/index',
       'pages/login/index',
-      'pages/buy-manpower-information/index',
       'pages/register/index',
-      'pages/buy-confirm/index',
-      'pages/buy-details/index',
       'pages/setting/index',
-      'pages/buy-material/index',
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -74,7 +69,19 @@ class App extends Component {
         selectedIconPath: "./assets/tab-bar/user-active.png",
         text: "我的"
       }]
-    }
+    },
+    subPackages: [
+      {
+        root: 'buy',
+        pages: [
+          'pages/buy-manpower/index',
+          'pages/buy-manpower-information/index',
+          'pages/buy-confirm/index',
+          'pages/buy-details/index',
+          'pages/buy-material/index',
+        ]
+      }
+    ]
   }
 
   componentDidShow () {}
