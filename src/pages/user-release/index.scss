@@ -16,18 +16,6 @@
       background-color: white;
       flex: 1;
       display: flex;
-<<<<<<< HEAD
-      flex-direction: column;
-      .dollar-worker-date-time{
-        display: flex;
-        flex-direction: row;
-        padding: 10px;
-        .img {
-          margin-top: 10px;
-          margin-left: 70px;
-          font-size: 52px;
-          color: #fe871f;
-=======
       flex-direction: row;
       flex-wrap: nowrap;
       width: 100%;
@@ -59,7 +47,6 @@
         .work-type {
           font-weight: 600;
           font-size: 30px;
->>>>>>> upload/master
         }
         .dollar {
           color: red;
