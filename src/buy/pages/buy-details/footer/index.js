@@ -60,7 +60,7 @@ export default class Footer extends Component {
   render () {
     return (
       <View className='item-footer'>
-        {NAV_LIST.map(item => (
+        {/* {NAV_LIST.map(item => (
           <View
             key={item.key}
             className='item-footer-nav'
@@ -74,7 +74,7 @@ export default class Footer extends Component {
         ))}
         <View className='item-footer-shopping-cart' onClick={this.handShopping}>
           <Text className='item-footer-buy-txt'>加入购物车</Text>
-        </View>
+        </View> */}
         <View className='item-footer-buy' onClick={this.handleBuy}>
           <Text className='item-footer-buy-txt'>立即购买</Text>
         </View>

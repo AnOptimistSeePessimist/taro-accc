@@ -1,16 +1,33 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text, Swiper, SwiperItem, ScrollView, Button, Picker } from '@tarojs/components'
+import {connect} from '@tarojs/redux'
 import Gallery from './gallery'
 import InfoBase from './infoBase'
 import InfoParam from './infoParam'
 import Footer from './footer'
 import classnames from 'classnames'
 import { getWindowHeight } from '@utils/style'
-import { AtFloatLayout, AtTag, AtInputNumber, AtButton, AtList,
-  AtListItem,} from 'taro-ui'
+import { API_ORDER_CREATE, API_CALLBACK_WX } from '@constants/api';
+import {
+  AtFloatLayout,
+  AtTag, 
+  AtInputNumber, 
+  AtButton, 
+  AtList,
+  AtListItem,
+  AtToast,
+  AtModal,
+  AtModalContent,
+	AtModalAction,
+} from 'taro-ui'
+import fetch from '@utils/request';
 
 import './index.scss'
 
+
+@connect(state => ({
+  userInfo: state.user.userInfo,
+}))
 export default class BuyDetails extends Component {
   constructor(props) {
     super(props);
@@ -19,6 +36,8 @@ export default class BuyDetails extends Component {
     this.state = {
       value: '1',
       isOpeneds: false,
+      isAtModal: false, 
+      isAtToast: false,
       loaded: false,
       selected: {},
       dataImg: {},
@@ -26,26 +45,33 @@ export default class BuyDetails extends Component {
       textTitle: '请选择:规格',
       dollar: '',
       safety: '',
-      endTime: [['a', 'b'], [['c','d','e'], ['s','r','t']]],
+      duration: 0,
+      //endTime: [['a', 'b'], [['c','d','e'], ['s','r','t']]],
+      timeStart: '',
+      timeEnd: '',
+      orderNo: '',
       list: [
         {
           id: 1,
           value: '1',
-          text: '08:00-16:00 (共计8小时)',
+          timeStart: '08:00:00',
+          timeEnd: '16:00:00',
           checked: false,
           time: 8,
         },
         {
           id: 2,
           value: '2',
-          text: '08:00 - 12:00 (共计4小时) ',
+          timeStart: '08:00:00',
+          timeEnd: '12:00:00',
           checked: false,
           time: 4,
         },
         {
           id: 3,
           value: '3',
-          text: '12:00 - 16:00 (共计4小时)',
+          timeStart: '12:00:00',
+          timeEnd: '16:00:00',
           checked: false,
           time: 4,
         },
@@ -98,56 +124,101 @@ export default class BuyDetails extends Component {
     })
   }
 
-  handleAdd = () => {
-    // 添加购物车是先从 skuSpecValueList 中选择规格，再去 skuMap 中找 skuId，多个规格时用 ; 组合
-    const { itemInfo } = this.props
-    const { skuSpecList = [] } = itemInfo
-    const { visible, selected } = this.state
-    const isSelected = visible && !!selected.id && itemInfo.skuMap[selected.id]
-    const isSingleSpec = skuSpecList.every(spec => spec.skuSpecValueList.length === 1)
+  // handleAdd = () => {
+  //   // 添加购物车是先从 skuSpecValueList 中选择规格，再去 skuMap 中找 skuId，多个规格时用 ; 组合
+  //   const { itemInfo } = this.props
+  //   const { skuSpecList = [] } = itemInfo
+  //   const { visible, selected } = this.state
+  //   const isSelected = visible && !!selected.id && itemInfo.skuMap[selected.id]
+  //   const isSingleSpec = skuSpecList.every(spec => spec.skuSpecValueList.length === 1)
 
-    if (isSelected || isSingleSpec) {
-      const selectedItem = isSelected ? selected : {
-        id: skuSpecList.map(spec => spec.skuSpecValueList[0].id).join(';'),
-        cnt: 1
-      }
-      const skuItem = itemInfo.skuMap[selectedItem.id] || {}
-      const payload = {
-        skuId: skuItem.id,
-        cnt: selectedItem.cnt
-      }
-      this.props.dispatchAdd(payload).then(() => {
-        Taro.showToast({
-          title: '加入购物车成功',
-          icon: 'none'
-        })
-      })
-      if (isSelected) {
-        this.toggleVisible()
-      }
-      return
-    }
+  //   if (isSelected || isSingleSpec) {
+  //     const selectedItem = isSelected ? selected : {
+  //       id: skuSpecList.map(spec => spec.skuSpecValueList[0].id).join(';'),
+  //       cnt: 1
+  //     }
+  //     const skuItem = itemInfo.skuMap[selectedItem.id] || {}
+  //     const payload = {
+  //       skuId: skuItem.id,
+  //       cnt: selectedItem.cnt
+  //     }
+  //     this.props.dispatchAdd(payload).then(() => {
+  //       Taro.showToast({
+  //         title: '加入购物车成功',
+  //         icon: 'none'
+  //       })
+  //     })
+  //     if (isSelected) {
+  //       this.toggleVisible()
+  //     }
+  //     return
+  //   }
 
-    if (!visible) {
-      this.setState({ visible: true })
-    } else {
-      // XXX 加购物车逻辑不一定准确
-      Taro.showToast({
-        title: '请选择规格（或换个商品测试）',
-        icon: 'none'
-      })
-    }
-  }
+  //   if (!visible) {
+  //     this.setState({ visible: true })
+  //   } else {
+  //     // XXX 加购物车逻辑不一定准确
+  //     Taro.showToast({
+  //       title: '请选择规格（或换个商品测试）',
+  //       icon: 'none'
+  //     })
+  //   }
+  // }
 
   handleBuy = () => {
+    const token =  this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
+    
     // Taro.showToast({
     //   title: '暂时只支持加入购物车',
     //   icon: 'none'
     // })
-    const { dataImg } = this.state;
-    console.log('传入数据', dataImg)
-    Taro.navigateTo({ url: `/buy/pages/buy-confirm/index?data=${JSON.stringify(dataImg)}&value=${this.state.value}&dollar=${this.state.dollar}&textTitle=${this.state.textTitle}` })
+    // const { dataImg } = this.state;
+    // console.log('传入数据', dataImg)
+    // Taro.navigateTo({ url: `/buy/pages/buy-confirm/index?data=${JSON.stringify(dataImg)}&value=${this.state.value}&dollar=${this.state.dollar}&textTitle=${this.state.textTitle}` })
 
+    if(!token){
+      Taro.navigateTo({url: '/user/pages/user-login/index'})
+      return
+    }
+    this.setState({
+      isAtToast: true
+    })
+    const {dataImg:{dateEnd, dateStart, price, publishBy, publishRecid}, value, timeStart, timeEnd, dollar} = this.state
+    const payload = {
+      address: " 张三12345678911上海市浦东国际机场厂区7号仓库",
+      discountSum: 0,
+      orderDetailDto: {
+        count: value,
+        dateEnd: dateEnd,
+        dateStart: dateStart,
+        price: price,
+        publishRecid: publishRecid,
+        timeEnd: timeEnd,
+        timeStart:timeStart
+      },
+      payableSum: dollar,
+      publishBy: publishBy,
+    }
+   console.log('订单数据', payload)
+    fetch({
+      url: API_ORDER_CREATE,
+      payload,
+      method: 'POST',
+      accessToken: token
+    })
+    .then((res) => {
+      console.log('菜单基本信息: ', res);
+      const {data: {status, data}} = res
+      if(status === 200 ){
+        this.setState({
+          duration: 1000,
+          orderNo: data
+        })
+        setTimeout(() => {
+          this.closeModal()
+        },1500)
+      } 
+    })
   }
 
   handleClickCatogory = (category) => {
@@ -158,13 +229,17 @@ export default class BuyDetails extends Component {
         item.checked = !item.checked;
         if(item.checked){
           this.setState({
-            textTitle: `已选：${item.text}`,
-            dollar: dataImg.price * item.time
+            textTitle: `已选：${item.timeStart}-${item.timeEnd}(共计${item.time}小时)`,
+            dollar: dataImg.price * item.time,
+            timeStart: item.timeStart,
+            timeEnd: item.timeEnd
           })
         } else {
           this.setState({
             textTitle: '请选择:规格',
-            dollar: dataImg.price * 4 + '-' + dataImg.price * 8
+            dollar: dataImg.price * 4 + '-' + dataImg.price * 8,
+            timeStart: '',
+            timeEnd: '',
           })
         }
         this.setState({
@@ -191,6 +266,33 @@ export default class BuyDetails extends Component {
     })
   }
 
+  handleToastClose = () => {
+    this.setState({
+      isAtToast: false
+    })
+  }
+
+  closeModal = () => {
+		this.setState({
+			isAtModal: !this.state.isAtModal
+    })
+  }
+  
+  wxPay = () => {
+    const token =  this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
+		this.setState({
+			isAtModal: !this.state.isAtModal
+    })
+    fetch({
+      url: API_CALLBACK_WX + `?orderNo=${this.state.orderNo}`,
+      method: 'POST',
+      accessToken: token
+    })
+    .then((res) => {
+      console.log(res)
+    })
+  }
+
 
   render() {
     const height = getWindowHeight(false)
@@ -214,7 +316,7 @@ export default class BuyDetails extends Component {
           scrollY
           onClose={this.handleClose}
         >
-          <View className='float-item'>
+          <ScrollView className='float-item'>
             <View className='float-item-title'>
               <View className='float-item-title-img'>
                 <Image
@@ -241,7 +343,7 @@ export default class BuyDetails extends Component {
                         type='primary'
                         onClick={() => this.handleClickCatogory(item.id)}
                       >
-                        {item.text}
+                        {item.timeStart}-{item.timeEnd}(共计{item.time}小时)
                       </AtTag>
                     );
                   })
@@ -261,18 +363,49 @@ export default class BuyDetails extends Component {
               />
             </View>
 
-            <Picker value={0} range={this.state.endTime} className='out-of-work-time' mode='multiSelector' >
+            {/* <Picker value={0} range={this.state.endTime} className='out-of-work-time' mode='multiSelector' >
               <AtList className='end-list'>
                 <AtListItem className='end' title='结束工作时间' extraText={this.state.endTime} />
               </AtList>
-            </Picker>
-            
-            <AtButton className='release' formType='submit' onClick={this.handleBuy}>确定</AtButton>
-          </View>
+            </Picker> */}
+          
+          </ScrollView>
+          <AtButton className='release' formType='submit' onClick={this.handleBuy}>付款</AtButton>
         </AtFloatLayout>
         <View className='item-footer' style={{paddingBottom: `${safety}px`}}>
           <Footer onAdd={this.handleAdd} onIsOpened={this.handleOpened}/>
         </View>
+
+        <AtToast
+          // icon={this.state.icon}
+          // text={'正在加载'}
+          // image={this.state.image}
+          status={'loading'}
+          // hasMask={this.state.hasMask}
+          isOpened={this.state.isAtToast}
+          duration={this.state.duration}
+          onClose={this.handleToastClose}
+        />
+
+        <AtModal
+          isOpened={this.state.isAtModal}
+          onClose={this.closeModal}
+        >
+          <AtModalContent>
+              <View className='wx-pay'>
+                <View className='store'>
+                  <Text className='store-name'>{dataImg.station}</Text>
+                  <Text className='store-dollar'>￥{this.state.dollar}</Text>
+                </View>
+              </View>
+          </AtModalContent>
+          <AtModalAction>
+						<Button onClick={this.wxPay}>
+							确认支付
+            </Button>
+					</AtModalAction>
+        </AtModal>
+
       </View>
     )
   }

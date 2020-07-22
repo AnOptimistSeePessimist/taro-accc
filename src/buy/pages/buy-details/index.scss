@@ -110,3 +110,32 @@ view, text, scroll-view {
 .at-float-layout .layout-body{
   padding: 0;
 }
+
+.wx-pay {
+  display: flex;
+  flex-direction: column;
+  
+  .store {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    &-name {
+      font-size: 35px;
+      padding: 10px;
+    }
+    &-dollar {
+      padding: 10px;
+      margin-top: 20px;
+      font-size: 40px;
+      font-weight: bold;
+    }
+  }
+}
+
+.at-modal__footer .at-modal__action > button:last-child {
+  color: #fff;
+  font-size: 35px;
+  background-color: green;
+  padding: 10px;
+}
