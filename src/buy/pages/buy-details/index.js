@@ -413,7 +413,7 @@ export default class BuyDetails extends Component {
             </View>
           </View>
           </ScrollView>
-          <Button className='release' hover-class='none' formType='submit' onClick={this.handleBuy}>付款</Button>
+          <Button className='release' formType='submit' onClick={this.handleBuy}>付款</Button>
         </AtFloatLayout>
         <View className='item-footer' style={{paddingBottom: `${safety}px`}}>
           <Footer onAdd={this.handleAdd} onIsOpened={this.handleOpened}/>
