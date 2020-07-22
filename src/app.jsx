@@ -62,7 +62,7 @@ class App extends Component {
       //   iconPath: "./assets/tab-bar/sell.png",
       //   selectedIconPath: "./assets/tab-bar/sell-active.png",
       //   text: "卖家"
-      // }, 
+      // },
       {
         pagePath: "pages/user/index",
         iconPath: "./assets/tab-bar/user.png",
@@ -91,6 +91,8 @@ class App extends Component {
           'pages/user-login/index',
           'pages/user-register/index',
           'pages/user-setting/index',
+          'pages/user-transaction/index',
+          'pages/user-order/index',
         ]
       },
       {

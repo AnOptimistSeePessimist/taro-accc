@@ -7,23 +7,30 @@ import {connect} from '@tarojs/redux';
 import './index.scss';
 
 const MENU_LIST = [
-  {key: 'resources', text: '我的资源', img: 'iconresource', path: '/user/pages/user-resource/index'},
-  {key: 'order', text: '我的订单', img: 'iconemaxcitygerenxinxitubiaoji03', path: '/user/pages/user-order/index'},
-  {key: 'workOrder', text: '我的工单', img: 'icongongdan', path: '/user/pages/user-work-order/index'},
-  {key: 'release', text: '我的发布', img: 'iconfabu', path: '/user/pages/user-release/index'},
-  {key: 'transaction', text: '我的交易', img: 'iconjiaoyi', path: '/user/pages/user-transaction/index'},
+  {key: 'resources', text: '我的资源', img: 'iconresource', path: '/user/pages/user-resource/index', finished: true},
+  {key: 'order', text: '我的订单', img: 'iconemaxcitygerenxinxitubiaoji03', path: '/user/pages/user-order/index', finished: true},
+  {key: 'workOrder', text: '我的工单', img: 'icongongdan', path: '/user/pages/user-work-order/index', finished: false},
+  {key: 'release', text: '我的发布', img: 'iconfabu', path: '/user/pages/user-release/index', finished: true},
+  {key: 'transaction', text: '我的交易', img: 'iconjiaoyi', path: '/user/pages/user-transaction/index', finished: true},
 ];
 
 @connect(state => ({userInfo: state.user.userInfo}), {})
 export default class Menu extends Component {
-  handleClick = (path) => {
+  handleClick = (path, finished) => {
     const {userInfo} = this.props;
     console.log('User-Menu: ', userInfo);
 
     if (!userInfo.login) {
       Taro.navigateTo({url: '/user/pages/user-login/index'});
     } else {
-      Taro.navigateTo({url: path});
+      if (finished) {
+        Taro.navigateTo({url: path});
+      } else {
+        Taro.showToast({
+          icon: 'none',
+          title: '敬请期待'
+        });
+      }
     }
   };
 
@@ -54,11 +61,11 @@ export default class Menu extends Component {
             });
             if (findOutMenu) {
               return (
-                <View 
-                  data-title={menu.text} 
-                  key={menu.key} 
-                  className='item' 
-                  onClick={() => this.handleClick(menu.path)}
+                <View
+                  data-title={menu.text}
+                  key={menu.key}
+                  className='item'
+                  onClick={() => this.handleClick(menu.path, menu.finished)}
                 >
                   <View className='left'>
                     <View className={`iconfont img ${menu.img}`} />

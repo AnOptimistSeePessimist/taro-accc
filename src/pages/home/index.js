@@ -70,14 +70,20 @@ class Home extends Component {
       //   ></AtDrawer>
       // </View>
 
-      <ScrollView className='home'>
+      <ScrollView
+        className='home'
+        refresherEnabled={true}
+        onRefresherRefresh={() => {
+          this.pageListData();
+        }}
+      >
         {/* <View className='panel-title' style={{ backgroundColor: '#F7F7F7', paddingTop: '5px', paddingBottom: '5px' }}>人力信息</View> */}
         <View className='information-title'>
           <View className='data-list'>
             {this.state.dataList.map((item, index) => {
               const evenNum = index % 2 === 0
-              
-             
+
+
               const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
               rspublishDto.imgSrc = listImgSrc()
               rspublishDto.listImg = [
@@ -102,7 +108,7 @@ class Home extends Component {
                 { img: listImgSrc() },
                 { img: listImgSrc() }
               ]
-             
+
               if (evenNum) {
                 return (
                   <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap}/>
