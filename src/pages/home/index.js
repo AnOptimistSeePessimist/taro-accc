@@ -70,13 +70,7 @@ class Home extends Component {
       //   ></AtDrawer>
       // </View>
 
-      <ScrollView
-        className='home'
-        refresherEnabled={true}
-        onRefresherRefresh={() => {
-          this.pageListData();
-        }}
-      >
+      <ScrollView className='home'>
         {/* <View className='panel-title' style={{ backgroundColor: '#F7F7F7', paddingTop: '5px', paddingBottom: '5px' }}>人力信息</View> */}
         <View className='information-title'>
           <View className='data-list'>
