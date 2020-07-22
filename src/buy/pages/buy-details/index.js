@@ -6,8 +6,17 @@ import InfoParam from './infoParam'
 import Footer from './footer'
 import classnames from 'classnames'
 import { getWindowHeight } from '@utils/style'
-import { AtFloatLayout, AtTag, AtInputNumber, AtButton, AtList,
-  AtListItem,} from 'taro-ui'
+import { API_ORDER_CREATE } from '@constants/api';
+import {
+  AtFloatLayout,
+  AtTag, 
+  AtInputNumber, 
+  AtButton, 
+  AtList,
+  AtListItem,
+  AtToast
+} from 'taro-ui'
+import fetch from '@utils/request';
 
 import './index.scss'
 
@@ -19,6 +28,7 @@ export default class BuyDetails extends Component {
     this.state = {
       value: '1',
       isOpeneds: false,
+      isAtToast: false,
       loaded: false,
       selected: {},
       dataImg: {},
@@ -26,6 +36,7 @@ export default class BuyDetails extends Component {
       textTitle: '请选择:规格',
       dollar: '',
       safety: '',
+      duration: 3000,
       endTime: [['a', 'b'], [['c','d','e'], ['s','r','t']]],
       list: [
         {
@@ -98,56 +109,59 @@ export default class BuyDetails extends Component {
     })
   }
 
-  handleAdd = () => {
-    // 添加购物车是先从 skuSpecValueList 中选择规格，再去 skuMap 中找 skuId，多个规格时用 ; 组合
-    const { itemInfo } = this.props
-    const { skuSpecList = [] } = itemInfo
-    const { visible, selected } = this.state
-    const isSelected = visible && !!selected.id && itemInfo.skuMap[selected.id]
-    const isSingleSpec = skuSpecList.every(spec => spec.skuSpecValueList.length === 1)
+  // handleAdd = () => {
+  //   // 添加购物车是先从 skuSpecValueList 中选择规格，再去 skuMap 中找 skuId，多个规格时用 ; 组合
+  //   const { itemInfo } = this.props
+  //   const { skuSpecList = [] } = itemInfo
+  //   const { visible, selected } = this.state
+  //   const isSelected = visible && !!selected.id && itemInfo.skuMap[selected.id]
+  //   const isSingleSpec = skuSpecList.every(spec => spec.skuSpecValueList.length === 1)
 
-    if (isSelected || isSingleSpec) {
-      const selectedItem = isSelected ? selected : {
-        id: skuSpecList.map(spec => spec.skuSpecValueList[0].id).join(';'),
-        cnt: 1
-      }
-      const skuItem = itemInfo.skuMap[selectedItem.id] || {}
-      const payload = {
-        skuId: skuItem.id,
-        cnt: selectedItem.cnt
-      }
-      this.props.dispatchAdd(payload).then(() => {
-        Taro.showToast({
-          title: '加入购物车成功',
-          icon: 'none'
-        })
-      })
-      if (isSelected) {
-        this.toggleVisible()
-      }
-      return
-    }
+  //   if (isSelected || isSingleSpec) {
+  //     const selectedItem = isSelected ? selected : {
+  //       id: skuSpecList.map(spec => spec.skuSpecValueList[0].id).join(';'),
+  //       cnt: 1
+  //     }
+  //     const skuItem = itemInfo.skuMap[selectedItem.id] || {}
+  //     const payload = {
+  //       skuId: skuItem.id,
+  //       cnt: selectedItem.cnt
+  //     }
+  //     this.props.dispatchAdd(payload).then(() => {
+  //       Taro.showToast({
+  //         title: '加入购物车成功',
+  //         icon: 'none'
+  //       })
+  //     })
+  //     if (isSelected) {
+  //       this.toggleVisible()
+  //     }
+  //     return
+  //   }
 
-    if (!visible) {
-      this.setState({ visible: true })
-    } else {
-      // XXX 加购物车逻辑不一定准确
-      Taro.showToast({
-        title: '请选择规格（或换个商品测试）',
-        icon: 'none'
-      })
-    }
-  }
+  //   if (!visible) {
+  //     this.setState({ visible: true })
+  //   } else {
+  //     // XXX 加购物车逻辑不一定准确
+  //     Taro.showToast({
+  //       title: '请选择规格（或换个商品测试）',
+  //       icon: 'none'
+  //     })
+  //   }
+  // }
 
   handleBuy = () => {
     // Taro.showToast({
     //   title: '暂时只支持加入购物车',
     //   icon: 'none'
     // })
-    const { dataImg } = this.state;
-    console.log('传入数据', dataImg)
-    Taro.navigateTo({ url: `/buy/pages/buy-confirm/index?data=${JSON.stringify(dataImg)}&value=${this.state.value}&dollar=${this.state.dollar}&textTitle=${this.state.textTitle}` })
-
+    // const { dataImg } = this.state;
+    // console.log('传入数据', dataImg)
+    // Taro.navigateTo({ url: `/buy/pages/buy-confirm/index?data=${JSON.stringify(dataImg)}&value=${this.state.value}&dollar=${this.state.dollar}&textTitle=${this.state.textTitle}` })
+    
+    this.setState({
+      isAtToast: true
+    })
   }
 
   handleClickCatogory = (category) => {
@@ -188,6 +202,12 @@ export default class BuyDetails extends Component {
     const safety = res.screenHeight - res.safeArea.bottom
     this.setState({
       safety
+    })
+  }
+
+  handleToastClose = () => {
+    this.setState({
+      isAtToast: false
     })
   }
 
@@ -261,18 +281,30 @@ export default class BuyDetails extends Component {
               />
             </View>
 
-            <Picker value={0} range={this.state.endTime} className='out-of-work-time' mode='multiSelector' >
+            {/* <Picker value={0} range={this.state.endTime} className='out-of-work-time' mode='multiSelector' >
               <AtList className='end-list'>
                 <AtListItem className='end' title='结束工作时间' extraText={this.state.endTime} />
               </AtList>
-            </Picker>
+            </Picker> */}
             
-            <AtButton className='release' formType='submit' onClick={this.handleBuy}>确定</AtButton>
+            <AtButton className='release' formType='submit' onClick={this.handleBuy}>付款</AtButton>
           </View>
         </AtFloatLayout>
         <View className='item-footer' style={{paddingBottom: `${safety}px`}}>
           <Footer onAdd={this.handleAdd} onIsOpened={this.handleOpened}/>
         </View>
+
+        <AtToast
+          // icon={this.state.icon}
+          // text={'正在加载'}
+          // image={this.state.image}
+          status={'loading'}
+          // hasMask={this.state.hasMask}
+          isOpened={this.state.isAtToast}
+          duration={this.state.duration}
+          onClose={this.handleToastClose}
+        />
+
       </View>
     )
   }
