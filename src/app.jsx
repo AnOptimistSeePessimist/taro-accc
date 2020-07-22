@@ -23,10 +23,11 @@ class App extends Component {
 
   config = {
     pages: [
+      'pages/home/index',
+      'pages/menu/index',
       'pages/user/index',
       'pages/sell/index',
-      'pages/home/index',
-      'pages/buy/index'
+      'pages/buy/index',
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -44,17 +45,25 @@ class App extends Component {
         iconPath: "./assets/tab-bar/home.png",
         selectedIconPath: "./assets/tab-bar/home-active.png",
         text: "首页"
-      }, {
-        pagePath: "pages/buy/index",
-        iconPath: "./assets/tab-bar/buy.png",
-        selectedIconPath: "./assets/tab-bar/buy-active.png",
-        text: "买家"
-      }, {
-        pagePath: "pages/sell/index",
-        iconPath: "./assets/tab-bar/sell.png",
-        selectedIconPath: "./assets/tab-bar/sell-active.png",
-        text: "卖家"
-      }, {
+      },
+      {
+        pagePath: "pages/menu/index",
+        iconPath: "./assets/tab-bar/menu.png",
+        selectedIconPath: "./assets/tab-bar/menu-active.png",
+        text: "菜单"
+      },
+      // {
+      //   pagePath: "pages/buy/index",
+      //   iconPath: "./assets/tab-bar/buy.png",
+      //   selectedIconPath: "./assets/tab-bar/buy-active.png",
+      //   text: "买家"
+      // }, {
+      //   pagePath: "pages/sell/index",
+      //   iconPath: "./assets/tab-bar/sell.png",
+      //   selectedIconPath: "./assets/tab-bar/sell-active.png",
+      //   text: "卖家"
+      // }, 
+      {
         pagePath: "pages/user/index",
         iconPath: "./assets/tab-bar/user.png",
         selectedIconPath: "./assets/tab-bar/user-active.png",
