@@ -10,20 +10,20 @@ const menuList = [
     sectionName: '买家',
     sectionId: 'buy',
     subMenu: [
-      {key: 'buy1', text: '租人力', img: 'iconrenli', path: '/buy/pages/buy-manpower/index'},
-      {key: 'buy2', text: '买耗材', img: 'icontubiao-', path:'/buy/pages/buy-material/index'},
-      {key: 'buy3', text: '租叉车', img: 'iconchache1'},
-      {key: 'buy4', text: '去拼车', img: 'iconpincheguanli'},
+      {key: 'buy1', text: '租人力', img: 'iconrenli', path: '/buy/pages/buy-manpower/index', finished: true},
+      {key: 'buy2', text: '买耗材', img: 'icontubiao-', path:'/buy/pages/buy-material/index', finished: false},
+      {key: 'buy3', text: '租叉车', img: 'iconchache1', finished: false},
+      {key: 'buy4', text: '去拼车', img: 'iconpincheguanli', finished: false},
     ] 
   },
   {
     sectionName: '卖家',
     sectionId: 'sell',
     subMenu: [
-      {key: 'buy3', text: '出租人力', img: 'iconLaw_manpower', path: '/sell/pages/sell-manpower/index'},
-      {key: 'buy1', text: '出租叉车', img: 'iconchache'},
-      {key: 'buy2', text: '出租拼车', img: 'iconcar'},
-      {key: 'buy4', text: '售卖耗材', img: 'iconsuppliesinvoice'},
+      {key: 'buy3', text: '出租人力', img: 'iconLaw_manpower', path: '/sell/pages/sell-manpower/index', finished: true},
+      {key: 'buy1', text: '出租叉车', img: 'iconchache', finished: false},
+      {key: 'buy2', text: '出租拼车', img: 'iconcar', finished: false},
+      {key: 'buy4', text: '售卖耗材', img: 'iconsuppliesinvoice', finished: false},
     ]
   }
 ];
@@ -45,11 +45,18 @@ class Menu extends Component {
     navigationBarTitleText: '菜单',
   };
 
-  handleClick = (path) => {
+  handleClick = (path, finished) => {
     if (!this.props.userInfo.login) {
       Taro.navigateTo({url: '/user/pages/user-login/index'});
     } else {
-      Taro.navigateTo({url: path});
+      if (finished) {
+        Taro.navigateTo({url: path});
+      } else {
+        Taro.showToast({
+          title: '敬请期待',
+          icon: 'none',
+        });
+      }
     }
   };
 
@@ -79,7 +86,7 @@ class Menu extends Component {
                           nth && 'item-nth',
                           lastLine && subMenu.length % 2 === 1 && 'item-nth'
                         )}
-                        onClick={() => this.handleClick(subMenuItem.path)}
+                        onClick={() => this.handleClick(subMenuItem.path, subMenuItem.finished)}
                       >
                         <View className={`iconfont ${subMenuItem.img} img`} />
                         <Text className='title'>{subMenuItem.text}</Text>
