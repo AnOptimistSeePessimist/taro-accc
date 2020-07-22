@@ -26,7 +26,7 @@ view, text, scroll-view {
   display: flex;
   flex-direction: column;
   height: 100%;
-
+  margin-bottom: 100px;
   &-title {
     display: flex;
     flex-direction: row;
@@ -101,6 +101,11 @@ view, text, scroll-view {
   border-width: 0;
   color: #fff;
   background-color: #fe871f;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
 }
 
 .at-button {
@@ -139,3 +144,19 @@ view, text, scroll-view {
   background-color: green;
   padding: 10px;
 }
+
+.pay-address {
+  display: flex;
+	flex-direction: row;
+  margin: 20px;
+  &-userName-phone-address {
+    margin: 20px;
+  }
+  .addressimg{
+		margin: 20px;
+		font-size: 52px;
+		color: #fe871f;
+  }
+}
+
+
