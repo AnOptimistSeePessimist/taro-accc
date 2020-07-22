@@ -49,7 +49,14 @@ export default class BuyDetails extends Component {
       //endTime: [['a', 'b'], [['c','d','e'], ['s','r','t']]],
       timeStart: '',
       timeEnd: '',
+      AtToastText:'',
+      AtToastLoading:'',
       orderNo: '',
+      address: {
+				userName: '张三',
+				phone: '12345678911',
+				userAddress: '上海市浦东国际机场厂区7号仓库'
+			},
       list: [
         {
           id: 1,
@@ -167,7 +174,7 @@ export default class BuyDetails extends Component {
 
   handleBuy = () => {
     const token =  this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
-    
+    const {dataImg:{dateEnd, dateStart, price, publishBy, publishRecid}, value, AtToastLoading, AtToastText, timeStart, timeEnd, dollar} = this.state
     // Taro.showToast({
     //   title: '暂时只支持加入购物车',
     //   icon: 'none'
@@ -180,10 +187,24 @@ export default class BuyDetails extends Component {
       Taro.navigateTo({url: '/user/pages/user-login/index'})
       return
     }
+
+    if(!timeStart){
+      this.setState({
+        isAtToast: true,
+        AtToastText: '请选择规格',
+        AtToastLoading: '',
+        duration: 2000
+      })
+      return
+    }
+
     this.setState({
-      isAtToast: true
+      isAtToast: true,
+      AtToastLoading: 'loading',
+      AtToastText: '',
+      duration: 0
     })
-    const {dataImg:{dateEnd, dateStart, price, publishBy, publishRecid}, value, timeStart, timeEnd, dollar} = this.state
+   
     const payload = {
       address: " 张三12345678911上海市浦东国际机场厂区7号仓库",
       discountSum: 0,
@@ -268,7 +289,8 @@ export default class BuyDetails extends Component {
 
   handleToastClose = () => {
     this.setState({
-      isAtToast: false
+      isAtToast: false,
+      
     })
   }
 
@@ -290,13 +312,25 @@ export default class BuyDetails extends Component {
     })
     .then((res) => {
       console.log(res)
+      const {data: {status}} = res
+      if(status === 200) {
+        this.setState({
+          isAtToast: true,
+          AtToastText: '支付成功',
+          AtToastLoading: 'success',
+          duration: 1500
+        })
+        setTimeout(() => {
+          Taro.navigateTo({url: '/user/pages/user-details/index'})
+        }, 2000)
+      }
     })
   }
 
 
   render() {
     const height = getWindowHeight(false)
-    const { dataImg, isOpeneds, textTitle, dollar, safety } = this.state
+    const { dataImg, isOpeneds, textTitle, dollar, safety, address: { userName, phone, userAddress } } = this.state
     console.log(dataImg)
     console.log('屏幕高度', height)
     return (
@@ -368,9 +402,18 @@ export default class BuyDetails extends Component {
                 <AtListItem className='end' title='结束工作时间' extraText={this.state.endTime} />
               </AtList>
             </Picker> */}
-          
+          <View className='pay-address'>
+            <View className={`iconfont iconionc-- addressimg`} />
+            <View className='pay-address-userName-phone-address'>
+              <View className='pay-address-userName-phone'>
+                <Text>{userName}</Text>
+                <Text className='pay-address-phone'>{phone}</Text>
+                <Text className='pay-address-address'>{userAddress}</Text>
+              </View>
+            </View>
+          </View>
           </ScrollView>
-          <AtButton className='release' formType='submit' onClick={this.handleBuy}>付款</AtButton>
+          <AtButton className='release' hover-class='none' formType='submit' onClick={this.handleBuy}>付款</AtButton>
         </AtFloatLayout>
         <View className='item-footer' style={{paddingBottom: `${safety}px`}}>
           <Footer onAdd={this.handleAdd} onIsOpened={this.handleOpened}/>
@@ -378,9 +421,9 @@ export default class BuyDetails extends Component {
 
         <AtToast
           // icon={this.state.icon}
-          // text={'正在加载'}
+          text={this.state.AtToastText}
           // image={this.state.image}
-          status={'loading'}
+          status={this.state.AtToastLoading}
           // hasMask={this.state.hasMask}
           isOpened={this.state.isAtToast}
           duration={this.state.duration}
@@ -405,7 +448,6 @@ export default class BuyDetails extends Component {
             </Button>
 					</AtModalAction>
         </AtModal>
-
       </View>
     )
   }
