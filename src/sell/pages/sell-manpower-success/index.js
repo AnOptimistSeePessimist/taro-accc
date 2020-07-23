@@ -16,30 +16,27 @@ class SellManpowerSuccess extends Component {
 
   render() {
     const {safeArea = {}, statusBarHeight} = Taro.getSystemInfoSync();
-    const navStyle = {
-      'background-color': '#fe871f',
-      'height':  statusBarHeight + 'px',
-    };
 
     return (
       <View className="sell-manpower-success">
-        <View style={navStyle} />
         <AtNavBar
           className="nav-bar"
           leftIconType="chevron-left"
-          // onClickRgIconSt={() => {}}
-          // onClickRgIconNd={() => {}}
-          // onClickLeftIcon={() => {}}
+          customStyle={{
+            'padding-top': statusBarHeight + 'px' 
+          }}
+          fixed
           color='#fe871f'
-          // title='NavBar 导航栏示例'
-          // leftText='返回'
-          // rightFirstIconType='bullet-list'
-          // rightSecondIconType='user'
         >
           <Text className='nav-bar-title'>发布状态</Text>
         </AtNavBar>
-        <View className="sell-manpower-success-content">
-          <Text className="iconfont iconchenggong success" />
+        <View 
+          className="sell-manpower-success-content" 
+        >
+          <Text 
+            className="iconfont iconchenggong success" 
+            style={{'padding-top': statusBarHeight + 50 + 'px' }}
+          />
           <Text className="title">人力发布成功</Text>
           <View className="buttons">
             <View className="back-container">
