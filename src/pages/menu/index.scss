@@ -18,13 +18,21 @@
       flex-direction: row;
       flex-wrap: wrap;
       // background-color: red;
+      .nil-sub-menu {
+        height: 180px;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+      }
       .item {
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
         flex: 1;
-        // min-width: 40%;
+        max-width: 25%;
         height: 180px;
         // @include border(right bottom, 1px, solid, rgba(0, 0, 0, .15));
         .img {
@@ -38,7 +46,7 @@
           line-height: 28px;
         }
         &-first {
-          border-top: 1px solid rgba(0, 0, 0, .15);
+          // border-top: 1px solid rgba(0, 0, 0, .15);
         }
         &-nth {
           border-right-width: 0;

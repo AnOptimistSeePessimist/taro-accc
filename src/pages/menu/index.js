@@ -14,7 +14,7 @@ const menuList = [
       {key: 'buy2', text: '买耗材', img: 'icontubiao-', path:'/buy/pages/buy-material/index', finished: false},
       {key: 'buy3', text: '租叉车', img: 'iconchache1', finished: false},
       {key: 'buy4', text: '去拼车', img: 'iconpincheguanli', finished: false},
-    ] 
+    ]
   },
   {
     sectionName: '卖家',
@@ -64,8 +64,12 @@ class Menu extends Component {
     return (
       <View className='menu'>
         {
+          this.props.userInfo.login &&
           menuList.map((menu) => {
             const {sectionName, sectionId, subMenu} = menu;
+            menu.curMenu = this.props.userInfo.auth.menuDtoSet.find((menuDtoItem) => {
+              return sectionName === menuDtoItem.menuName;
+            });
             return (
               <View className='section-container' key={sectionId}>
                 <View className='section-header'>
@@ -73,7 +77,22 @@ class Menu extends Component {
                 </View>
                 <View className='sub-menu'>
                 {
-                  subMenu.map((subMenuItem, index) => {
+                  !!!menu.curMenu ?
+                  (
+                    <View className='nil-sub-menu'>
+                      <Text>您还没有成为{menu.sectionName}</Text>
+                    </View>
+                  )
+                  :
+                  menu.curMenu.subMenuDtoList && menu.subMenu.map((subMenuItem, index) => {
+                    const curSubMenu = menu.curMenu.subMenuDtoList.find((curSubMenuItem) => {
+                      return subMenuItem.text === curSubMenuItem.menuName;
+                    });
+
+                    if (!!!curSubMenu) {
+                      return <View/>
+                    }
+
                     const nth = (index + 1) % COUNT_LINE === 0;
                     const firstLine = index === 0 || index === 1;
                     const lastLine = parseInt(index / COUNT_LINE) === parseInt(menu.subMenu.length / COUNT_LINE);
