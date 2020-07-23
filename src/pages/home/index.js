@@ -7,6 +7,7 @@ import { API_RSPUBLISH_LIST } from '@constants/api';
 import fetch from '@utils/request';
 import Menu from './menu'
 import './index.scss';
+import { getWindowHeight } from '@utils/style';
 
 function listImgSrc() {
   return `https://picsum.photos/seed/${Math.ceil(Math.random() * 100)}/110/70`
@@ -32,23 +33,33 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataList: []
+      dataList: [],
+      refresherTriggered: false,
     }
   }
 
   componentDidMount() {
-    this.pageListData()
+    this.pageListData();
   }
 
   pageListData = () => {
-    fetch({
-      url: API_RSPUBLISH_LIST,
-    }).then((res) => {
-      const { data: { data } } = res;
-      this.setState({
-        dataList: data.list
+    this.setState({
+      refresherTriggered: true,
+    }, () => {
+      fetch({
+        url: API_RSPUBLISH_LIST,
+      }).then((res) => {
+        const { data: { data } } = res;
+        this.setState({
+          dataList: data.list
+        }, () => {
+          this.setState({
+            refresherTriggered: false,
+          })
+          this._freshing = false
+        })
       })
-    })
+    });
   }
 
 
@@ -70,7 +81,41 @@ class Home extends Component {
       //   ></AtDrawer>
       // </View>
 
-      <ScrollView className='home'>
+      <ScrollView
+        className='home'
+        style={{height: getWindowHeight(true)}}
+        scrollY
+        refresherEnabled={true}
+        refresherThreshold={100}
+        refresherDefaultStyle="white"
+        refresherBackground="#fe871f"
+        refresherTriggered={this.state.refresherTriggered}
+        onRefresherPulling={() => {
+          console.log('onRefresherPulling...');
+          // this.setState({
+          //   refresherTriggered: true,
+          // });
+          // this.pageListData();
+        }}
+        onRefresherRefresh={() => {
+          if (this._freshing) return;
+          console.log('onRefresherRefresh');
+          this._freshing = true;
+          this.pageListData();
+          // setTimeout(() => {
+          //   this.setState({
+          //     refresherTriggered: false,
+          //   })
+          //   this._freshing = false
+          // }, 3000);
+        }}
+        onRefresherRestore={(e) => {
+          console.log('onRestore:', e);
+        }}
+        onRefresherAbort={(e) => {
+          console.log('onAbort', e);
+        }}
+        >
         {/* <View className='panel-title' style={{ backgroundColor: '#F7F7F7', paddingTop: '5px', paddingBottom: '5px' }}>人力信息</View> */}
         <View className='information-title'>
           <View className='data-list'>
