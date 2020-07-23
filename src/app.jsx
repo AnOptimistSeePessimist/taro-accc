@@ -79,6 +79,7 @@ class App extends Component {
           'pages/buy-confirm/index',
           'pages/buy-details/index',
           'pages/buy-material/index',
+          'pages/buy-pay-success/index',
         ]
       },
       {
@@ -91,9 +92,9 @@ class App extends Component {
           'pages/user-login/index',
           'pages/user-register/index',
           'pages/user-setting/index',
-          'pages/user-details/index',
           'pages/user-transaction/index',
           'pages/user-order/index',
+          'pages/user-order-details/index',
         ]
       },
       {
