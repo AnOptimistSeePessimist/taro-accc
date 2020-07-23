@@ -98,7 +98,9 @@ view, text, scroll-view {
 }
 
 .release {
+  z-index: 2;
   border-width: 0;
+  border-radius: 0;
   color: #fff;
   background-color: #fe871f;
   position: fixed;

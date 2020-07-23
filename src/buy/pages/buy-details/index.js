@@ -8,6 +8,7 @@ import Footer from './footer'
 import classnames from 'classnames'
 import { getWindowHeight } from '@utils/style'
 import { API_ORDER_CREATE, API_CALLBACK_WX } from '@constants/api';
+import {formatTimeStampToTime} from '@utils/common';
 import {
   AtFloatLayout,
   AtTag, 
@@ -24,6 +25,13 @@ import fetch from '@utils/request';
 
 import './index.scss'
 
+function datePoor (dateStart, dateEnd) {
+  const start = new Date(dateStart); 
+  const end = new Date(dateEnd); 
+  const days = end.getTime() - start.getTime(); 
+  const day = parseInt(days / (1000 * 60 * 60 * 24));
+  return (day + 1)
+}
 
 @connect(state => ({
   userInfo: state.user.userInfo,
@@ -52,6 +60,9 @@ export default class BuyDetails extends Component {
       AtToastText:'',
       AtToastLoading:'',
       orderNo: '',
+      dateStart: '',
+      dateEnd: '',
+      timeNum: 1, 
       address: {
 				userName: '张三',
 				phone: '12345678911',
@@ -104,7 +115,9 @@ export default class BuyDetails extends Component {
     const data = JSON.parse(item)
     this.setState({
       dataImg: data,
-      dollar: data.price * 4 + '-' +data.price * 8
+      dollar: data.price * 4 + '-' +data.price * 8,
+      dateStart: data.dateStart,
+      dateEnd: data.dateEnd
     })
   }
 
@@ -174,7 +187,7 @@ export default class BuyDetails extends Component {
 
   handleBuy = () => {
     const token =  this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
-    const {dataImg:{dateEnd, dateStart, price, publishBy, publishRecid}, value, AtToastLoading, AtToastText, timeStart, timeEnd, dollar} = this.state
+    const {dataImg:{ price, publishBy, publishRecid}, value, AtToastLoading, AtToastText, timeStart, timeEnd, dollar, dateEnd, dateStart} = this.state
     // Taro.showToast({
     //   title: '暂时只支持加入购物车',
     //   icon: 'none'
@@ -182,7 +195,7 @@ export default class BuyDetails extends Component {
     // const { dataImg } = this.state;
     // console.log('传入数据', dataImg)
     // Taro.navigateTo({ url: `/buy/pages/buy-confirm/index?data=${JSON.stringify(dataImg)}&value=${this.state.value}&dollar=${this.state.dollar}&textTitle=${this.state.textTitle}` })
-
+    
     if(!token){
       Taro.navigateTo({url: '/user/pages/user-login/index'})
       return
@@ -217,8 +230,6 @@ export default class BuyDetails extends Component {
         timeEnd: timeEnd,
         timeStart:timeStart
       },
-      payableSum: dollar,
-      publishBy: publishBy,
     }
    console.log('订单数据', payload)
     fetch({
@@ -229,7 +240,7 @@ export default class BuyDetails extends Component {
     })
     .then((res) => {
       console.log('菜单基本信息: ', res);
-      const {data: {status, data}} = res
+      const {data: {status, data, message}} = res
       if(status === 200 ){
         this.setState({
           duration: 1000,
@@ -238,12 +249,21 @@ export default class BuyDetails extends Component {
         setTimeout(() => {
           this.closeModal()
         },1500)
-      } 
+      } else {
+        this.setState({
+          isAtToast: true,
+          AtToastText: message,
+          AtToastLoading: '',
+          duration: 2000
+        })
+      }
     })
   }
 
   handleClickCatogory = (category) => {
-    const {dataImg, list } = this.state;
+    const {dataImg, list, value, dateEnd,dateStart} = this.state;
+    const day = datePoor(dateStart, dateEnd)
+    console.log('时间差', day)
     const newList = list.slice();
     newList.forEach((item) => {
       if (item.id === category) {
@@ -251,7 +271,8 @@ export default class BuyDetails extends Component {
         if(item.checked){
           this.setState({
             textTitle: `已选：${item.timeStart}-${item.timeEnd}(共计${item.time}小时)`,
-            dollar: dataImg.price * item.time,
+            dollar: dataImg.price * item.time * value * day,
+            timeNum: item.time,
             timeStart: item.timeStart,
             timeEnd: item.timeEnd
           })
@@ -276,7 +297,19 @@ export default class BuyDetails extends Component {
   };
 
   handleValueChange = (value) => {
-    this.setState({ value,});
+    const {dataImg, dateEnd, dateStart, timeNum, textTitle} = this.state
+    const day = datePoor(dateStart, dateEnd)
+    if(textTitle === '请选择:规格'){
+      this.setState({ 
+        value,
+        dollar: dataImg.price * 4 + '-' + dataImg.price * 8,
+      });
+      return
+    }
+    this.setState({ 
+      value,
+      dollar: dataImg.price * timeNum * value * day
+    });
   };
 
   getSystemInfoSync = () => {
@@ -293,6 +326,62 @@ export default class BuyDetails extends Component {
       
     })
   }
+
+  onDateStartChange = e => {
+    const {dataImg, dateEnd, timeNum, textTitle, value} = this.state
+    const day = datePoor(e.detail.value, dateEnd)
+
+    if(day <=0 ) {
+        this.setState({
+          isAtToast: true,
+          AtToastText: '起始时间不能超过结束时间',
+          AtToastLoading: '',
+          duration: 2000
+        })
+        return
+    }
+
+    if(textTitle === '请选择:规格'){
+      this.setState({ 
+        dateStart: e.detail.value,
+        dollar: dataImg.price * 4 + '-' + dataImg.price * 8,
+      });
+      return
+    }
+
+    this.setState({
+      dateStart: e.detail.value,
+      dollar: dataImg.price * timeNum * value * day
+    });
+  };
+
+  onDateEndChange = e => {
+    const {dataImg, dateStart, timeNum, textTitle, value} = this.state
+    const day = datePoor(dateStart, e.detail.value)
+    
+    if(day <= 0) {
+      this.setState({
+        isAtToast: true,
+        AtToastText: '结束时间不能小于起始时间',
+        AtToastLoading: '',
+        duration: 2000
+      })
+      return
+    }
+
+    if(textTitle === '请选择:规格'){
+      this.setState({ 
+        dateEnd: e.detail.value,
+        dollar: dataImg.price * 4 + '-' + dataImg.price * 8,
+      });
+      return
+    }
+
+    this.setState({
+      dateEnd: e.detail.value,
+      dollar: dataImg.price * timeNum * value * day
+    });
+  };
 
   closeModal = () => {
 		this.setState({
@@ -312,7 +401,7 @@ export default class BuyDetails extends Component {
     })
     .then((res) => {
       console.log(res)
-      const {data: {status}} = res
+      const {data: {status, message}} = res
       if(status === 200) {
         this.setState({
           isAtToast: true,
@@ -321,8 +410,15 @@ export default class BuyDetails extends Component {
           duration: 1500
         })
         setTimeout(() => {
-          Taro.navigateTo({url: '/user/pages/user-details/index'})
+          Taro.navigateTo({url: '/buy/pages/buy-pay-success/index'})
         }, 2000)
+      } else {
+        this.setState({
+          isAtToast: true,
+          AtToastText: message,
+          AtToastLoading: '',
+          duration: 1500
+        })
       }
     })
   }
@@ -330,7 +426,7 @@ export default class BuyDetails extends Component {
 
   render() {
     const height = getWindowHeight(false)
-    const { dataImg, isOpeneds, textTitle, dollar, safety, address: { userName, phone, userAddress } } = this.state
+    const { dataImg, isOpeneds, textTitle, dollar, safety, dateEnd, dateStart, address: { userName, phone, userAddress } } = this.state
     console.log(dataImg)
     console.log('屏幕高度', height)
     return (
@@ -384,6 +480,28 @@ export default class BuyDetails extends Component {
                 }
               </View>
             </View>
+
+            <Picker
+              className='date'
+              mode='date'
+              onChange={this.onDateStartChange}
+              //start={formatTimeStampToTime(Date.now())}
+            >
+              <AtList className='date-at-list'>
+                <AtListItem className='item' title='起始日期' extraText={dateStart} />
+              </AtList>
+            </Picker>
+
+            <Picker
+              className='date'
+              mode='date'
+              onChange={this.onDateEndChange}
+              //start={formatTimeStampToTime(Date.now())}
+            >
+              <AtList className='date-at-list'>
+                <AtListItem className='item' title='结束日期' extraText={dateEnd} />
+              </AtList>
+            </Picker>
 
             <View className='setting-spec'>
               <Text>工人人数</Text>

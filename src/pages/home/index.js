@@ -62,6 +62,11 @@ class Home extends Component {
     });
   }
 
+  ScrollToLower() { 
+    console.log('滚动到底部事件')
+  
+  }
+
 
   todrawerShowHide = (e) => {
     this.props.drawerShowHides(true)
@@ -115,6 +120,7 @@ class Home extends Component {
         onRefresherAbort={(e) => {
           console.log('onAbort', e);
         }}
+        onScrollToLower={this.ScrollToLower}
         >
         {/* <View className='panel-title' style={{ backgroundColor: '#F7F7F7', paddingTop: '5px', paddingBottom: '5px' }}>人力信息</View> */}
         <View className='information-title'>
