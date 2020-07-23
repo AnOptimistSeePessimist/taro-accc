@@ -46,12 +46,18 @@ class UserOrder extends Component {
       });
   };
 
+  userOrderDetails = () => {
+
+    Taro.navigateTo({url: '/user/pages/user-order-details/index'})
+
+  }
+
   renderOrderList = () => {
     const {orderList} = this.state;
     return orderList.map((orderRecord) => {
       const {orderRecid, orderNo, createTime, orderstatusDtoList} = orderRecord;
       return (
-        <View className="order-record" key={orderRecid}>
+        <View className="order-record" key={orderRecid} onClick={this.userOrderDetails}>
           <View className="order-no">
             <Text>订单编号: {orderNo}</Text>
           </View>
