@@ -11,9 +11,8 @@ import { API_ORDER_CREATE, API_CALLBACK_WX } from '@constants/api';
 import {formatTimeStampToTime} from '@utils/common';
 import {
   AtFloatLayout,
-  AtTag, 
-  AtInputNumber, 
-  AtButton, 
+  AtTag,
+  AtInputNumber,
   AtList,
   AtListItem,
   AtModal,
@@ -43,7 +42,7 @@ export default class BuyDetails extends Component {
     this.state = {
       value: '1',
       isOpeneds: false,
-      isAtModal: false, 
+      isAtModal: false,
       loaded: false,
       selected: {},
       dataImg: {},
@@ -56,7 +55,7 @@ export default class BuyDetails extends Component {
       orderNo: '',
       dateStart: '',
       dateEnd: '',
-      timeNum: 1, 
+      timeNum: 1,
       address: {
 				userName: '张三',
 				phone: '12345678911',
@@ -96,10 +95,6 @@ export default class BuyDetails extends Component {
     navigationBarTitleText: '商品详情'
   }
 
-  componentDidMount() {
-    this.getSystemInfoSync()
-  }
-
   componentWillPreload (params) {
     return this.fetchData(params.item)
   }
@@ -107,7 +102,6 @@ export default class BuyDetails extends Component {
   fetchData (item) {
     console.log('《《《《',JSON.parse(item))
     const data = JSON.parse(item)
-    this.getSystemInfoSync()
     this.setState({
       dataImg: data,
       dollar: data.price * 4 + '-' +data.price * 8,
@@ -190,7 +184,7 @@ export default class BuyDetails extends Component {
     // const { dataImg } = this.state;
     // console.log('传入数据', dataImg)
     // Taro.navigateTo({ url: `/buy/pages/buy-confirm/index?data=${JSON.stringify(dataImg)}&value=${this.state.value}&dollar=${this.state.dollar}&textTitle=${this.state.textTitle}` })
-    
+
     if(!token){
       Taro.navigateTo({url: '/user/pages/user-login/index'})
       return
@@ -288,25 +282,17 @@ export default class BuyDetails extends Component {
     const {dataImg, dateEnd, dateStart, timeNum, textTitle} = this.state
     const day = datePoor(dateStart, dateEnd)
     if(textTitle === '请选择:规格'){
-      this.setState({ 
+      this.setState({
         value,
         dollar: dataImg.price * 4 + '-' + dataImg.price * 8,
       });
       return
     }
-    this.setState({ 
+    this.setState({
       value,
       dollar: dataImg.price * timeNum * value * day
     });
   };
-
-  //获取苹果与android的安全区域
-  getSystemInfoSync = () => {
-    const res = Taro.getSystemInfoSync()
-    const safety = res.screenHeight - res.safeArea.bottom
-    return safety
-  }
-
 
   onDateStartChange = e => {
     const {dataImg, dateEnd, timeNum, textTitle, value} = this.state
@@ -322,7 +308,7 @@ export default class BuyDetails extends Component {
     }
 
     if(textTitle === '请选择:规格'){
-      this.setState({ 
+      this.setState({
         dateStart: e.detail.value,
         dollar: dataImg.price * 4 + '-' + dataImg.price * 8,
       });
@@ -338,7 +324,7 @@ export default class BuyDetails extends Component {
   onDateEndChange = e => {
     const {dataImg, dateStart, timeNum, textTitle, value} = this.state
     const day = datePoor(dateStart, e.detail.value)
-    
+
     if(day <= 0) {
       Taro.showToast({
         icon: "none",
@@ -349,7 +335,7 @@ export default class BuyDetails extends Component {
     }
 
     if(textTitle === '请选择:规格'){
-      this.setState({ 
+      this.setState({
         dateEnd: e.detail.value,
         dollar: dataImg.price * 4 + '-' + dataImg.price * 8,
       });
@@ -367,7 +353,7 @@ export default class BuyDetails extends Component {
 			isAtModal: !this.state.isAtModal
     })
   }
-  
+
   wxPay = () => {
     const token =  this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
 		this.setState({
@@ -384,7 +370,7 @@ export default class BuyDetails extends Component {
       if(status === 200) {
 
         Taro.navigateTo({url: '/buy/pages/buy-pay-success/index'})
-  
+
       } else {
         Taro.showToast({
           icon: "none",
@@ -397,9 +383,10 @@ export default class BuyDetails extends Component {
 
 
   render() {
-    const height = getWindowHeight(false)
-    const safety = this.getSystemInfoSync()
-    const { dataImg, isOpeneds, textTitle, dollar, dateEnd, dateStart, address: { userName, phone, userAddress } } = this.state
+    const height = getWindowHeight(false);
+    const { dataImg, isOpeneds, textTitle, dollar, dateEnd, dateStart, address: { userName, phone, userAddress } } = this.state;
+    const res = Taro.getSystemInfoSync();
+    const safety = res.screenHeight - res.safeArea.bottom;
     console.log(dataImg)
     console.log('屏幕高度', height, safety)
     return (
@@ -407,7 +394,7 @@ export default class BuyDetails extends Component {
         <ScrollView
           scrollY
           className='item-warp'
-          style={{ height, paddingBottom: `${safety+40}px` }}
+          style={{ height, paddingBottom: `${safety}px` }}
         >
           <Gallery list={dataImg.listImg} />
           <InfoBase data={dataImg}/>
@@ -419,7 +406,11 @@ export default class BuyDetails extends Component {
           scrollY
           onClose={this.handleClose}
         >
-          <ScrollView className='float-item' >
+          <ScrollView
+            className='float-item'
+            scrollY
+            style={{paddingBottom: safety + 10 + 'px'}}
+          >
             <View className='float-item-title'>
               <View className='float-item-title-img'>
                 <Image
@@ -497,15 +488,24 @@ export default class BuyDetails extends Component {
                 </View>
               </View>
             </View>
-          </ScrollView>  
+          </ScrollView>
+          <View className='release' style={{paddingBottom: safety + 'px'}}>
+            <Button
+              plain={true}
+              className="btn"
+              formType='submit' 
+              onClick={this.handleBuy}
+            >
+              付款
+            </Button>
+          </View>
         </AtFloatLayout>
-        {isOpeneds && (<Button className='release' formType='submit' onClick={this.handleBuy}>付款</Button>)}
-        
+
         <View className='item-footer' style={{paddingBottom: `${safety}px`}}>
           <Footer onAdd={this.handleAdd} onIsOpened={this.handleOpened}/>
         </View>
 
-       
+
 
         <AtModal
           isOpened={this.state.isAtModal}

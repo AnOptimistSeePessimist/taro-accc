@@ -73,6 +73,7 @@ class App extends Component {
     subPackages: [
       {
         root: 'buy',
+        name: 'buy',
         pages: [
           'pages/buy-manpower/index',
           'pages/buy-manpower-information/index',
@@ -80,7 +81,8 @@ class App extends Component {
           'pages/buy-details/index',
           'pages/buy-material/index',
           'pages/buy-pay-success/index',
-        ]
+        ],
+        independent: false
       },
       {
         root: 'user',
@@ -95,16 +97,24 @@ class App extends Component {
           'pages/user-transaction/index',
           'pages/user-order/index',
           'pages/user-order-details/index',
-        ]
+        ],
+        independent: false
       },
       {
         root: 'sell',
         pages: [
           'pages/sell-manpower/index',
           'pages/sell-manpower-success/index',
-        ]
+        ],
+        independent: false
+      },
+    ],
+    preloadRule: {
+      "pages/home/index": {
+        network: "all",
+        packages: ["buy"],
       }
-    ]
+    }
   }
 
   componentDidShow () {}
