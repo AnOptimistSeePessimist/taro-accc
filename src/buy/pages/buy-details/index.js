@@ -16,7 +16,6 @@ import {
   AtButton, 
   AtList,
   AtListItem,
-  AtToast,
   AtModal,
   AtModalContent,
 	AtModalAction,
@@ -45,20 +44,15 @@ export default class BuyDetails extends Component {
       value: '1',
       isOpeneds: false,
       isAtModal: false, 
-      isAtToast: false,
       loaded: false,
       selected: {},
       dataImg: {},
       dataList: '',
       textTitle: '请选择:规格',
       dollar: '',
-      safety: '',
-      duration: 0,
       //endTime: [['a', 'b'], [['c','d','e'], ['s','r','t']]],
       timeStart: '',
       timeEnd: '',
-      AtToastText:'',
-      AtToastLoading:'',
       orderNo: '',
       dateStart: '',
       dateEnd: '',
@@ -113,6 +107,7 @@ export default class BuyDetails extends Component {
   fetchData (item) {
     console.log('《《《《',JSON.parse(item))
     const data = JSON.parse(item)
+    this.getSystemInfoSync()
     this.setState({
       dataImg: data,
       dollar: data.price * 4 + '-' +data.price * 8,
@@ -202,22 +197,18 @@ export default class BuyDetails extends Component {
     }
 
     if(!timeStart){
-      this.setState({
-        isAtToast: true,
-        AtToastText: '请选择规格',
-        AtToastLoading: '',
+      Taro.showToast({
+        icon: "none",
+        title: '请选择规格',
         duration: 2000
       })
       return
     }
 
-    this.setState({
-      isAtToast: true,
-      AtToastLoading: 'loading',
-      AtToastText: '',
-      duration: 0
+    Taro.showLoading({
+      title: '加载中',
     })
-   
+
     const payload = {
       address: " 张三12345678911上海市浦东国际机场厂区7号仓库",
       discountSum: 0,
@@ -242,18 +233,15 @@ export default class BuyDetails extends Component {
       console.log('菜单基本信息: ', res);
       const {data: {status, data, message}} = res
       if(status === 200 ){
+        Taro.hideLoading()
         this.setState({
-          duration: 1000,
           orderNo: data
         })
-        setTimeout(() => {
-          this.closeModal()
-        },1500)
+        this.closeModal()
       } else {
-        this.setState({
-          isAtToast: true,
-          AtToastText: message,
-          AtToastLoading: '',
+        Taro.showToast({
+          icon: "none",
+          title: message,
           duration: 2000
         })
       }
@@ -312,30 +300,22 @@ export default class BuyDetails extends Component {
     });
   };
 
+  //获取苹果与android的安全区域
   getSystemInfoSync = () => {
     const res = Taro.getSystemInfoSync()
     const safety = res.screenHeight - res.safeArea.bottom
-    this.setState({
-      safety
-    })
+    return safety
   }
 
-  handleToastClose = () => {
-    this.setState({
-      isAtToast: false,
-      
-    })
-  }
 
   onDateStartChange = e => {
     const {dataImg, dateEnd, timeNum, textTitle, value} = this.state
     const day = datePoor(e.detail.value, dateEnd)
 
     if(day <=0 ) {
-        this.setState({
-          isAtToast: true,
-          AtToastText: '起始时间不能超过结束时间',
-          AtToastLoading: '',
+        Taro.showToast({
+          icon: "none",
+          title:'起始时间不能超过结束时间',
           duration: 2000
         })
         return
@@ -360,10 +340,9 @@ export default class BuyDetails extends Component {
     const day = datePoor(dateStart, e.detail.value)
     
     if(day <= 0) {
-      this.setState({
-        isAtToast: true,
-        AtToastText: '结束时间不能小于起始时间',
-        AtToastLoading: '',
+      Taro.showToast({
+        icon: "none",
+        title:'结束时间不能小于起始时间',
         duration: 2000
       })
       return
@@ -403,21 +382,14 @@ export default class BuyDetails extends Component {
       console.log(res)
       const {data: {status, message}} = res
       if(status === 200) {
-        this.setState({
-          isAtToast: true,
-          AtToastText: '支付成功',
-          AtToastLoading: 'success',
-          duration: 1500
-        })
-        setTimeout(() => {
-          Taro.navigateTo({url: '/buy/pages/buy-pay-success/index'})
-        }, 2000)
+
+        Taro.navigateTo({url: '/buy/pages/buy-pay-success/index'})
+  
       } else {
-        this.setState({
-          isAtToast: true,
-          AtToastText: message,
-          AtToastLoading: '',
-          duration: 1500
+        Taro.showToast({
+          icon: "none",
+          title: message,
+          duration: 2000
         })
       }
     })
@@ -426,9 +398,10 @@ export default class BuyDetails extends Component {
 
   render() {
     const height = getWindowHeight(false)
-    const { dataImg, isOpeneds, textTitle, dollar, safety, dateEnd, dateStart, address: { userName, phone, userAddress } } = this.state
+    const safety = this.getSystemInfoSync()
+    const { dataImg, isOpeneds, textTitle, dollar, dateEnd, dateStart, address: { userName, phone, userAddress } } = this.state
     console.log(dataImg)
-    console.log('屏幕高度', height)
+    console.log('屏幕高度', height, safety)
     return (
       <View className='buy-details'>
         <ScrollView
@@ -438,7 +411,7 @@ export default class BuyDetails extends Component {
         >
           <Gallery list={dataImg.listImg} />
           <InfoBase data={dataImg}/>
-          <InfoParam />
+          {/* <InfoParam /> */}
         </ScrollView>
         {/* <Float isOpened={isOpeneds}  onHandleClose={this.handleClose} data={dataImg}/> */}
         <AtFloatLayout
@@ -446,7 +419,7 @@ export default class BuyDetails extends Component {
           scrollY
           onClose={this.handleClose}
         >
-          <ScrollView className='float-item'>
+          <ScrollView className='float-item' >
             <View className='float-item-title'>
               <View className='float-item-title-img'>
                 <Image
@@ -514,39 +487,25 @@ export default class BuyDetails extends Component {
                 onChange={this.handleValueChange}
               />
             </View>
-
-            {/* <Picker value={0} range={this.state.endTime} className='out-of-work-time' mode='multiSelector' >
-              <AtList className='end-list'>
-                <AtListItem className='end' title='结束工作时间' extraText={this.state.endTime} />
-              </AtList>
-            </Picker> */}
-          <View className='pay-address'>
-            <View className={`iconfont iconionc-- addressimg`} />
-            <View className='pay-address-userName-phone-address'>
-              <View className='pay-address-userName-phone'>
-                <Text>{userName}</Text>
-                <Text className='pay-address-phone'>{phone}</Text>
-                <Text className='pay-address-address'>{userAddress}</Text>
+            <View className='pay-address'>
+              <View className={`iconfont iconionc-- addressimg`} />
+              <View className='pay-address-userName-phone-address'>
+                <View className='pay-address-userName-phone'>
+                  <Text>{userName}</Text>
+                  <Text className='pay-address-phone'>{phone}</Text>
+                  <Text className='pay-address-address'>{userAddress}</Text>
+                </View>
               </View>
             </View>
-          </View>
-          </ScrollView>
-          <Button className='release' formType='submit' onClick={this.handleBuy}>付款</Button>
+          </ScrollView>  
         </AtFloatLayout>
+        {isOpeneds && (<Button className='release' formType='submit' onClick={this.handleBuy}>付款</Button>)}
+        
         <View className='item-footer' style={{paddingBottom: `${safety}px`}}>
           <Footer onAdd={this.handleAdd} onIsOpened={this.handleOpened}/>
         </View>
 
-        <AtToast
-          // icon={this.state.icon}
-          text={this.state.AtToastText}
-          // image={this.state.image}
-          status={this.state.AtToastLoading}
-          // hasMask={this.state.hasMask}
-          isOpened={this.state.isAtToast}
-          duration={this.state.duration}
-          onClose={this.handleToastClose}
-        />
+       
 
         <AtModal
           isOpened={this.state.isAtModal}
