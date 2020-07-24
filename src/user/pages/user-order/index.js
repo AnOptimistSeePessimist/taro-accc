@@ -46,8 +46,8 @@ class UserOrder extends Component {
       });
   };
 
-  userOrderDetails = () => {
-
+  userOrderDetails = (orderRecord) => {
+    console.log('订单数据', orderRecord)
     Taro.navigateTo({url: '/user/pages/user-order-details/index'})
 
   }
@@ -57,7 +57,7 @@ class UserOrder extends Component {
     return orderList.map((orderRecord) => {
       const {orderRecid, orderNo, createTime, orderstatusDtoList} = orderRecord;
       return (
-        <View className="order-record" key={orderRecid} onClick={this.userOrderDetails}>
+        <View className="order-record" key={orderRecid} onClick={() => {this.userOrderDetails(orderRecord)}}>
           <View className="order-no">
             <Text>订单编号: {orderNo}</Text>
           </View>
