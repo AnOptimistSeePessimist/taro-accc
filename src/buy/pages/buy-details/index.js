@@ -13,7 +13,6 @@ import {
   AtFloatLayout,
   AtTag,
   AtInputNumber,
-  AtButton,
   AtList,
   AtListItem,
   AtModal,
@@ -96,10 +95,6 @@ export default class BuyDetails extends Component {
     navigationBarTitleText: '商品详情'
   }
 
-  componentDidMount() {
-    this.getSystemInfoSync()
-  }
-
   componentWillPreload (params) {
     return this.fetchData(params.item)
   }
@@ -107,7 +102,6 @@ export default class BuyDetails extends Component {
   fetchData (item) {
     console.log('《《《《',JSON.parse(item))
     const data = JSON.parse(item)
-    this.getSystemInfoSync()
     this.setState({
       dataImg: data,
       dollar: data.price * 4 + '-' +data.price * 8,
@@ -300,14 +294,6 @@ export default class BuyDetails extends Component {
     });
   };
 
-  //获取苹果与android的安全区域
-  getSystemInfoSync = () => {
-    const res = Taro.getSystemInfoSync()
-    const safety = res.screenHeight - res.safeArea.bottom
-    return safety
-  }
-
-
   onDateStartChange = e => {
     const {dataImg, dateEnd, timeNum, textTitle, value} = this.state
     const day = datePoor(e.detail.value, dateEnd)
@@ -397,9 +383,10 @@ export default class BuyDetails extends Component {
 
 
   render() {
-    const height = getWindowHeight(false)
-    const safety = this.getSystemInfoSync()
-    const { dataImg, isOpeneds, textTitle, dollar, dateEnd, dateStart, address: { userName, phone, userAddress } } = this.state
+    const height = getWindowHeight(false);
+    const { dataImg, isOpeneds, textTitle, dollar, dateEnd, dateStart, address: { userName, phone, userAddress } } = this.state;
+    const res = Taro.getSystemInfoSync();
+    const safety = res.screenHeight - res.safeArea.bottom;
     console.log(dataImg)
     console.log('屏幕高度', height, safety)
     return (
@@ -407,7 +394,7 @@ export default class BuyDetails extends Component {
         <ScrollView
           scrollY
           className='item-warp'
-          style={{ height, paddingBottom: `${safety+40}px` }}
+          style={{ height, paddingBottom: `${safety}px` }}
         >
           <Gallery list={dataImg.listImg} />
           <InfoBase data={dataImg}/>
@@ -419,7 +406,11 @@ export default class BuyDetails extends Component {
           scrollY
           onClose={this.handleClose}
         >
-          <ScrollView className='float-item' >
+          <ScrollView
+            className='float-item'
+            scrollY
+            style={{paddingBottom: safety + 10 + 'px'}}
+          >
             <View className='float-item-title'>
               <View className='float-item-title-img'>
                 <Image
@@ -498,8 +489,17 @@ export default class BuyDetails extends Component {
               </View>
             </View>
           </ScrollView>
+          <View className='release' style={{paddingBottom: safety + 'px'}}>
+            <Button
+              plain={true}
+              className="btn"
+              formType='submit' 
+              onClick={this.handleBuy}
+            >
+              付款
+            </Button>
+          </View>
         </AtFloatLayout>
-        {isOpeneds && (<Button className='release' formType='submit' onClick={this.handleBuy}>付款</Button>)}
 
         <View className='item-footer' style={{paddingBottom: `${safety}px`}}>
           <Footer onAdd={this.handleAdd} onIsOpened={this.handleOpened}/>
