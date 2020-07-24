@@ -1,0 +1,77 @@
+@import '@styles/theme.scss';
+
+.oneOrder {
+	display: flex;
+	flex-direction: column;
+
+	.text {
+		padding: 10px;
+		margin: 20px;
+	}
+
+	&-status {
+		display: flex;
+		flex-direction: row;
+		.oneOrder-status-item {
+			margin-right: 40px;	
+		}
+	}
+	.at-timeline-item__tail{
+		border-left:2px solid #fe871f;
+		left: 19rpx;
+	}
+	.at-timeline-item__icon {
+		
+		width: 40px;
+		height: 40px;
+	}
+	.addressimg {
+		font-size: 40px;
+		color: #fe871f;
+	}
+	.release {
+		line-height: 2;
+		border-width: 0;
+		border-radius: 100px;
+		color: #fff;
+		left: 0;
+		width: 30%;
+		height: 70px;
+		background-color: #fe871f !important;
+		&[plain] {
+      border-width: 0;
+		}
+		
+	}
+
+	.wx-pay {
+		display: flex;
+		flex-direction: column;
+		
+		.store {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			align-items: center;
+			&-name {
+				font-size: 35px;
+				padding: 10px;
+			}
+			&-dollar {
+				padding: 10px;
+				margin-top: 20px;
+				font-size: 40px;
+				font-weight: bold;
+			}
+		}
+	}
+
+	.at-modal__footer .at-modal__action > button:last-child {
+		color: #fff;
+		font-size: 35px;
+		background-color: green;
+		padding: 10px;
+	}
+
+	
+}

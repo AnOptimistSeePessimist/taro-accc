@@ -31,8 +31,10 @@ export const API_CARGOSTATION_LIST = `${host}/cargostation/list`; // 获取所�
 
 //order
 export const API_ORDER_CREATE = `${host}/order/create`; //创建订单和详情
+export const API_ORDER_ONELIST = `${host}/orderstatus/list` //通过订单id获取订单所有状态
 export const API_ORDER_MYORDER = `${host}/order/myOrder`; // 我的订单
 export const API_ORDER_MYTRADE = `${host}/order/myTrade`; // 我的交易
+export const API_ORDER_ORDERONE = `${host}/order`; //通过订单编号获取订单信息 
 
 //callback
 export const API_CALLBACK_WX = `${host}/callback/wx-pay`; //微信支付
