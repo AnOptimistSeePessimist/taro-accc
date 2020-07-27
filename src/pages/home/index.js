@@ -49,7 +49,7 @@ class Home extends Component {
       refresherTriggered: true,
     }, () => {
       fetch({
-        url: API_RSPUBLISH_LIST + `? pageNum = ${this.state.pageNum}`,
+        url: API_RSPUBLISH_LIST + `?pageNum=${this.state.pageNum}`,
       }).then((res) => {
         const { data: { data } } = res;
         this.setState({
@@ -79,7 +79,7 @@ class Home extends Component {
       return;
     }
     fetch({
-      url: API_RSPUBLISH_LIST + `?pageNum=${this.state.pageNum + 1}`
+      url: API_RSPUBLISH_LIST + `?pageNum=${pageNum + 1}`
     })
     .then((res) => {
       console.log('分页参数',res, pageNum + 1)
@@ -93,7 +93,7 @@ class Home extends Component {
         console.log('数据',dataList)
         this.setState({
           dataList,
-          pageNum: this.state.pageNum + 1
+          pageNum: pageNum + 1
         })
       }
     })
