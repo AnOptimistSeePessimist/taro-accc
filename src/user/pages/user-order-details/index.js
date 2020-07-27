@@ -192,7 +192,7 @@ export default class UserDetails extends Component {
               </View>
           </AtModalContent>
           <AtModalAction>
-						<Button onClick={() => {this.wxPay(orderNo, orderRecid)}}>
+						<Button className='btn-wx' onClick={() => {this.wxPay(orderNo, orderRecid)}}>
 							确认支付
             </Button>
 					</AtModalAction>
