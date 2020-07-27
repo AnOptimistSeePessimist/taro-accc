@@ -30,7 +30,9 @@
 		color: #fe871f;
 	}
 	.release {
-		line-height: 2;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		border-width: 0;
 		border-radius: 100px;
 		color: #fff;
