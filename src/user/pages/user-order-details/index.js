@@ -153,7 +153,7 @@ export default class UserDetails extends Component {
 							items={atTimeline}
 							color={'#fe871f'}
 						></AtTimeline>
-						{isBotton && (<Button plain={true} className='release' formType='submit' onClick={this.handleBuy}>付款</Button>)}
+						<Button plain={true} className='release' formType='submit' onClick={this.handleBuy}>付款</Button>
 				</View>
 
 
