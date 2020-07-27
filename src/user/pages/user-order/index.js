@@ -47,8 +47,7 @@ class UserOrder extends Component {
   };
 
   userOrderDetails = (orderRecord) => {
-    console.log('订单数据', orderRecord)
-    Taro.navigateTo({url: '/user/pages/user-order-details/index'})
+    Taro.navigateTo({url: `/user/pages/user-order-details/index?oneOrder=${JSON.stringify(orderRecord)}`})
 
   }
 
