@@ -24,9 +24,16 @@ export default class UserDetails extends Component {
 		super(props)
 		this.state = {
 			orderInformation: {},
-			atTimeline: [],
+			atTimeline: [
+				{title: '订单未完成',  status: 6},
+				{title: '订单未收工',  status: 5}, 
+				{title: '订单未签到',  status: 4}, 
+				{title: '订单未派工',  status: 3}, 
+				{title: '订单未支付',  status: 2}, 
+				{title: '订单未创建',  status: 1}, 
+			],
 			isAtModal: false, 
-			isBotton: false,
+			bottonTitle: '',
 		}
 		
 	}
@@ -37,27 +44,52 @@ export default class UserDetails extends Component {
 
   fetchData (item) {
 		const data = JSON.parse(item);
-		let atTimeline = []
-		console.log('订单',data)
     this.setState({
 			orderInformation: data
 		}, () => {
-			data.orderstatusDtoList.map((item, index) => {
-				atTimeline[index] = {
-					title: item.statusdsc,
-					icon: 'iconfont iconionc-- addressimg'
+			this.statusUpload(data.orderstatusDtoList)
+		})
+	}
+	
+	statusUpload = (orderstatusDtoList) => {
+		const {atTimeline, bottonTitle} = this.state
+		console.log('订单', orderstatusDtoList)
+		orderstatusDtoList.map((item) => {
+			console.log(item.status)
+			atTimeline.map((atTimeItem) => {
+				if(atTimeItem.status === item.status){
+					atTimeItem.title = item.statusdsc
+					atTimeItem.content = [`${item.createTime}`]
+					atTimeItem.icon = 'iconfont iconionc-- addressimg'
 				}
 			})
-			if(data.orderstatusDtoList.length === 1) {
-					this.setState({
-						isBotton: true
-					})
-			}
-			this.setState({
-				atTimeline
-			})
 		})
-  }
+		switch (orderstatusDtoList[0].status) {
+			case 1:
+				 this.setState({bottonTitle: '支付'})
+				break;
+				case 2:
+				 this.setState({bottonTitle: '未派工'})
+				break;
+				case 3:
+				 this.setState({bottonTitle: '签到'})
+				break;
+				case 4:
+				 this.setState({bottonTitle: '收工'})
+				break;
+				case 5:
+				 this.setState({bottonTitle: '完成'})
+				break;
+				case 6:
+				 this.setState({bottonTitle: '完成'})
+				break;
+			default:
+				break;
+		}
+		this.setState({
+			atTimeline
+		})
+	}
 
 	closeModal = () => {
 		this.setState({
@@ -74,19 +106,9 @@ export default class UserDetails extends Component {
 		.then((res) => {
 			console.log(res)
 			const {data:{data, status, message}} = res
-			let atTimeline = []
 			if(status === 200 ) {
 				Taro.hideLoading()
-				data.map((item, index) => {
-					atTimeline[index] = {
-						title: item.statusdsc,
-						icon: 'iconfont iconionc-- addressimg'
-					}
-				})
-				this.setState({
-					atTimeline,
-					isBotton: false
-				})
+				this.statusUpload(data)
 			}else {
 				Taro.showToast({
           icon: "none",
@@ -136,9 +158,9 @@ export default class UserDetails extends Component {
 	}
 
 	render(){
-		const {orderInformation, orderInformation:{orderNo, orderRecid, createTime, paidSum, orderDetailDto, publishByCompanyName}, atTimeline, isBotton} = this.state
+		const {orderInformation, orderInformation:{orderNo, orderRecid, createTime, paidSum, orderDetailDto, publishByCompanyName}, atTimeline, bottonTitle} = this.state
 		
-		console.log('订单详情', orderInformation)
+		console.log('订单详情', orderInformation, bottonTitle)
 		return(
 			<View className='oneOrder'>
 				<View className='oneOrder-orderNum text'>订单编号： {orderNo}</View>
@@ -153,7 +175,7 @@ export default class UserDetails extends Component {
 							items={atTimeline}
 							color={'#fe871f'}
 						></AtTimeline>
-						<Button plain={true} className='release' formType='submit' onClick={this.handleBuy}>付款</Button>
+						<Button plain={true} className='release' formType='submit' onClick={this.handleBuy}>{bottonTitle}</Button>
 				</View>
 
 
