@@ -35,6 +35,7 @@ class Home extends Component {
     this.state = {
       dataList: [],
       refresherTriggered: false,
+      pageNum: 1,
     }
   }
 
@@ -47,11 +48,11 @@ class Home extends Component {
       refresherTriggered: true,
     }, () => {
       fetch({
-        url: API_RSPUBLISH_LIST,
+        url: API_RSPUBLISH_LIST + `? pageNum = ${this.state.pageNum}`,
       }).then((res) => {
         const { data: { data } } = res;
         this.setState({
-          dataList: data.list
+          dataList: data.list,
         }, () => {
           this.setState({
             refresherTriggered: false,
@@ -64,7 +65,27 @@ class Home extends Component {
 
   ScrollToLower() { 
     console.log('滚动到底部事件')
-  
+    Taro.showLoading()
+    const {dataList} = this.state
+    console.log(dataList)
+    fetch({
+      url: API_RSPUBLISH_LIST + `?pageNum = ${this.state.pageNum + 1}`
+    })
+    .then((res) => {
+      console.log(res)
+      const {data: {data, status, message}} = res
+      if(status === 200) {
+        Taro.hideLoading()
+        data.list.map((item) => {
+          dataList.push(item)
+        })
+        console.log('数据',dataList)
+        this.setState({
+          dataList,
+          pageNum: this.state.pageNum + 1
+        })
+      }
+    })
   }
 
 
@@ -127,8 +148,6 @@ class Home extends Component {
           <View className='data-list'>
             {this.state.dataList.map((item, index) => {
               const evenNum = index % 2 === 0
-
-
               const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
               rspublishDto.imgSrc = listImgSrc()
               rspublishDto.listImg = [
@@ -138,7 +157,7 @@ class Home extends Component {
               // console.log('返回的数据',hresCargostationMap)
               if (evenNum) {
                 return (
-                  <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} />
+                  <Menu listImg={rspublishDto} key={index} hresCargostationMap={hresCargostationMap} />
                 )
               }
             })}
@@ -156,7 +175,7 @@ class Home extends Component {
 
               if (evenNum) {
                 return (
-                  <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap}/>
+                  <Menu listImg={rspublishDto} key={index} hresCargostationMap={hresCargostationMap}/>
                 )
               }
             })}
