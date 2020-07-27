@@ -36,6 +36,7 @@ class Home extends Component {
       dataList: [],
       refresherTriggered: false,
       pageNum: 1,
+      pageMax: ''
     }
   }
 
@@ -53,6 +54,7 @@ class Home extends Component {
         const { data: { data } } = res;
         this.setState({
           dataList: data.list,
+          pageMax: data.pages
         }, () => {
           this.setState({
             refresherTriggered: false,
@@ -66,17 +68,26 @@ class Home extends Component {
   ScrollToLower() { 
     console.log('滚动到底部事件')
     Taro.showLoading()
-    const {dataList} = this.state
+    const {dataList, pageMax, pageNum} = this.state
     console.log(dataList)
+    if(pageNum === pageMax) {
+      Taro.showToast({
+        icon: "none",
+        title: '已经没有了',
+        duration: 2000
+      })
+      return;
+    }
     fetch({
-      url: API_RSPUBLISH_LIST + `?pageNum = ${this.state.pageNum + 1}`
+      url: API_RSPUBLISH_LIST + `?pageNum=${this.state.pageNum + 1}`
     })
     .then((res) => {
-      console.log(res)
-      const {data: {data, status, message}} = res
+      console.log('分页参数',res, pageNum + 1)
+      const {data: {data, status}} = res
       if(status === 200) {
         Taro.hideLoading()
         data.list.map((item) => {
+          console.log('分页', item)
           dataList.push(item)
         })
         console.log('数据',dataList)
@@ -157,7 +168,7 @@ class Home extends Component {
               // console.log('返回的数据',hresCargostationMap)
               if (evenNum) {
                 return (
-                  <Menu listImg={rspublishDto} key={index} hresCargostationMap={hresCargostationMap} />
+                  <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} />
                 )
               }
             })}
