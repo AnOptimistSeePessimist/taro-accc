@@ -15,7 +15,7 @@ view, text, scroll-view {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
-  
+
 
 .buy-details {
   position: relative;
@@ -31,6 +31,7 @@ view, text, scroll-view {
   bottom: 0;
   left: 0;
   width: 100%;
+  background-color: white;
 }
 
 .date {
@@ -161,7 +162,7 @@ view, text, scroll-view {
 .wx-pay {
   display: flex;
   flex-direction: column;
-  
+
   .store {
     display: flex;
     flex-direction: column;
