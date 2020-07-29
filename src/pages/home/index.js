@@ -47,6 +47,7 @@ class Home extends Component {
   pageListData = () => {
     this.setState({
       refresherTriggered: true,
+      pageNum: 1
     }, () => {
       fetch({
         url: API_RSPUBLISH_LIST + `?pageNum=${this.state.pageNum}`,
@@ -129,22 +130,12 @@ class Home extends Component {
         refresherTriggered={this.state.refresherTriggered}
         onRefresherPulling={() => {
           console.log('onRefresherPulling...');
-          // this.setState({
-          //   refresherTriggered: true,
-          // });
-          // this.pageListData();
         }}
         onRefresherRefresh={() => {
           if (this._freshing) return;
           console.log('onRefresherRefresh');
           this._freshing = true;
           this.pageListData();
-          // setTimeout(() => {
-          //   this.setState({
-          //     refresherTriggered: false,
-          //   })
-          //   this._freshing = false
-          // }, 3000);
         }}
         onRefresherRestore={(e) => {
           console.log('onRestore:', e);
@@ -186,7 +177,7 @@ class Home extends Component {
 
               if (evenNum) {
                 return (
-                  <Menu listImg={rspublishDto} key={index} hresCargostationMap={hresCargostationMap}/>
+                  <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap}/>
                 )
               }
             })}

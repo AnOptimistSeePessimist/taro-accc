@@ -40,7 +40,9 @@ export const API_ORDER_RS = `${host}/order/rs`; // 通过订单id获取对应的
 //callback
 export const API_CALLBACK_WX = `${host}/callback/wx-pay`; //微信支付
 
-// work order
+
+//workorder
+export const API_WORKORDER_LIST = `${host}/workorder/list`; //工单条件查询
 export const API_WORK_ORDER_LIST = `${host}/workorder/list`; // 我的工单
 export const API_WORK_ORDER_DISTRIBUTE = `${host}/workorder/distribute`; // 派工单
 export const API_WORK_ORDER_CHECK_IN = `${host}/workorder/check-in`; // 签到打卡

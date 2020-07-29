@@ -8,13 +8,14 @@ import {
 	AtModalAction,
 } from 'taro-ui'
 import {API_CALLBACK_WX, API_ORDER_ONELIST} from '@constants/api';
+import WQRCode from '@utils/wqrCode/index'
 import fetch from '@utils/request';
 
 import './index.scss'
 
 @connect(state => ({
   userInfo: state.user.userInfo,
-}))
+}), {})
 export default class UserDetails extends Component {
 	config = {
 		navigationBarTitleText: '订单详情'
@@ -25,15 +26,20 @@ export default class UserDetails extends Component {
 		this.state = {
 			orderInformation: {},
 			atTimeline: [
-				{title: '订单未完成',  status: 6},
-				{title: '订单未收工',  status: 5},
-				{title: '订单未签到',  status: 4},
-				{title: '订单未派工',  status: 3},
-				{title: '订单未支付',  status: 2},
-				{title: '订单未创建',  status: 1},
+				{id: 3, title: '订单未派工',  status: 3}, 
+				{id: 2, title: '订单未支付',  status: 2}, 
+				{id: 1, title: '订单未创建',  status: 1}, 
 			],
-			isAtModal: false,
+			atTimeline2: [
+				{id: 6, title: '订单未完成',  status: 6}
+			],
+			isAtModal: false, 
+			isWqrCode: false,
 			bottonTitle: '',
+			isBotton: false,
+			signInWorkOver: false,
+			signInbtnTitle: '',
+			workOverBtnTitle: '',
 		}
 
 	}
@@ -52,7 +58,8 @@ export default class UserDetails extends Component {
 	}
 
 	statusUpload = (orderstatusDtoList) => {
-		const {atTimeline, bottonTitle} = this.state
+		const {atTimeline} = this.state
+		
 		console.log('订单', orderstatusDtoList)
 		orderstatusDtoList.map((item) => {
 			console.log(item.status)
@@ -64,30 +71,51 @@ export default class UserDetails extends Component {
 				}
 			})
 		})
+		 let bottonTitle
+		 let isBotton
+		 let signInbtnTitle
+		 let workOverBtnTitle
+		 let signInWorkOver
 		switch (orderstatusDtoList[0].status) {
 			case 1:
-				 this.setState({bottonTitle: '支付'})
+				 bottonTitle ='支付'
+				 isBotton = true
 				break;
 				case 2:
-				 this.setState({bottonTitle: '未派工'})
+				 bottonTitle = '未派工'
+				 isBotton = true
 				break;
 				case 3:
-				 this.setState({bottonTitle: '签到'})
+				 isBotton = false
+				 signInWorkOver = true
+				 signInbtnTitle = '未签到'
+				 workOverBtnTitle = '未收工'
 				break;
 				case 4:
-				 this.setState({bottonTitle: '收工'})
+				 isBotton = false
+				 signInbtnTitle = '已签到'
+				 workOverBtnTitle = '未收工'
 				break;
 				case 5:
-				 this.setState({bottonTitle: '完成'})
+				 signInbtnTitle = '已签到'
+				 workOverBtnTitle = '已收工'
+				 bottonTitle ='完成'
+				 isBotton = true
 				break;
 				case 6:
-				 this.setState({bottonTitle: '完成'})
+				 bottonTitle= '完成'
+				 isBotton = true
 				break;
 			default:
 				break;
 		}
 		this.setState({
-			atTimeline
+			atTimeline,
+			bottonTitle,
+			isBotton,
+			signInbtnTitle,
+			workOverBtnTitle,
+			signInWorkOver
 		})
 	}
 
@@ -97,6 +125,11 @@ export default class UserDetails extends Component {
     })
 	}
 
+	closeWqrModal = () => {
+		this.setState({
+			isWqrCode: !this.state.isWqrCode
+		})
+	}
 	orderStatusUpload = (orderRecid) => {
 		const token =  this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
 		fetch({
@@ -156,28 +189,100 @@ export default class UserDetails extends Component {
 			isAtModal: !this.state.isAtModal
 		})
 	}
+	
+	//派工
+	dispatching = () => {
+		console.log('提示派工')
+	}
+
+	//签到
+	signIn = () => {
+		console.log('签到')
+		this.setState({
+			isWqrCode: !this.state.isWqrCode
+		})
+		
+	}
+
+	//收工
+	workOver = () => {
+		console.log('收工')
+	}
+
+	//完成
+	workSuccess = () => {
+		console.log('完成')
+	}
 
 	render(){
-		const {orderInformation, orderInformation:{orderNo, orderRecid, createTime, paidSum, orderDetailDto, publishByCompanyName}, atTimeline, bottonTitle} = this.state
-
-		console.log('订单详情', orderInformation, bottonTitle)
+		const {orderInformation, orderInformation:{orderstatusDtoList, orderNo, orderRecid, createTime, paidSum, orderDetailDto, publishByCompanyName}, atTimeline, bottonTitle, atTimeline2, signInbtnTitle, workOverBtnTitle} = this.state
+		
+		console.log('订单详情', orderInformation)
 		return(
 			<View className='oneOrder'>
 				<View className='oneOrder-orderNum text'>订单编号： {orderNo}</View>
 				<View className='oneOrder-time text'>订单时间： {createTime}</View>
 				<View className='oneOrder-price text'>订单价钱： {paidSum}</View>
-		<View className='oneOrder-title text'>订单内容： 工种类型-{orderDetailDto.workTypeName}</View>
+				<View className='oneOrder-title text'>订单内容： 工种类型-{orderDetailDto.workTypeName}</View>
 				<View className='oneOrder-status text'>
-						<View className='oneOrder-status-item'>订单状态:</View>
+					<View className='oneOrder-status-item'>订单状态:</View>
+					{this.state.isBotton && 
+						<Button plain={true} className='release submit' formType='submit' onClick={() => {
+								switch (orderstatusDtoList[0].status) {
+									case 1:
+											this.handleBuy()
+										break;
+										case 2:
+											this.dispatching()
+										break;
+										case 5:
+											this.workSuccess()
+										break;
+									default:
+										break;
+								}
+						}}>{bottonTitle}</Button>}
+				</View>
+				<View className='at-time-title'>
+					{this.state.signInWorkOver && <AtTimeline
+								className='at-time-line'
+								pending
+								items={atTimeline2}
+								color={'#fe871f'}
+							></AtTimeline>}
+						
+						{this.state.signInWorkOver && 		
+							<View className='work-success'>
+								<Text className='work-text'>张三 2020-07-29</Text> 
+								<View className='work-over'>
+									<Button className='release btn' onClick={this.signIn}>{signInbtnTitle}</Button> 
+									<Button className='release btn'>{workOverBtnTitle}</Button>
+								</View>
+							</View>
+						}
 						<AtTimeline
 							className='at-time-line'
 							pending
 							items={atTimeline}
 							color={'#fe871f'}
 						></AtTimeline>
-						<Button plain={true} className='release' formType='submit' onClick={this.handleBuy}>{bottonTitle}</Button>
-				</View>
+				</View>	
 
+
+				
+					<AtModal
+          isOpened={this.state.isWqrCode}
+					onClose={this.closeWqrModal}
+					>
+						<AtModalContent>
+								<View className='WqrCode'>
+									<Text className='WqrCode-title'>请扫描二维码</Text>
+									 {/* {this.state.isWqrCode && <WQRCode cid="qrcode2302" ref='qrcode2302' text={orderNo +'/'+ orderRecid+'/' + Math.ceil(Math.random() * 100)} />} */}
+									 { this.state.isWqrCode && <WQRCode makeOnLoad cid="qrcode2302" text={orderNo +'/'+ orderRecid+'/' + Math.ceil(Math.random() * 100)} />}
+								</View>
+						</AtModalContent>
+					</AtModal>
+				
 
 				<AtModal
           isOpened={this.state.isAtModal}

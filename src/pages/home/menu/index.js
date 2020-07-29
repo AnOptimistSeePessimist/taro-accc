@@ -79,9 +79,6 @@ export default class Menu extends Component {
 										</View>)
 								})
 							}
-							{/* <Text>第一人： 站点多个</Text>
-							<Text>第二人： 站点多个</Text>
-							<Text>第三人： 站点多个</Text> */}
 						</View>
 					</AtModalContent>
 					<AtModalAction>
