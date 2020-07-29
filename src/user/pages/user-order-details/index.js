@@ -1,11 +1,11 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text,Button } from '@tarojs/components'
 import {connect} from '@tarojs/redux'
-import { 
+import {
 	AtTimeline,
 	AtModal,
   AtModalContent,
-	AtModalAction,  
+	AtModalAction,
 } from 'taro-ui'
 import {API_CALLBACK_WX, API_ORDER_ONELIST} from '@constants/api';
 import WQRCode from '@utils/wqrCode/index'
@@ -20,7 +20,7 @@ export default class UserDetails extends Component {
 	config = {
 		navigationBarTitleText: '订单详情'
 	}
-	
+
 	constructor(props){
 		super(props)
 		this.state = {
@@ -41,7 +41,7 @@ export default class UserDetails extends Component {
 			signInbtnTitle: '',
 			workOverBtnTitle: '',
 		}
-		
+
 	}
 
 	componentWillPreload (params) {
@@ -56,7 +56,7 @@ export default class UserDetails extends Component {
 			this.statusUpload(data.orderstatusDtoList)
 		})
 	}
-	
+
 	statusUpload = (orderstatusDtoList) => {
 		const {atTimeline} = this.state
 		
@@ -130,7 +130,6 @@ export default class UserDetails extends Component {
 			isWqrCode: !this.state.isWqrCode
 		})
 	}
-	
 	orderStatusUpload = (orderRecid) => {
 		const token =  this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
 		fetch({
@@ -150,7 +149,7 @@ export default class UserDetails extends Component {
           duration: 2000
         })
 			}
-			
+
 		})
 	}
 
@@ -175,7 +174,7 @@ export default class UserDetails extends Component {
 					title: '加载中',
 				})
         this.orderStatusUpload(orderRecid)
-  
+
       } else {
         Taro.showToast({
           icon: "none",

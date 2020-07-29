@@ -1,0 +1,95 @@
+@import '@styles/theme.scss';
+
+$gap: 20px;
+
+.user-transaction-details {
+  @include wh(100%, 100%);
+  // display: flex;
+  // flex-direction: column;
+  // flex-wrap: nowrap;
+  // justify-content: center;
+  // align-items: flex-start;
+  // margin: 20px;
+  .order-no {
+    margin-top: $gap;
+    margin-left: $gap;
+    .title {
+      margin-right: 30px;
+    }
+  }
+  .order-time {
+    margin-top: $gap;
+    margin-left: $gap;
+    .title {
+      margin-right: 30px;
+    }
+  }
+  .order-price {
+    margin-top: $gap;
+    margin-left: $gap;
+    .title {
+      margin-right: 30px;
+    }
+  }
+  .order-content {
+    margin-top: $gap;
+    margin-left: $gap;
+    .title {
+      margin-right: 30px;
+    }
+  }
+  .order-status {
+    margin-left: $gap;
+    margin-top: $gap;
+    .title {
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+  }
+  .do {
+    margin: 30px;
+    border-width: 0;
+    background-color: #fe871f;
+    color: white;
+  }
+  .at-modal-content {
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    .manpower-list {
+      display: flex;
+      flex-direction: row;
+      // justify-content: flex-end;
+      flex-wrap: wrap;
+      .manpower-checkbox-wrapper {
+        display: flex;
+        justify-content: flex-start;
+        width: 50%;
+        margin-bottom: 10px;
+        // .manpower-checkbox-label {
+        // }
+      }
+      .curr-at-checkbox {
+        &::after {
+          border-bottom-width: 0px;
+        }
+        &::before {
+          border-top-width: 0px;
+        }
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        .at-checkbox__option {
+          padding-left: 0px;
+          .at-checkbox__option-wrap {
+            &::after {
+              border-top-width: 0px;
+            }
+            padding: 16px 20px 16px 20px;
+          }
+        }
+      }
+    }
+  }
+}

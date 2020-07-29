@@ -1,0 +1,47 @@
+@import '@styles/theme.scss';
+
+.user-work-order {
+  @include wh(100%, 100%);
+  .scroll-view {
+    @include wh(100%, 100%);
+    .work-order-item {
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      margin: 20px;
+      padding: 20px;
+      border: 2px solid #eee;
+      .info-wrapper {
+        .location {
+          margin-bottom: 10px;
+        }
+        .date {
+          margin-bottom: 10px;
+        }
+        .time {
+          margin-bottom: 10px;
+        }
+        .check-in-time {
+          margin-bottom: 10px;
+        }
+        .check-out-time {
+          margin-bottom: 10px;
+        }
+      }
+      .btn-wrapper {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        border-radius: 10px;
+        .card {
+          margin-right: 20px;
+          border: 2px solid #fe871f;
+        }
+        .work {
+          border: 2px solid #fe871f;
+        }
+      }
+    }
+  }
+}
