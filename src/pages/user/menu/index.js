@@ -9,7 +9,7 @@ import './index.scss';
 const MENU_LIST = [
   {key: 'resources', text: '我的资源', img: 'iconresource', path: '/user/pages/user-resource/index', finished: true},
   {key: 'order', text: '我的订单', img: 'iconemaxcitygerenxinxitubiaoji03', path: '/user/pages/user-order/index', finished: true},
-  {key: 'workOrder', text: '我的工单', img: 'icongongdan', path: '/user/pages/user-work-order/index', finished: false},
+  {key: 'workOrder', text: '我的工单', img: 'icongongdan', path: '/user/pages/user-work-order/index', finished: true},
   {key: 'release', text: '我的发布', img: 'iconfabu', path: '/user/pages/user-release/index', finished: true},
   {key: 'transaction', text: '我的交易', img: 'iconjiaoyi', path: '/user/pages/user-transaction/index', finished: true},
 ];

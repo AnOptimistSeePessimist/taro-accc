@@ -33,7 +33,7 @@ import './index.scss';
 class SellManpower extends Component {
   constructor(props) {
     super(props);
-    const date = new Date(); 
+    const date = new Date();
     date.setDate(date.getDate()  + 1);
     const nextDate = formatTimeStampToTime(date);
 
@@ -183,7 +183,7 @@ class SellManpower extends Component {
         manpowerTitle = item.workTypeName;
         checkedWorkType = item;
         currCheckedWorkTypeRecId = item.typeRecId;
-      } 
+      }
     });
 
 
@@ -243,11 +243,11 @@ class SellManpower extends Component {
   // 发布人力
   release = () => {
     const {
-      startDate, 
+      startDate,
       endDate,
-      startTime, 
-      endTimeList, 
-      endTimeIndex, 
+      startTime,
+      endTimeList,
+      endTimeIndex,
       checkedWorkTypeRecId,
       value,
       checkedManpower,
@@ -264,7 +264,7 @@ class SellManpower extends Component {
       rsNum: checkedManpower.length,
       contentType: 1,
       publishBy: id,
-      publishType: 1,  
+      publishType: 1,
       iscancel: 'N'
     };
 
@@ -282,7 +282,7 @@ class SellManpower extends Component {
     })
       .then((res) => {
         const {status, data} = res.data;
-        
+
         Taro.hideLoading();
 
         if (status === 200) {
@@ -392,21 +392,21 @@ class SellManpower extends Component {
                 <AtListItem className='end-item' title='结束日期' extraText={this.state.endDate} />
               </AtList>
             </Picker>
-            <Picker 
-              value={this.state.startTime} 
-              className='work-time' 
-              mode='time' 
+            <Picker
+              value={this.state.startTime}
+              className='work-time'
+              mode='time'
               onChange={this.onStartTimeChange}
             >
               <AtList className='start-list'>
                 <AtListItem className='start' title='开始时间' extraText={this.state.startTime} />
               </AtList>
             </Picker>
-            <Picker 
+            <Picker
               value={this.state.endTimeIndex}
-              range={this.state.endTimeList} 
-              className='out-of-work-time' 
-              mode='selector' 
+              range={this.state.endTimeList}
+              className='out-of-work-time'
+              mode='selector'
               onChange={this.onEndTimeChange}
             >
               <AtList className='end-list'>

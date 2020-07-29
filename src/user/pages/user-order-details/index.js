@@ -1,11 +1,11 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text,Button } from '@tarojs/components'
 import {connect} from '@tarojs/redux'
-import { 
+import {
 	AtTimeline,
 	AtModal,
   AtModalContent,
-	AtModalAction,  
+	AtModalAction,
 } from 'taro-ui'
 import {API_CALLBACK_WX, API_ORDER_ONELIST} from '@constants/api';
 import fetch from '@utils/request';
@@ -19,23 +19,23 @@ export default class UserDetails extends Component {
 	config = {
 		navigationBarTitleText: '订单详情'
 	}
-	
+
 	constructor(props){
 		super(props)
 		this.state = {
 			orderInformation: {},
 			atTimeline: [
 				{title: '订单未完成',  status: 6},
-				{title: '订单未收工',  status: 5}, 
-				{title: '订单未签到',  status: 4}, 
-				{title: '订单未派工',  status: 3}, 
-				{title: '订单未支付',  status: 2}, 
-				{title: '订单未创建',  status: 1}, 
+				{title: '订单未收工',  status: 5},
+				{title: '订单未签到',  status: 4},
+				{title: '订单未派工',  status: 3},
+				{title: '订单未支付',  status: 2},
+				{title: '订单未创建',  status: 1},
 			],
-			isAtModal: false, 
+			isAtModal: false,
 			bottonTitle: '',
 		}
-		
+
 	}
 
 	componentWillPreload (params) {
@@ -50,7 +50,7 @@ export default class UserDetails extends Component {
 			this.statusUpload(data.orderstatusDtoList)
 		})
 	}
-	
+
 	statusUpload = (orderstatusDtoList) => {
 		const {atTimeline, bottonTitle} = this.state
 		console.log('订单', orderstatusDtoList)
@@ -96,7 +96,7 @@ export default class UserDetails extends Component {
 			isAtModal: !this.state.isAtModal
     })
 	}
-	
+
 	orderStatusUpload = (orderRecid) => {
 		const token =  this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
 		fetch({
@@ -116,7 +116,7 @@ export default class UserDetails extends Component {
           duration: 2000
         })
 			}
-			
+
 		})
 	}
 
@@ -141,7 +141,7 @@ export default class UserDetails extends Component {
 					title: '加载中',
 				})
         this.orderStatusUpload(orderRecid)
-  
+
       } else {
         Taro.showToast({
           icon: "none",
@@ -159,7 +159,7 @@ export default class UserDetails extends Component {
 
 	render(){
 		const {orderInformation, orderInformation:{orderNo, orderRecid, createTime, paidSum, orderDetailDto, publishByCompanyName}, atTimeline, bottonTitle} = this.state
-		
+
 		console.log('订单详情', orderInformation, bottonTitle)
 		return(
 			<View className='oneOrder'>
