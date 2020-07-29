@@ -38,3 +38,6 @@ export const API_ORDER_ORDERONE = `${host}/order`; //通过订单编号获取订
 
 //callback
 export const API_CALLBACK_WX = `${host}/callback/wx-pay`; //微信支付
+
+//workorder
+export const API_WORKORDER_LIST = `${host}/workorder/list`; //工单条件查询

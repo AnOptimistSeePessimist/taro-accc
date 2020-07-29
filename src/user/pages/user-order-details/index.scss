@@ -12,10 +12,18 @@
 	&-status {
 		display: flex;
 		flex-direction: row;
+		align-items: center;
+		margin-right: 0;
 		.oneOrder-status-item {
 			margin-right: 40px;	
 		}
 	}
+
+	.at-timeline{
+		width: 300px;
+		padding: 10px;
+	}
+
 	.at-timeline-item__tail{
 		border-left:2px solid #fe871f;
 		left: 19rpx;
@@ -43,6 +51,44 @@
 		&[plain] {
       border-width: 0;
 		}
+	}
+	.submit{
+		margin-right: 0;
+	}
+
+	.btn {
+		width: 50%;
+		height: 50px;
+		font-size: 28px;
+		margin-left: 20px;
+	}
+
+	.work-success {
+		width: 45%;
+		padding: 10px;
+	}
+
+	.work-over {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+	}
+	.work-text {
+		display: flex;
+		flex-direction: row;
+		color: #333;
+		font-size: 28px;
+		line-height: 1.5;
+		margin-left: 40px;
+		min-height: 56px;
+		text-align: left;
+	}
+	.at-time-title {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 	}
 	
 	.btn-wx {
@@ -80,5 +126,14 @@
 		padding: 10px;
 	}
 
-	
+	.WqrCode {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		&-title {
+			margin-bottom: 20px;
+			
+		}
+	}
 }
