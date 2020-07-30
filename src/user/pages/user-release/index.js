@@ -25,8 +25,13 @@ class UserRelease extends Component {
   };
 
   componentDidMount() {
+    Taro.showLoading({
+      icon: 'none',
+      title: '正在查询我的发布'
+    });
     fetch({url: API_RSPUBLISH_LIST, accessToken: this.props.userInfo.userToken.accessToken})
       .then((res) => {
+        Taro.hideLoading();
         console.log('publishList: ', res);
         const {data: {data: {list}, status}} = res;
 
@@ -36,11 +41,20 @@ class UserRelease extends Component {
               publishList: list,
             });
           } else {
-            Taro.navigateBack();
+            Taro.showToast({
+              icon: 'none',
+              title: '暂无发布信息',
+              duration: 2000,
+            });
+            setTimeout(() => {
+              Taro.navigateBack();
+            }, 2000);
           }
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        Taro.hideLoading();
+      });
   }
 
   renderItem = () => {
@@ -48,22 +62,22 @@ class UserRelease extends Component {
     const {publishList} = this.state;
     return publishList.map((publish, key) => {
       const {
-        rspublishDto: 
+        rspublishDto:
           {
-            price, 
-            dateEnd, 
+            price,
+            dateEnd,
             dateStart,
-            iscancel, 
-            timeEnd, 
+            iscancel,
+            timeEnd,
             timeStart,
             rsId,
             workTypeName,
           }
       } = publish;
       return (
-        <View 
-          className='publish-item' 
-          key='a' 
+        <View
+          className='publish-item'
+          key='a'
           style={{'padding-bottom': key === publishList.length - 1 ? Taro.pxTransform(15) : '0px'}}
           onClick={() => {
             this.$preload({
@@ -75,8 +89,8 @@ class UserRelease extends Component {
             });
           }}
         >
-          <View 
-            className='publish-item-wrapper' 
+          <View
+            className='publish-item-wrapper'
             style={{
               'margin-top': key === 0 ? Taro.pxTransform(14) : Taro.pxTransform(7),
               'opacity': iscancel === 'N' ? '1' : '0.5'
@@ -107,20 +121,12 @@ class UserRelease extends Component {
   render() {
     const {publishList} = this.state;
     return (
-      <ScrollView 
+      <ScrollView
         className='user-release'
         scrollY
         style={{height: getWindowHeight()}}
       >
-        
-        {publishList.length === 0 ? 
-          (
-            <View className='loading'>
-          <Text>正在加载中...</Text>
-        </View>
-          ) 
-          : this.renderItem()
-        }
+        {this.renderItem()}
       </ScrollView>
     );
   }
