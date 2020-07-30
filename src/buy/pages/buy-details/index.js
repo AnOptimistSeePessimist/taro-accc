@@ -55,8 +55,6 @@ export default class BuyDetails extends Component {
       dateEnd: '',
       timeNum: 1,
       address: {
-				userName: '张三',
-				phone: '12345678911',
 				userAddress: '上海市浦东国际机场厂区7号仓库'
 			},
       list: [
@@ -143,7 +141,7 @@ export default class BuyDetails extends Component {
     })
 
     const payload = {
-      address: " 张三12345678911上海市浦东国际机场厂区7号仓库",
+      address: "上海市浦东国际机场厂区7号仓库",
       discountSum: 0,
       orderDetailDto: {
         count: value,
@@ -324,7 +322,7 @@ export default class BuyDetails extends Component {
 
   render() {
     const height = getWindowHeight(false);
-    const { dataImg, isOpeneds, textTitle, dollar, dateEnd, dateStart, address: { userName, phone, userAddress } } = this.state;
+    const { dataImg, isOpeneds, textTitle, dollar, dateEnd, dateStart, address: {userAddress } } = this.state;
     const res = Taro.getSystemInfoSync();
     const safety = res.screenHeight - res.safeArea.bottom;
     console.log(dataImg)
@@ -422,8 +420,8 @@ export default class BuyDetails extends Component {
               <View className={`iconfont iconionc-- addressimg`} />
               <View className='pay-address-userName-phone-address'>
                 <View className='pay-address-userName-phone'>
-                  <Text>{userName}</Text>
-                  <Text className='pay-address-phone'>{phone}</Text>
+                  {/* <Text>{userName}</Text>
+                  <Text className='pay-address-phone'>{phone}</Text> */}
                   <Text className='pay-address-address'>{userAddress}</Text>
                 </View>
               </View>
