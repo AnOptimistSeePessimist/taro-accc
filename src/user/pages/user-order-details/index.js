@@ -157,7 +157,7 @@ export default class UserDetails extends Component {
 		const token =  this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
 		const {orderInformation:{orderRecid}} = this.state
 		fetch({
-			url: API_WORK_ORDER_LIST + `?orderRecid = ${orderRecid}`,
+			url: API_WORK_ORDER_LIST + `?orderRecid=${orderRecid}`,
 			accessToken: token
 		})
 		.then((res) => {
