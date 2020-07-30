@@ -306,7 +306,7 @@ export default class BuyDetails extends Component {
       const {data: {status, message}} = res
       console.log('订单编号', this.state.orderNo)
       if(status === 200) {
-        
+
         Taro.navigateTo({url: `/buy/pages/buy-pay-success/index?orderNo=${this.state.orderNo}`})
 
       } else {
@@ -431,7 +431,7 @@ export default class BuyDetails extends Component {
             <Button
               plain={true}
               className="btn"
-              formType='submit' 
+              formType='submit'
               onClick={this.handleBuy}
             >
               付款

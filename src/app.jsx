@@ -97,6 +97,9 @@ class App extends Component {
           'pages/user-transaction/index',
           'pages/user-order/index',
           'pages/user-order-details/index',
+          'pages/user-transaction-details/index',
+          'pages/user-work-order/index',
+          'pages/user-work-order-details/index',
         ],
         independent: false
       },
