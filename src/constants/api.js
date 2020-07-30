@@ -42,8 +42,9 @@ export const API_CALLBACK_WX = `${host}/callback/wx-pay`; //微信支付
 
 
 //workorder
-export const API_WORKORDER_LIST = `${host}/workorder/list`; //工单条件查询
-export const API_WORK_ORDER_LIST = `${host}/workorder/list`; // 我的工单
+export const API_WORK_ORDER_LIST = `${host}/workorder/list`; //工单条件查询
+export const API_WORK_ORDER_MY = `${host}/workorder/my`; // 我的工单
 export const API_WORK_ORDER_DISTRIBUTE = `${host}/workorder/distribute`; // 派工单
 export const API_WORK_ORDER_CHECK_IN = `${host}/workorder/check-in`; // 签到打卡
 export const API_WORK_ORDER_CHECK_OUT = `${host}/workorder/check-out` // 完工打卡
+export const API_WORK_ORDER_RECID = `${host}/workorder`; // 通过工单id查询工单
