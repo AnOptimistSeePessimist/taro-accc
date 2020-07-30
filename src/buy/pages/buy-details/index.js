@@ -37,8 +37,6 @@ function datePoor (dateStart, dateEnd) {
 export default class BuyDetails extends Component {
   constructor(props) {
     super(props);
-    const eventChannel = this.$scope
-    console.log(eventChannel)
     this.state = {
       value: '1',
       isOpeneds: false,

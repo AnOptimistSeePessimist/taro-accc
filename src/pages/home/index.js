@@ -68,7 +68,6 @@ class Home extends Component {
 
   ScrollToLower() { 
     console.log('滚动到底部事件')
-    Taro.showLoading()
     const {dataList, pageMax, pageNum} = this.state
     console.log(dataList)
     if(pageNum === pageMax) {
@@ -86,7 +85,6 @@ class Home extends Component {
       console.log('分页参数',res, pageNum + 1)
       const {data: {data, status}} = res
       if(status === 200) {
-        Taro.hideLoading()
         data.list.map((item) => {
           console.log('分页', item)
           dataList.push(item)
