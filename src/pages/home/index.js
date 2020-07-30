@@ -66,7 +66,7 @@ class Home extends Component {
     });
   }
 
-  ScrollToLower() { 
+  scrollToLower() { 
     console.log('滚动到底部事件')
     const {dataList, pageMax, pageNum} = this.state
     console.log(dataList)
