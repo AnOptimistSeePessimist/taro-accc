@@ -66,7 +66,7 @@ class Home extends Component {
     });
   }
 
-  scrollToLower() { 
+  scrollToLower = () => { 
     console.log('滚动到底部事件')
     const {dataList, pageMax, pageNum} = this.state
     console.log(dataList)
@@ -141,7 +141,7 @@ class Home extends Component {
         onRefresherAbort={(e) => {
           console.log('onAbort', e);
         }}
-        onScrollToLower={this.ScrollToLower}
+        onScrollToLower={this.scrollToLower}
         >
         {/* <View className='panel-title' style={{ backgroundColor: '#F7F7F7', paddingTop: '5px', paddingBottom: '5px' }}>人力信息</View> */}
         <View className='information-title'>
