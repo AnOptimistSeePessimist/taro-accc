@@ -75,7 +75,7 @@ class Profile extends Component {
               />
             </View>
             <View className='info'>
-              <Text className='name'>{userInfo.login ? userInfo.auth.id: '未登录'}</Text>
+              <Text className='name'>{userInfo.login ? (userInfo.userInfoDto && userInfo.userInfoDto.userDetailDto && userInfo.userInfoDto.userDetailDto.nickName) || '' : '未登录'}</Text>
               <Text className='tip'>{userInfo.login ? userInfo.auth.mobilePhone : '点击登录账号'}</Text>
             </View>
           </View>

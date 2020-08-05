@@ -24,8 +24,84 @@ import {API_HRES_LIST, API_COMP_WORK_TYPE, API_RSPUBLISH_SAVE} from '@constants/
 import fetch from '@utils/request';
 import {connect} from '@tarojs/redux';
 import intersectionWith from 'lodash.intersectionwith';
+import groupBy from 'lodash.groupby';
+import take from 'lodash.take';
 
 import './index.scss';
+
+function getDateMonth() {
+  const timestamp = Date.now();
+  const date = (new Array(31).fill(0)).map((_, i) => {
+    const weekTimestamp  = new Date(timestamp + (i + 1) * 24 * 60 * 60 *1000);
+
+    const date = String(weekTimestamp.getFullYear()) + '-' + String(weekTimestamp.getMonth() + 1).padStart(2, '0') + '-' +
+    String(new Date(weekTimestamp).getDate()).padStart(2, '0');
+
+    /* 得到周几后转换 */
+    let week = weekTimestamp.getDay();
+    switch (week) {
+      case 0:
+        week = 7;
+        break
+      case 1:
+        week = 1;
+        break
+      case 2:
+        week = 2;
+        break
+      case 3:
+        week = 3;
+        break
+      case 4:
+        week = 4;
+        break
+      case 5:
+        week = 5;
+        break
+      case 6:
+        week = 6;
+        break
+    }
+
+    return {
+      date,
+      week,
+      // active: false,
+    }
+  });
+
+  return date;
+}
+
+// 0 => 周日 1 => 周一
+function getWeek(weekFlag) {
+  let week;
+  switch (Number(weekFlag)) {
+    case 7:
+      week = '周日'
+      break
+    case 1:
+      week = '周一'
+      break
+    case 2:
+      week = '周二'
+      break
+    case 3:
+      week = '周三'
+      break
+    case 4:
+      week = '周四'
+      break
+    case 5:
+      week = '周五'
+      break
+    case 6:
+      week = '周六'
+      break
+  }
+  return week;
+}
+
 
 @connect(state => ({
   userInfo: state.user.userInfo,
@@ -37,7 +113,12 @@ class SellManpower extends Component {
     date.setDate(date.getDate()  + 1);
     const nextDate = formatTimeStampToTime(date);
 
+    const dateMonth = getDateMonth();
+
     this.state = {
+      dateMonth: dateMonth,
+      selectedWorkDateList: [],
+      isOpenedSelectDateModal: false,
       startDate: nextDate,
       endDate: nextDate,
       startTime: '08:00',
@@ -243,19 +324,46 @@ class SellManpower extends Component {
   // 发布人力
   release = () => {
     const {
-      startDate,
-      endDate,
+      // startDate,
+      // endDate,
       startTime,
       endTimeList,
       endTimeIndex,
       checkedWorkTypeRecId,
       value,
       checkedManpower,
+      selectedWorkDateList,
     } = this.state;
+
+    if (checkedManpower.length === 0) {
+      Taro.showToast({
+        icon: 'none',
+        title: '请选择人力',
+      });
+      return;
+    }
+
+    if (selectedWorkDateList.length === 0) {
+      Taro.showToast({
+        icon: 'none',
+        title: '请选择日期',
+      });
+      return;
+    }
+
+    if (value == 0) {
+      Taro.showToast({
+        icon: 'none',
+        title: '单价不能为零',
+      });
+      return;
+    }
+
     const {userInfo: {auth: {id}, userToken: {accessToken}}} = this.props;
+
     const payload = {
-      dateStart: startDate,
-      dateEnd: endDate,
+      // dateStart: startDate,
+      // dateEnd: endDate,
       timeStart: startTime + ':00',
       timeEnd: endTimeList[endTimeIndex] + ':00',
       worktype: checkedWorkTypeRecId,
@@ -265,7 +373,8 @@ class SellManpower extends Component {
       contentType: 1,
       publishBy: id,
       publishType: 1,
-      iscancel: 'N'
+      iscancel: 'N',
+      workdateList: selectedWorkDateList,
     };
 
     console.log('发布的数据: ', payload);
@@ -304,7 +413,50 @@ class SellManpower extends Component {
       });
   }
 
+  selecteWorkDate = ({name, active}) => {
+    const {selectedWorkDateList} = this.state;
+    const newSelectedWorkDateList = selectedWorkDateList.slice();
+
+    const findValue = newSelectedWorkDateList.findIndex(item => item === name);
+
+    if (findValue === -1) {
+      newSelectedWorkDateList.push(name);
+    } else {
+      newSelectedWorkDateList.splice(findValue, 1);
+    }
+
+    console.log('selectedWorkDateList: ', newSelectedWorkDateList);
+
+    this.setState({
+      selectedWorkDateList: newSelectedWorkDateList,
+    });
+    // const {dateMonth} = this.state;
+    // console.log('dateMonth: ', dateMonth);
+    // console.log('name - active: ', name, active);
+    // const curDateIndex = dateMonth.findIndex((dateItem) => {
+    //   return dateItem.date.toString() == name;
+    // });
+    // const newDateMonth = dateMonth.slice();
+    // newDateMonth[curDateIndex].active = !active;
+
+    // console.log('dateMonth: ', newDateMonth);
+
+    // this.setState({
+    //   dateMonth: newDateMonth
+    // });
+  };
+
+
+  // 显示选择日期界面
+  showDateModal = () => {
+    this.setState({
+      isOpenedSelectDateModal: true,
+    });
+  };
+
   render() {
+    const {dateMonth, selectedWorkDateList} = this.state;
+    const displayActiveDate = selectedWorkDateList.length > 2 ? take(selectedWorkDateList, 2).toString() + '...' : selectedWorkDateList.toString();
     return (
       <View className='sell-manpower'>
         <View className='wrapper'>
@@ -314,7 +466,7 @@ class SellManpower extends Component {
             className='form'
           >
             <View className='category'>
-              <View className='at-article__h3'>工种</View>
+              <View className='at-article__h3 title'>工种</View>
                 <View className='tag-wrapper'>
                   {
                     this.state.workTypeList.filter((item) => {
@@ -347,11 +499,16 @@ class SellManpower extends Component {
                   this.setOpen(true);
                 }}
               >
-                人员 <Text>{this.state.displayCheckedManpower}</Text>
+                <Text className='title'>人员: </Text><Text>{this.state.displayCheckedManpower}</Text>
               </View>
               <AtModal
                 isOpened={this.state.isOpened}
                 closeOnClickOverlay={true}
+                onClose={() => {
+                  this.setState({
+                    isOpened: false,
+                  });
+                }}
               >
                   <AtModalHeader>{this.state.manpowerTitle}</AtModalHeader>
                   <AtModalContent className='at-modal-content'>
@@ -370,7 +527,7 @@ class SellManpower extends Component {
                   </AtModalAction>
               </AtModal>
             </View>
-            <Picker
+            {/* <Picker
               className='start-date'
               mode='date'
               onChange={this.onStartDateChange}
@@ -380,8 +537,8 @@ class SellManpower extends Component {
               <AtList className='start-date-at-list'>
                 <AtListItem className='start-item' title='开始日期' extraText={this.state.startDate} />
               </AtList>
-            </Picker>
-            <Picker
+            </Picker> */}
+            {/* <Picker
               className='end-date'
               mode='date'
               start={this.state.startDate}
@@ -391,7 +548,69 @@ class SellManpower extends Component {
               <AtList className='end-date-at-list'>
                 <AtListItem className='end-item' title='结束日期' extraText={this.state.endDate} />
               </AtList>
-            </Picker>
+            </Picker> */}
+            <View className='date' onClick={this.showDateModal}>
+              <Text className='title'>日期</Text>
+              <Text>
+                {displayActiveDate}
+              </Text>
+            </View>
+            <AtModal
+              isOpened = {this.state.isOpenedSelectDateModal}
+              className="date-modal"
+              onClose={() => {
+                this.setState({
+                  isOpenedSelectDateModal: false,
+                });
+              }}
+            >
+              <AtModalHeader>选择日期{'\n\r'}({dateMonth[0].date} - {dateMonth[dateMonth.length - 1].date})</AtModalHeader>
+              <AtModalContent>
+                <View className='date-container'>
+                  {
+                    Object.entries(groupBy(dateMonth, (item) => {
+                      return item.week;
+                    })).map((day) => {
+                      const [week, dateList] = day;
+                      return (
+                        <View key={week.toString()}>
+                          <View className='week-day'>
+                            {getWeek(week)}
+                          </View>
+                          <View>
+                            {
+                              dateList.map((dateItem) => {
+                                const {date, active} = dateItem;
+                                const findValue = selectedWorkDateList.find(selectedItem => selectedItem === date);
+                                return (
+                                  <AtTag
+                                    className={classnames('tag', (findValue !== undefined) && 'tag-active')}
+                                    type='primary'
+                                    name={date}
+                                    active={findValue !== undefined}
+                                    key={date.toString()}
+                                    onClick={this.selecteWorkDate}
+                                  >
+                                    {date.toString()}
+                                  </AtTag>
+                                );
+                              })
+                            }
+                          </View>
+                        </View>
+                      );
+                    })
+                  }
+                </View>
+              </AtModalContent>
+              <AtModalAction>
+                <Button onClick={() => {
+                  this.setState({
+                    isOpenedSelectDateModal: false,
+                  });
+                }}>确定</Button>
+              </AtModalAction>
+            </AtModal>
             <Picker
               value={this.state.startTime}
               className='work-time'
@@ -414,7 +633,7 @@ class SellManpower extends Component {
               </AtList>
             </Picker>
             <View className='setting-spec'>
-              <Text>单价(每小时)</Text>
+              <Text className='title'>单价(每小时)</Text>
               <AtInputNumber
                 className='at-input-number'
                 min={0}

@@ -2,6 +2,7 @@
 
 .user-release {
   @include wh(100%, 100%);
+  background-color: #eeeeee;
   .loading {
     @include wh(100%, 100%);
     display: flex;
@@ -34,7 +35,7 @@
         .image {
           border-radius: 15px;
           width: 210px;
-          height: 160px;
+          height: 100%;
         }
       }
       .right-information {
@@ -52,6 +53,8 @@
           color: red;
         }
         .data-start-end {
+          padding-top: 10px;
+          padding-bottom: 10px;
           font-size: 32px;
         }
         .time-start-end{

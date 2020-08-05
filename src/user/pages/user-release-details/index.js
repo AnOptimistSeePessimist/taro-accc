@@ -11,13 +11,14 @@ class UserReleaseDetails extends Component {
     this.state = {
       publishDetail: {},
       previousViewFlag: undefined,
-      startDate: '', //
-      endDate: '', //
+      // startDate: '', //
+      // endDate: '', //
+      workDateList: [],
       startTime: '', //
       endTimeList: [],
       endTimeIndex: -1,
       value: '', //
-      displayCheckedManpower: '',
+      displayCheckedManpower: [],
     };
   }
 
@@ -51,7 +52,7 @@ class UserReleaseDetails extends Component {
     const flag = this.$router.preload.flag;
     const publishItem = this.$router.preload.data;
     const publishDetail = flag === 1 ? publishItem.rspublishDto : publishItem;
-    const {dateStart, dateEnd, timeStart, timeEnd, price, workTypeName, rsId} = publishDetail;
+    const {timeStart, timeEnd, price, workTypeName, rsId, workdateList, hresDtoList} = publishDetail;
     const timeStartList = timeStart.split(':');
     const startTime = timeStartList[0] + ':' + timeStartList[1];
     const timeEndList = timeEnd.split(':');
@@ -61,14 +62,15 @@ class UserReleaseDetails extends Component {
     this.setState({
       publishDetail,
       previousViewFlag: this.$router.preload.flag,
-      startDate: dateStart,
-      endDate: dateEnd,
+      workDateList: workdateList,
+      // startDate: dateStart,
+      // endDate: dateEnd,
       startTime,
       endTimeList,
       endTimeIndex: endTimeList.findIndex(item => item === endTime),
       value: price,
       category: workTypeName,
-      displayCheckedManpower: rsId,
+      displayCheckedManpower: hresDtoList.map(hresDtoItem => hresDtoItem.name),
     });
   }
 
@@ -86,21 +88,16 @@ class UserReleaseDetails extends Component {
 
   render() {
     const {safeArea = {}, statusBarHeight} = Taro.getSystemInfoSync();
-    console.log('Taro.getSystemInfoSync(): ', Taro.getSystemInfoSync().statusBarHeight);
-    const navStyle = {
-      'width': '100%',
-      'background-color': '#fe871f',
-      // Taro.pxTransform(
-      'height':  statusBarHeight + 'px',
-    };
     return (
       <View className='user-release-details'>
-        <View style={navStyle} />
         <AtNavBar
           className="nav-bar"
           leftIconType="chevron-left"
-          // onClickRgIconSt={() => {}}
-          // onClickRgIconNd={() => {}}
+          customStyle={{
+            'padding-top': statusBarHeight + 'px'
+          }}
+          fixed
+          color='white'
           onClickLeftIcon={() => {
             if (this.state.previousViewFlag === 1) {
               Taro.navigateBack();
@@ -110,27 +107,22 @@ class UserReleaseDetails extends Component {
               });
             }
           }}
-          color='white'
-          // title='NavBar 导航栏示例'
-          // leftText='返回'
-          // rightFirstIconType='bullet-list'
-          // rightSecondIconType='user'
         >
           <Text className='nav-bar-title'>发布详情</Text>
         </AtNavBar>
-        <View className='form-wrapper'>
+        <View className='form-wrapper' style={{marginTop: statusBarHeight + 50 + 'px'}}>
           <View className='category'>
             <View className='at-article__h3'>工种</View>
             <View className='tag-wrapper'>{this.state.category}</View>
           </View>
           <View className='manpower'>
-              <View
-                className='manpower-label'
-              >
-                人员: <Text>{this.state.displayCheckedManpower}</Text>
-              </View>
+            <View
+              className='manpower-label'
+            >
+              人员: <Text>{this.state.displayCheckedManpower.join('、')}</Text>
             </View>
-          <Picker
+          </View>
+          {/* <Picker
             className='start-date'
             mode='date'
             onChange={this.onStartDateChange}
@@ -138,10 +130,26 @@ class UserReleaseDetails extends Component {
             start={formatTimeStampToTime(Date.now())}
           >
             <AtList className='start-date-at-list'>
-              <AtListItem className='start-item' title='开始日期' extraText={this.state.startDate} />
+              <AtListItem className='start-item' title='日期' extraText={this.state.workDateList} />
             </AtList>
-          </Picker>
-          <Picker
+          </Picker> */}
+          <View className='work-date-list'>
+            <View>
+              <Text>日期</Text>
+            </View>
+            <View>
+              {
+                this.state.workDateList.map((workDate) => {
+                  return (
+                    <View key={workDate.toString()}>
+                      {workDate}
+                    </View>
+                  );
+                })
+              }
+            </View>
+          </View>
+          {/* <Picker
             className='end-date'
             mode='date'
             start={this.state.startDate}
@@ -151,7 +159,7 @@ class UserReleaseDetails extends Component {
             <AtList className='end-date-at-list'>
               <AtListItem className='end-item' title='结束日期' extraText={this.state.endDate} />
             </AtList>
-          </Picker>
+          </Picker> */}
           <Picker
             value={this.state.startTime}
             className='work-time'

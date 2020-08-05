@@ -24,7 +24,6 @@ import {
 import fetch from '@utils/request';
 import {
   API_COMPANY_ALL,
-  API_USER_BIND_COMPANY_ROLE,
   API_PASSAREA_ALL,
   API_USER_USERDETAIL,
   API_CARGOSTATION_LIST
@@ -36,6 +35,8 @@ import {
 } from '@actions/compWorkType';
 import {dispatchLogin} from '@actions/user';
 import cloneDeep from 'lodash.clonedeep';
+import intersectionWith from 'lodash.intersectionwith';
+import differenceWith from 'lodash.differencewith';
 
 import './index.scss';
 
@@ -61,12 +62,11 @@ class UserInfomation extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      companyList: [],
-      checkedCompany: '',
-      checkedCompanyId: 0,
-      isOpened: false,
-      compWorkTypes: [],
-      checkedItem: {},
+      companyList: [], // 公司列表
+      checkedCompany: '', // 选中的公司名
+      checkedCompanyId: -1, // 选中的公司索引
+      isOpened: false, // 是否打开职位选择modal
+      compWorkTypes: [], // 职位列表(包括了是否选中的标志)
       passarea: [], // 通行证列表
       passareaList: [], // 通行证适用区域列表
       displayCheckedPassareaList: cloneDeep(props.userInfo.stationArea), // 显示在界面上的通行证适用区域
@@ -77,10 +77,10 @@ class UserInfomation extends Component {
       name: '', // 姓名
       nickName: '', // 昵称
       sexName: '', // 性别
-      sexId: 0, // 性别 ID
+      sexId: -1, // 性别 ID
       idCard: '', // 身份证号
-      isBound: false, // 是否已绑定工种
-      disabled: true, // 是否禁用保存按钮
+      // isBound: false, // 是否已绑定工种
+      // disabled: true, // 是否禁用保存按钮
       isOpenedPassarea: false, // 是否显示通行证选择列表
     };
   }
@@ -97,12 +97,12 @@ class UserInfomation extends Component {
 
   fetchPassareaList = () => {
     fetch({
-      url: API_CARGOSTATION_LIST, 
+      url: API_CARGOSTATION_LIST,
       accessToken: (this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken) || accessToken})
       .then((res) => {
         const {data: passareaList, statusCode} = res;
         console.log('区域位置: ', res);
-    
+
         if (statusCode === 200) {
           const newPassareaList = passareaList.map(station => {
             const {passareaDtoList: areas} = station;
@@ -114,10 +114,10 @@ class UserInfomation extends Component {
             return station;
           });
           console.log('newPassareaList: ', newPassareaList);
-  
+
           this.setState({
             passareaList: newPassareaList,
-          }); 
+          });
         }
       })
       .catch(() => {});
@@ -193,7 +193,7 @@ class UserInfomation extends Component {
   config = {
     navigationBarTitleText: '个人信息'
   }
-  
+
   // 选择所属公司
   onChangeCompany = e => {
     const companyName = this.state.companyList[e.detail.value].companyName;
@@ -219,25 +219,28 @@ class UserInfomation extends Component {
       } catch (e) {
 
       }
-      // console.log('workTypeList: ', workTypeList);
       const {userInfo} = this.props;
 
-      const workTypeRecId =  userInfo.hresDto && userInfo.hresDto.worktypeRecid; 
-      console.log('workTypeRecId: ', workTypeRecId);
+      const workTypeRecId =  userInfo.hresDto && userInfo.hresDto.worktypeRecid;
+      console.log('用户默认的工种: ', workTypeRecId);
 
       if (workTypeRecId != null) {
-        const checkedItemIndex = workTypeList.findIndex((item) => {
-          return item.typeRecId === workTypeRecId;
+        const workTypeRecIdList = [workTypeRecId];
+
+        const comparator = function (arrVal, othVal) {return arrVal.typeRecId === othVal};
+
+        const differenceWorkType = differenceWith(workTypeList, workTypeRecIdList, comparator);
+        console.log('differenceWorkType: ', differenceWorkType);
+        const intersectionWorkType = intersectionWith(workTypeList, workTypeRecIdList, comparator);
+        console.log('intersectionWorkType: ', intersectionWorkType);
+
+        const intersectionWorkTypewithCheck = intersectionWorkType.map(workTypeItem => {
+          workTypeItem.checked = true;
+          return workTypeItem;
         });
-        
-        const checkedItem = workTypeList[checkedItemIndex];
-        checkedItem.checked = true;
-        console.log('checkedItem: ', checkedItem);
+
         this.setState({
-          compWorkTypes: workTypeList,
-          checkedItem,
-          isBound: true,
-          disabled: false,
+          compWorkTypes: [...intersectionWorkTypewithCheck, ...differenceWorkType],
         });
       } else {
         this.setState({compWorkTypes: workTypeList});
@@ -259,9 +262,9 @@ class UserInfomation extends Component {
 
   //       const {userInfo} = this.props;
 
-  //       const passareaRecId =  userInfo.hresDto && userInfo.hresDto.passareaRecid; 
+  //       const passareaRecId =  userInfo.hresDto && userInfo.hresDto.passareaRecid;
   //       console.log('passareaRecId: ', passareaRecId);
-  
+
   //       if (passareaRecId != null) {
   //         const checkedPassareaId = data.findIndex((item) => {
   //           return item.recId === passareaRecId;
@@ -290,16 +293,45 @@ class UserInfomation extends Component {
 
   save = () => {
     const {
-      idCard, 
-      name, 
-      checkedCompanyId, 
-      companyList, 
-      sexId, 
-      passarea, 
+      idCard,
+      name,
+      checkedCompanyId,
+      companyList,
+      sexId,
+      passarea,
       checkedPassareaId,
       passareaList,
       nickName,
+      compWorkTypes,
     } = this.state;
+
+    console.log('选中的公司: ', companyList[checkedCompanyId]);
+
+    if (companyList[checkedCompanyId] == null) {
+      Taro.showToast({
+        icon: 'none',
+        title: '请选择所属公司',
+      });
+      return;
+    }
+
+    const filterCompWorkTypes = compWorkTypes.filter(item => item.checked === true);
+
+    if (filterCompWorkTypes.length === 0) {
+      Taro.showToast({
+        icon: 'none',
+        title: '请选择职位',
+      });
+      return;
+    }
+
+    if (name === '') {
+      Taro.showToast({
+        icon: 'none',
+        title: '请输入真实姓名'
+      });
+      return;
+    }
 
     const hresareaDtoList = [];
 
@@ -309,7 +341,7 @@ class UserInfomation extends Component {
         passareaDtoList.forEach(area => {
           if (area.checked) {
             hresareaDtoList.push({
-              areaCode: area.areaCode, // 区域代码 
+              areaCode: area.areaCode, // 区域代码
               stationcode: station.stationcode, // 货站
               usrRecId: this.props.userInfo.auth.id // 用户id
             });
@@ -330,14 +362,14 @@ class UserInfomation extends Component {
         idcard: idCard, // 身份证号
         // isverify: "N", // 是否已审核
         name,
-        sex: sexList[sexId].code, // 性别
+        sex: sexList[sexId] && sexList[sexId].code, // 性别
         status: 1, // 在职状态
         usrRecId: this.props.userInfo.auth.id, // 用户ID
-        worktypeRecid: this.state.checkedItem.typeRecId // 工种ID
+        worktypeRecid: compWorkTypes.filter(item => item.checked === true).map(item => item.typeRecId)[0] // 工种ID
       },
       userDetailDto: {
         identityCard: idCard,
-        nickName: nickName,
+        nickName: nickName || name,
         phoneno: this.props.userInfo.auth.mobilePhone,
         usrDetailRecId: usrDetailRecId,
         // "usrIcon": "string",
@@ -345,7 +377,7 @@ class UserInfomation extends Component {
       }
     };
 
-    console.log('payload: ', payload);
+    console.log('保存用户信息的数据: ', JSON.stringify(payload));
 
     Taro.showLoading({
       title: '保存用户信息中',
@@ -360,70 +392,38 @@ class UserInfomation extends Component {
       .then((res) => {
         Taro.hideLoading();
         console.log('保存用户基本信息: ', res);
-        this.props.dispatch(dispatchLogin(res.data.data));
-        Taro.navigateBack({
-          delta: 2,
-        });
-      })
-      .catch(() => {
-        Taro.hideLoading();
-      });
-  };
+        const {data: {status, message, code}} = res;
 
-  bindCompanyRole = () => {
-    const companyId = this.state.companyList[this.state.checkedCompanyId].companyId;
-    const roleId = this.state.checkedItem.roleId;
-    console.log('companyId - roleId: ', companyId, roleId);
-    console.log('token: ', this.props.userInfo.userToken.accessToken);
-    Taro.showLoading({
-      title: '正在绑定工种中',
-    });
-    fetch({
-      url: API_USER_BIND_COMPANY_ROLE + `?companyId=${companyId}&roleId=${roleId}`,
-      method: 'POST',
-      accessToken:  (this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken) || accessToken
-    })
-      .then((res) => {
-        Taro.hideLoading();
-        this.setState({
-          isBound: true,
-          disabled: false,
-        });
-        console.log('绑定公司和工种: ', res);
-      })
-      .catch(() => {
-        this.setState({
-          isBound: false,
-          disabled: true,
-        });
-      });
-  };
-
-  handleClickWorkType = (typeRecId) => {
-    const {compWorkTypes} = this.state;
-    const newCompWorkType = compWorkTypes.slice();
-    let checkedItem = {};
-    newCompWorkType.forEach((item) => {
-      if (item.typeRecId === typeRecId) {
-        item.checked = true;
-        if (item.checked === true) {
-          checkedItem = item;
+        if (status === 200) {
+          this.props.dispatch(dispatchLogin(res.data.data));
+          Taro.navigateBack({
+            delta: 2,
+          });
         } else {
-          checkedItem = {};
+          Taro.showToast({
+            icon: 'none',
+            title: `${message}`,
+          });
         }
-      } else {
-        item.checked = false;
-        // if (typeRecId === '') {
-        //   checkedItem = {};
-        // }
-      }
-      this.setState({
-        compWorkTypes: newCompWorkType,
-        checkedItem
-      }, () => {
-        this.setState({isOpened: false});
-        this.bindCompanyRole();
+      })
+      .catch(() => {
+        Taro.hideLoading();
       });
+  };
+
+  // 选择工种, 工种可多选。
+  handleClickWorkType = (typeRecId) => {
+    const newCompWorkType = [...this.state.compWorkTypes];
+
+    const findIdx = newCompWorkType.findIndex(item => item.typeRecId === typeRecId);
+    const findItem = newCompWorkType[findIdx];
+
+    newCompWorkType[findIdx] = {...findItem, checked: !findItem.checked};
+
+    console.log('newCompWorkType: ', newCompWorkType);
+
+    this.setState({
+      compWorkTypes: newCompWorkType,
     });
   };
 
@@ -524,14 +524,14 @@ class UserInfomation extends Component {
 
                 return (
                   <View className='area-item' key={recId}>
-                    <CheckboxGroup 
-                      data-station-id={stationItem.recid}  
-                      data-area-id={recId} 
+                    <CheckboxGroup
+                      data-station-id={stationItem.recid}
+                      data-area-id={recId}
                       onChange={this.handlePassareaChange}
                     >
-                      <Checkbox 
-                        className='area-checkbox' 
-                        value="还未给" 
+                      <Checkbox
+                        className='area-checkbox'
+                        value="还未给"
                         checked={checked}
                       >
                         {areaCode}
@@ -548,10 +548,9 @@ class UserInfomation extends Component {
   };
 
   render() {
+    const {compWorkTypes} = this.state;
     const systemInfo = Taro.getSystemInfoSync();
     const paddingBottom = systemInfo.safeArea == undefined ? 0 : systemInfo.screenHeight - systemInfo.safeArea.bottom;
-
-    console.log('stationcode: ', this.props.userInfo.stationArea);
 
     return (
       <View className='user-information'>
@@ -578,8 +577,18 @@ class UserInfomation extends Component {
                 type='text'
                 editable={false}
                 border={false}
-                value={this.state.checkedItem.workTypeName}
+                value={compWorkTypes.filter(item => item.checked === true).map(item => item.workTypeName).join('、')}
                 onClick={() => {
+                  console.log('onClick - 公司工种信息: ', this.props.compWorkType);
+
+                  if (this.state.checkedCompany === '') {
+                    Taro.showToast({
+                      icon: 'none',
+                      title: '请先选择所属公司',
+                    });
+                    return;
+                  }
+
                   if (this.props.compWorkType.length === 0) {
                     Taro.showToast({
                       title: '该公司无任何工种信息',
@@ -592,7 +601,15 @@ class UserInfomation extends Component {
                   });
                 }}
               />
-              <AtModal isOpened={this.state.isOpened} closeOnClickOverlay={true}>
+              <AtModal
+                isOpened={this.state.isOpened}
+                closeOnClickOverlay={true}
+                onClose={() => {
+                  this.setState({
+                    isOpened: false,
+                  });
+                }}
+                >
                 <AtModalHeader>请选择工种</AtModalHeader>
                 <AtModalContent>
                   <View className='tag-wrapper'>
@@ -613,146 +630,141 @@ class UserInfomation extends Component {
                     }
                   </View>
                 </AtModalContent>
-                {/* <AtModalAction>
-                  <Button onClick={() => {
+                <AtModalAction>
+                  {/* <Button onClick={() => {
                     this.setState({isOpened: false});
                     // this.handleClickWorkType('');
                   }}
                   >
                     取消
-                  </Button>
+                  </Button>*/}
                   <Button onClick={() => {
                     this.setState({isOpened: false});
-                    this.bindCompanyRole();
                   }}
                   >
-                    保存
-                  </Button> 
-                </AtModalAction>*/}
+                    确定
+                  </Button>
+                </AtModalAction>
               </AtModal>
             </View>
           </AtForm>
-          {
-            this.state.isBound && (
-              <View>
-                <AtForm className='form'>
-                  <AtInput
-                    className='margin-to-padding username'
-                    title='真实姓名'
-                    type='text'
-                    border={false}
-                    placeholder='姓名'
-                    value={this.state.name}
-                    onChange={(name) => {
-                      this.setState({
-                        name
-                      });
-                    }}
+          <View>
+            <AtForm className='form'>
+              <AtInput
+                className='margin-to-padding username'
+                title='真实姓名'
+                type='text'
+                border={false}
+                placeholder='姓名'
+                value={this.state.name}
+                onChange={(name) => {
+                  this.setState({
+                    name
+                  });
+                }}
+              />
+              <AtInput
+                className='margin-to-padding nickname'
+                title='昵称'
+                type='text'
+                border={false}
+                placeholder='昵称'
+                value={this.state.nickName}
+                onChange={(nickName) => {
+                  this.setState({
+                    nickName
+                  });
+                }}
+              />
+              <AtInput
+                className='margin-to-padding id'
+                title='身份证号'
+                type='text'
+                placeholder='身份证号'
+                value={this.state.idCard}
+                onChange={(idCard) => {
+                  this.setState({
+                    idCard,
+                  });
+                }}
+              />
+              <Picker
+                mode='selector'
+                range={sexList}
+                rangeKey='name'
+                onChange={this.onChangeSex}
+                value={this.state.sexId}
+              >
+                <AtList className='at-list-sex'>
+                  <AtListItem
+                    className='at-list-sex-item'
+                    title='性别'
+                    extraText={this.state.sexName}
                   />
-                  <AtInput
-                    className='margin-to-padding nickname'
-                    title='昵称'
-                    type='text'
-                    border={false}
-                    placeholder='昵称'
-                    value={this.state.nickName}
-                    onChange={(nickName) => {
-                      this.setState({
-                        nickName
-                      });
-                    }}
-                  />
-                  <AtInput
-                    className='margin-to-padding id'
-                    title='身份证号'
-                    type='text'
-                    placeholder='身份证号'
-                    value={this.state.idCard}
-                    onChange={(idCard) => {
-                      this.setState({
-                        idCard,
-                      });
-                    }}
-                  />
-                  <Picker
-                    mode='selector'
-                    range={sexList}
-                    rangeKey='name'
-                    onChange={this.onChangeSex}
-                    value={this.state.sexId}
-                  >
-                    <AtList className='at-list-sex'>
-                      <AtListItem
-                        className='at-list-sex-item'
-                        title='性别'
-                        extraText={this.state.sexName}
-                      />
-                    </AtList>
-                  </Picker>
-                  {/* <Picker
-                    mode='selector'
-                    range={this.state.passarea}
-                    rangeKey='areaName'
-                    onChange={this.onChangePassarea}
-                    value={this.state.checkedPassareaId}
-                  >
-                  <AtList className='at-list-passarea'>
-                    <AtListItem
-                      className='at-list-passarea-item'
-                      title='通行证适用区域'
-                      extraText={this.state.checkedPassarea}
-                    />
-                  </AtList>
-                </Picker> */}
-                <View 
-                  className='passarea'
-                  onClick={() => {
-                    this.setState({
-                      isOpenedPassarea: true,
+                </AtList>
+              </Picker>
+              {/* <Picker
+                mode='selector'
+                range={this.state.passarea}
+                rangeKey='areaName'
+                onChange={this.onChangePassarea}
+                value={this.state.checkedPassareaId}
+              >
+              <AtList className='at-list-passarea'>
+                <AtListItem
+                  className='at-list-passarea-item'
+                  title='通行证适用区域'
+                  extraText={this.state.checkedPassarea}
+                />
+              </AtList>
+            </Picker> */}
+            <View
+              className='passarea'
+              onClick={() => {
+                this.setState({
+                  isOpenedPassarea: true,
+                });
+              }}
+            >
+              <Text className='passarea-title'>通行证{'\n'}适用区域</Text>
+              <View className='passarea-value'>
+                {
+                  this.state.passareaList.length !== 0 && Object.keys(this.state.displayCheckedPassareaList).map(passarea => {
+                    let desc = '';
+                    this.state.passareaList.forEach((passareaItem) => {
+                      if (passarea === passareaItem.stationcode) {
+                        desc = passareaItem.stationdsc;
+                      }
                     });
-                  }}
-                >
-                  <Text className='passarea-title'>通行证{'\n'}适用区域</Text>
-                  <View className='passarea-value'>
-                    {
-                      this.state.passareaList.length !== 0 && Object.keys(this.state.displayCheckedPassareaList).map(passarea => {
-                        let desc = '';
-                        this.state.passareaList.forEach((passareaItem) => {
-                          if (passarea === passareaItem.stationcode) {
-                            desc = passareaItem.stationdsc;
-                          }
-                        });
-                      return (
-                        <View key={passarea}>
-                          {desc + '...'}
-                        </View>
-                      );
-                    })}
-                  </View>
-                </View>
-                <AtFloatLayout
-                  className='at-float-layout-container'
-                  scrollY={true}
-                  isOpened={this.state.isOpenedPassarea} 
-                  title="选择通行证适用区域" 
-                  onClose={this.handleClosePassarea}
-                >
-                  <ScrollView
-                    enableFlex={true}
-                    style={{'padding-bottom': Taro.pxTransform(paddingBottom)}} 
-                    className='passarea-wrapper'
-                  > 
-                    {this.renderPassarea()}
-                  </ScrollView>
-                </AtFloatLayout>
-                </AtForm>
+                  return (
+                    <View key={passarea}>
+                      {desc + '...'}
+                    </View>
+                  );
+                })}
               </View>
-            )
-          }
-          <Button 
-            className='button' 
+            </View>
+            <AtFloatLayout
+              className='at-float-layout-container'
+              scrollY={true}
+              isOpened={this.state.isOpenedPassarea}
+              title="选择通行证适用区域"
+              onClose={this.handleClosePassarea}
+            >
+              <ScrollView
+                enableFlex={true}
+                style={{'padding-bottom': Taro.pxTransform(paddingBottom)}}
+                className='passarea-wrapper'
+              >
+                {this.renderPassarea()}
+              </ScrollView>
+            </AtFloatLayout>
+            </AtForm>
+          </View>
+          <Button
+            className='button'
             onClick={this.save}
-            disabled={this.state.disabled}
+            disabled={false}
           >
             保存
           </Button>

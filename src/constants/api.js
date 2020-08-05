@@ -5,7 +5,7 @@ export const API_USER_LOGIN = `${host}/login`; // 登录
 export const API_USER_LOGOUT = `${host}/doLogout`; // 登出
 export const API_USER_CODE = `${host}/anon/sendCode`; // 获取验证码
 export const API_USER_REGISTER = `${host}/register`; // 注册
-export const API_USER_BIND_COMPANY_ROLE = `${host}/user/bind-company-role`; // 绑定公司
+// export const API_USER_BIND_COMPANY_ROLE = `${host}/user/bind-company-role`; // 绑定公司
 export const API_USER_USERDETAIL = `${host}/user/userdetail`; // 保存用户信息
 
 // company
