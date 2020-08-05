@@ -1,5 +1,5 @@
 import Taro, {Component} from '@tarojs/taro';
-import {View, Text, ScrollView, Button} from '@tarojs/components';
+import {View, Text, ScrollView, Button, Input} from '@tarojs/components';
 import fetch from '@utils/request';
 import {
   API_WORK_ORDER_LIST,
@@ -9,7 +9,7 @@ import {
   API_WORK_ORDER_RECID
 } from '@constants/api';
 import {connect} from '@tarojs/redux';
-import {AtButton} from 'taro-ui';
+import {AtButton, AtModal, AtModalHeader, AtModalContent, AtModalAction} from 'taro-ui';
 
 import './index.scss';
 import { getWindowHeight } from '@utils/style';
@@ -21,7 +21,13 @@ class UserWorkOrder extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      workOrderList: [],
+      workOrderList: [], // 工单列表
+      isOpenedCheckInModal: false, // 是否打开签到模态
+      isFocusCheckInInput: false, // 签到输入框是否获取焦点
+      isOpenedCheckOutModal: false, // 是否打开收工模态
+      curWorkOrder: {}, // 当前正在操作的工单
+      checkInCode: '', // 签到码
+      checkOutCode: '', // 手工码
     };
   }
 
@@ -92,37 +98,28 @@ class UserWorkOrder extends Component {
   // http://172.21.118.79:8090/accc-openapi/workorder/list?staffId=148
 
 
-  checkIn = (workOrder) => {
-    const {workRecid, staffId} = workOrder;
-    // this.checkInRequest(`${workRecid}/${staffId}/3/123`, workOrder);
+  checkIn = () => {
     Taro.scanCode({
       onlyFromCamera: true,
       scanType: 'qrCode',
       success: (res) => {
-        console.log('checkIn - 扫描到的内容: ', res);
-        this.checkInRequest(res.result, workOrder);
+        this.setState({
+          checkInCode: res.result,
+        }, () => {
+          this.checkInRequest(res.result);
+        });
       }
     });
   };
 
-  // 3 => 签到
-  checkInRequest = (qrCodeData, workOrder) => {
+  checkInRequest = (qrCodeData) => {
     console.log('checkInRequest - qrCodeData: ', qrCodeData);
-    const codeList = qrCodeData.split('/');
-    const workRecId = codeList[0];
-    const staffId = codeList[1];
-    const operationType = codeList[2];
-    const random = codeList[3];
-    const {workRecid, orderDto: {address}} = workOrder;
-    console.log('workRecId/staffId/operationType/random: ', `${workRecId}/${staffId}/${operationType}/${random}`);
-    console.log('workOrder:', workOrder);
+    const {checkInCode, curWorkOrder: {checkInCode: workOrderCheckInCode, workRecid, orderDto: {address}}} = this.state;
+    const newestCheckInCode = qrCodeData || checkInCode;
+    const {userInfo: {userToken: {accessToken}}} = this.props;
 
-    const {userInfo: {userToken: {accessToken}, auth: {id: userId}}} = this.props;
-
-    console.log('二维码上的workRecId/当前工单的workRecid: ', `${workRecId}/${workRecid}`);
-      console.log('二维码上的staffId/当前用户的staffId', `${staffId}/${userId}`);
-    // 比较 staffId 和 workRecid
-    if (workRecId == workRecid && userId == staffId && operationType == 3) {
+    // workOrderCheckInCode 暂时还没有
+    if (newestCheckInCode === workOrderCheckInCode) {
       Taro.showLoading({
         icon: 'none',
         title: '正在签到中',
@@ -144,6 +141,11 @@ class UserWorkOrder extends Component {
           console.log('checkInRequest: ', res);
           const {data: {status}} = res;
           if (status === 200) {
+            this.setState({
+              isOpenedCheckInModal: false,
+              isFocusCheckInInput: false,
+              checkInCode: '',
+            });
             this.fetchEditWorkOrder(workRecid);
           }
         })
@@ -153,96 +155,92 @@ class UserWorkOrder extends Component {
     } else {
         Taro.showToast({
           icon: 'none',
-          title: '请出示正确的签到二维码',
+          title: '请输入正确的签到码',
           duration: 2000,
         });
     }
   };
 
-  checkOut = (workOrder) => {
-    const {orderRecid, checkInBy, workRecid, staffId} = workOrder;
-    if (!checkInBy) {
-      Taro.showToast({
-        icon: 'none',
-        title: '请先签到',
-      });
-      return;
-    }
-    // this.checkOutRequest(`${workRecid}/${staffId}/4/456`, workOrder);
+  checkOut = () => {
     Taro.scanCode({
       onlyFromCamera: true,
       scanType: 'qrCode',
       success: (res) => {
-        console.log('checkOut - 扫描到的内容: ', res);
-        this.checkOutRequest(res.result, workOrder);
+        this.setState({
+          checkOutCode: res.result,
+        }, () => {
+          this.checkOutRequest(res.result);
+        });
       }
     });
   };
 
-  // 4 => 收工
-  checkOutRequest = (qrCodeData, workOrder) => {
+  checkOutRequest = (qrCodeData) => {
     console.log('checkOutRequest - qrCodeData: ', qrCodeData);
-    const codeList = qrCodeData.split('/');
-    const workRecId = codeList[0];
-    const staffId = codeList[1];
-    const operationType = codeList[2];
-    const random = codeList[3];
-    const {workRecid, orderDto: {address}} = workOrder;
-    console.log('workRecId/staffId/operationType/random: ', `${workRecId}/${staffId}/${operationType}/${random}`);
-    console.log('workOrder:', workOrder);
+    const {checkOutCode, curWorkOrder: {checkOutCode: workOrderCheckOutCode, workRecid, orderDto: {address}}} = this.state;
+    const newestCheckOutCode = qrCodeData || checkOutCode;
 
     const {userInfo: {userToken: {accessToken}, auth: {id: userId}}} = this.props;
 
-    console.log('二维码上的workRecId/当前工单的workRecid: ', `${workRecId}/${workRecid}`);
-    console.log('二维码上的staffId/当前用户的staffId', `${staffId}/${userId}`);
-
-      // 比较 staffId 和 workRecid
-      if (workRecId == workRecid && userId == staffId && operationType == 4) {
-        Taro.showLoading({
-          icon: 'none',
-          title: '正在收工中',
-          mask: true,
-        });
-        fetch({
-          url: API_WORK_ORDER_CHECK_OUT,
-          accessToken: accessToken,
-          method: 'POST',
-          payload: {
-            checkOutArea: address,
-            checkOutBy: userId,
-            checkOutType: 1,
-            staffId: userId,
-            workRecid: workRecid,
+    if (newestCheckOutCode === workOrderCheckOutCode) {
+      Taro.showLoading({
+        icon: 'none',
+        title: '正在收工中',
+        mask: true,
+      });
+      fetch({
+        url: API_WORK_ORDER_CHECK_OUT,
+        accessToken: accessToken,
+        method: 'POST',
+        payload: {
+          checkOutArea: address,
+          checkOutBy: userId,
+          checkOutType: 1,
+          staffId: userId,
+          workRecid: workRecid,
+        }
+      })
+        .then((res) => {
+          console.log('checkOutRequest: ', res);
+          const {data: {status}} = res;
+          if (status === 200) {
+            this.setState({
+              isOpenedCheckOutModal: false,
+              isFocusCheckOutInput: false,
+              checkOutCode: '',
+            });
+            this.fetchEditWorkOrder(workRecid);
           }
         })
-          .then((res) => {
-            console.log('checkInRequest: ', res);
-            const {data: {status}} = res;
-            if (status === 200) {
-              this.fetchEditWorkOrder(workRecid);
-            }
-          })
-          .catch(() => {
-            Taro.hideLoading();
-          });
-      } else {
-          Taro.showToast({
-            icon: 'none',
-            title: '请出示正确的收工二维码',
-            duration: 2000,
-          });
-      }
-
-
+        .catch(() => {
+          Taro.hideLoading();
+        });
+    } else {
+        Taro.showToast({
+          icon: 'none',
+          title: '请输入正确的收工码',
+          duration: 2000,
+        });
+    }
   };
 
   renderWorkOrder = () => {
     const {workOrderList} = this.state;
     console.log('workOrderList: ', workOrderList);
     return workOrderList.map((workOrderItem) => {
-      const {orderRecid, workDate, checkInBy, checkInTime, checkOutBy, checkOutTime, orderDto: {address, orderDetailDto: {dateEnd, dateStart, timeEnd, timeStart}}} = workOrderItem;
+      const {
+        workRecid,
+        orderRecid,
+        workDate,
+        checkInBy,
+        checkInTime,
+        checkOutBy,
+        checkOutTime,
+        orderDto: {
+          address,
+          orderDetailDto: {dateEnd, dateStart, timeEnd, timeStart}}} = workOrderItem;
       return (
-        <View className='work-order-item' key={orderRecid.toString()}>
+        <View className='work-order-item' key={workRecid.toString() + orderRecid.toString()}>
           <View className='info-wrapper'>
             <View className='location'>
               工作地点:  <Text>{address}</Text>
@@ -272,20 +270,58 @@ class UserWorkOrder extends Component {
             !(checkInTime && checkOutTime) && (
               <View className='btn-wrapper'>
                 {
-                  !checkInTime && <AtButton className='card' onClick={() => this.checkIn(workOrderItem)}>签到</AtButton>
+                  !checkInTime && (
+                    <AtButton
+                      className='card'
+                      onClick={() => {
+                        this.setState({
+                          isOpenedCheckInModal: true,
+                          curWorkOrder: workOrderItem,
+                        }, () => {
+                          this.setState({
+                            isFocusCheckInInput: true,
+                          })
+                        });
+                      }}
+                    >
+                      签到
+                    </AtButton>
+                  )
                 }
                 {
-                  !checkOutTime && <AtButton className='work' onClick={() => this.checkOut(workOrderItem)}>收工</AtButton>
+                  !checkOutTime && (
+                    <AtButton
+                      className='work'
+                      onClick={() => {
+                        const {checkInBy} = workOrderItem;
+                        if (!checkInBy) {
+                          Taro.showToast({
+                            icon: 'none',
+                            title: '请先签到',
+                          });
+                          return;
+                        }
+                        this.setState({
+                          isOpenedCheckOutModal: true,
+                          curWorkOrder: workOrderItem,
+                        }, () => {
+                          this.setState({
+                            isFocusCheckOutInput: true,
+                          });
+                        })
+                      }}
+                    >
+                      收工
+                    </AtButton>
+                  )
                 }
               </View>
             )
           }
-
         </View>
       );
     });
   }
-
 
   render() {
     return (
@@ -297,6 +333,75 @@ class UserWorkOrder extends Component {
           style={{height: getWindowHeight(false)}}
         >
           {this.renderWorkOrder()}
+        <AtModal
+          isOpened={this.state.isOpenedCheckInModal}
+          onClose={() => {
+            this.setState({
+              isOpenedCheckInModal: false,
+              isFocusCheckInInput: false,
+            });
+          }}
+          className='check-in-modal'
+        >
+          <AtModalHeader>输入签到码</AtModalHeader>
+          <AtModalContent>
+          {this.state.isOpenedCheckInModal &&
+            <Input
+              value={this.state.checkInCode}
+              onInput={(e) => {
+                this.setState({
+                  checkInCode: e.target.value
+                });
+              }}
+              className='check-in-code'
+              adjustPosition={true}
+              cursorSpacing={100}
+              focus={this.state.isFocusCheckInInput}
+              type="number"
+              placeholder='签到码'
+            />
+          }
+          </AtModalContent>
+          <AtModalAction>
+            <Button onClick={this.checkIn}>扫码</Button>
+            <Button onClick={this.checkInRequest}>确定</Button>
+          </AtModalAction>
+        </AtModal>
+        <AtModal
+          isOpened={this.state.isOpenedCheckOutModal}
+          onClose={() => {
+            this.setState({
+              isOpenedCheckOutModal: false,
+              isFocusCheckOutInput: false,
+            });
+          }}
+          className='check-out-modal'
+        >
+          <AtModalHeader>输入收工码</AtModalHeader>
+          <AtModalContent>
+            {
+              this.state.isOpenedCheckOutModal &&
+              <Input
+                value={this.state.checkOutCode}
+                onInput={(e) => {
+                  this.setState({
+                    checkInCode: e.target.value
+                  });
+                }}
+                className='check-out-code'
+                adjustPosition={true}
+                cursorSpacing={100}
+                focus={this.state.isFocusCheckOutInput}
+                type="number"
+                placeholder='收工码'
+              />
+            }
+          </AtModalContent>
+          <AtModalAction>
+            <Button onClick={this.checkOut}>扫码</Button>
+            <Button onClick={this.checkOutRequest}>确定</Button>
+          </AtModalAction>
+        </AtModal>
         </ScrollView>
       </View>
     );

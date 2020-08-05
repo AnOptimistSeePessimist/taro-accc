@@ -23,6 +23,8 @@
     margin-top: 40px;
     background-color: #fff;
     .category {
+      padding-top: 20px;
+      padding-bottom: 20px;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
@@ -91,6 +93,16 @@
           }
         }
       }
+    }
+    .work-date-list {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-left: 20px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      padding-right: 20px;
+      border-bottom: 1px solid #eeeeee;
     }
     .start-date {
       flex: 1;

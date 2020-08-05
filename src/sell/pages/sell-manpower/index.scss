@@ -10,6 +10,8 @@
   border-bottom-color: #eeeeee;
 }
 
+$fontWeight: 600;
+
 .sell-manpower {
   @include wh(100%, 100%);
   .wrapper {
@@ -23,36 +25,79 @@
       }
       display: flex;
       flex-direction: column;
-      .start-date {
-        flex: 1;
-        .start-date-at-list {
-          &::after {
-            @include btbw;
-            @include btbwn;
-          }
-          .item-extra__info {
-            color: #000,
-          }
-          .start-item {
-            &::after {
-              @include btbw;
-            }
-          }
+      // .start-date {
+      //   flex: 1;
+      //   .start-date-at-list {
+      //     &::after {
+      //       @include btbw;
+      //       @include btbwn;
+      //     }
+      //     .item-extra__info {
+      //       color: #000,
+      //     }
+      //     .start-item {
+      //       &::after {
+      //         @include btbw;
+      //       }
+      //     }
+      //   }
+      // }
+      // .end-date {
+      //   flex: 1;
+      //   .end-date-at-list {
+      //     &::after {
+      //       @include btbw;
+      //       @include btbwn;
+      //     }
+      //     .item-extra__info {
+      //       color: #000,
+      //     }
+      //     .end-item {
+      //       &::after {
+      //         @include btbw;
+      //       }
+      //     }
+      //   }
+      // }
+      .date {
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 24px;
+        padding-right: 24px;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        align-items: center;
+        border-bottom: 1px solid #eeeeee;
+        .title {
+          font-weight: $fontWeight;
         }
       }
-      .end-date {
-        flex: 1;
-        .end-date-at-list {
-          &::after {
-            @include btbw;
-            @include btbwn;
-          }
-          .item-extra__info {
-            color: #000,
-          }
-          .end-item {
-            &::after {
-              @include btbw;
+      .date-modal {
+        .at-modal__container {
+          width: 95%;
+          .at-modal__content {
+            padding: 10px 8px;
+            .date-container {
+              width: 100%;
+              height: 100%;
+              display: flex;
+              flex-direction: row;
+              flex-wrap: wrap;
+              justify-content: flex-start;
+              .tag {
+                margin: 10px 10px;
+                padding: 0 10px;
+              }
+              .tag-active {
+                background-color: #fe871f;
+                border-color: #fe871f;
+              }
+              .week-day {
+                font-weight: 600;
+                padding: 5px;
+                padding-left: 20px;
+              }
             }
           }
         }
@@ -77,6 +122,9 @@
             &::after {
               @include btbw;
             }
+            .item-content__info-title {
+              font-weight: $fontWeight;
+            }
           }
         }
       }
@@ -97,6 +145,9 @@
             &::after {
               @include btbw;
             }
+            .item-content__info-title {
+              font-weight: $fontWeight;
+            }
           }
         }
       }
@@ -110,6 +161,9 @@
         flex-direction: row;
         align-items: center;
         border-bottom: 1px solid #eeeeee;
+        .title {
+          font-weight: $fontWeight;
+        }
         .at-input-number {
           border-color: #fe871f;
           input {
@@ -132,6 +186,9 @@
         flex-direction: column;
         align-items: flex-start;
         flex-wrap: wrap;
+        .title {
+          font-weight: $fontWeight;
+        }
         .tag-wrapper {
           width: 100%;
           margin-top: 20px;
@@ -153,6 +210,9 @@
           padding-top: 24px;
           padding-bottom: 24px;
           margin-left: 24px;
+          .title {
+            font-weight: $fontWeight;
+          }
         }
         .at-modal-content {
           padding-left: 0px;

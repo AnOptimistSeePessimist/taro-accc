@@ -4,26 +4,26 @@ import {API_USER_LOGIN, API_USER_LOGOUT} from '@constants/api';
 import fetch from '@utils/request';
 
 /**
- * 
+ *
  * 用户登录
- * 
+ *
  */
-export const dispatchLogin = (payload) => ({type: actionTypes.USER_LOGIN, payload: payload}); 
+export const dispatchLogin = (payload) => ({type: actionTypes.USER_LOGIN, payload: payload});
 
 /**
- * 
- * 
+ *
+ *
  * 用户退出登录
- * 
+ *
  */
 export const dispatchLogout = () => ({type: actionTypes.USER_LOGOUT});
 
 /**
- * 
+ *
  * 用户登录
- * 
+ *
  * action creator
- * 
+ *
  */
 export const login = payload => {
   return dispatch => {
@@ -64,11 +64,11 @@ export const login = payload => {
 };
 
 /**
- * 
+ *
  * 用户退出登录
- * 
+ *
  * action creator
- * 
+ *
  */
 export const logout = () => {
   return (dispatch, getState, extraArgument) => {
@@ -84,6 +84,9 @@ export const logout = () => {
           dispatch(dispatchLogout());
           Taro.navigateBack();
           Taro.hideLoading();
+        } else {
+          dispatch(dispatchLogout());
+          Taro.navigateBack();
         }
       })
       .catch(() => {

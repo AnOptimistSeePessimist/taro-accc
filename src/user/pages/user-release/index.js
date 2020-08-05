@@ -17,6 +17,7 @@ class UserRelease extends Component {
     super(props);
     this.state = {
       publishList: [], // 发布列表
+      refresherTriggered: false, // 刷新器被触发
     };
   }
 
@@ -25,37 +26,22 @@ class UserRelease extends Component {
   };
 
   componentDidMount() {
-    Taro.showLoading({
-      icon: 'none',
-      title: '正在查询我的发布'
-    });
-    fetch({url: API_RSPUBLISH_LIST, accessToken: this.props.userInfo.userToken.accessToken})
+    this.onRefresherRefresh();
+  }
+
+  getReleaseData = (pageNum, pageSize, callback) => {
+    fetch({url: API_RSPUBLISH_LIST + `?pageNum=${pageNum}&pageSize=${pageSize}`, accessToken: this.props.userInfo.userToken.accessToken})
       .then((res) => {
-        Taro.hideLoading();
         console.log('publishList: ', res);
         const {data: {data: {list}, status}} = res;
 
         if (status === 200) {
-          if (list.length !== 0) {
-            this.setState({
-              publishList: list,
-            });
-          } else {
-            Taro.showToast({
-              icon: 'none',
-              title: '暂无发布信息',
-              duration: 2000,
-            });
-            setTimeout(() => {
-              Taro.navigateBack();
-            }, 2000);
-          }
+          callback(list);
         }
       })
       .catch(() => {
-        Taro.hideLoading();
       });
-  }
+  };
 
   renderItem = () => {
     console.log('renderItem');
@@ -72,6 +58,7 @@ class UserRelease extends Component {
             timeStart,
             rsId,
             workTypeName,
+            workdateList,
           }
       } = publish;
       return (
@@ -107,7 +94,7 @@ class UserRelease extends Component {
                 {workTypeName}
                 <Text className='dollar'>({price}元/每小时)</Text>
               </Text>
-              <Text className='data-start-end'>{dateStart} 至 {dateEnd}</Text>
+              <Text className='data-start-end'>{workdateList.join('、')}</Text>
               <Text className='time-start-end'>{timeStart} 至 {timeEnd}</Text>
               {/* <Text>人员: {rsId}</Text> */}
               {/* <Text>是否已作废: {iscancel}</Text> */}
@@ -118,13 +105,60 @@ class UserRelease extends Component {
     });
   };
 
+  onRefresherRefresh = () => {
+    this.setState({
+      refresherTriggered: true,
+    }, () => {
+      this.getReleaseData(1, 5, (list) => {
+        if (list.length !== 0) {
+          this.setState({
+            publishList: list,
+          }, () => {
+            this.setState({
+              refresherTriggered: false,
+            })
+            this._freshing = false
+          });
+        } else {
+          Taro.showToast({
+            icon: 'none',
+            title: '暂无发布信息',
+            duration: 2000,
+          });
+          setTimeout(() => {
+            Taro.navigateBack();
+          }, 2000);
+        }
+      });
+    });
+  };
+
+  scrollToLower = () => {
+    console.log('scrollToLower');
+  };
+
   render() {
     const {publishList} = this.state;
+    const systemInfo = Taro.getSystemInfoSync();
+    const paddingBottom = systemInfo.safeArea == undefined ? 0 : systemInfo.screenHeight - systemInfo.safeArea.bottom;
     return (
       <ScrollView
         className='user-release'
         scrollY
-        style={{height: getWindowHeight()}}
+        style={{height: getWindowHeight(false)}}
+        refresherEnabled={true}
+        refresherThreshold={100}
+        lowerThreshold={150}
+        refresherDefaultStyle="black"
+        refresherBackground="white"
+        refresherTriggered={this.state.refresherTriggered}
+        onRefresherRefresh={() => {
+          if (this._freshing) return;
+          this._freshing = true;
+          this.onRefresherRefresh();
+        }}
+        enableBackToTop={true}
+        onScrollToLower={this.scrollToLower}
       >
         {this.renderItem()}
       </ScrollView>

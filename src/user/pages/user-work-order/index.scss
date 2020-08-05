@@ -44,4 +44,28 @@
       }
     }
   }
+  .check-in-modal {
+    .at-modal__content {
+      min-height: 0;
+      padding: 0;
+      .check-in-code {
+        border: 2px solid #bababa;
+        margin: 20px 20px;
+        padding: 10px;
+
+      }
+    }
+  }
+  .check-out-modal {
+    .at-modal__content {
+      min-height: 0;
+      padding: 0;
+      .check-out-code {
+        border: 2px solid #bababa;
+        margin: 20px 20px;
+        padding: 10px;
+
+      }
+    }
+  }
 }
