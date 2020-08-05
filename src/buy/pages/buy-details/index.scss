@@ -34,12 +34,10 @@ view, text, scroll-view {
   background-color: white;
 }
 
-.date {
-  flex: 1;
   .date-at-list {
     &::after {
       @include btbw;
-      @include btbwn;
+      @include btbw;
     }
     .item-extra__info {
       color: #000,
@@ -50,7 +48,7 @@ view, text, scroll-view {
       }
     }
   }
-}
+
 
 .float-item {
   display: flex;
@@ -83,20 +81,6 @@ view, text, scroll-view {
     flex-direction: column;
     align-items: flex-start;
     flex-wrap: wrap;
-
-    .tag-wrapper {
-      margin-top: 20px;
-      margin-bottom: 20px;
-      padding-left: 20px;
-      .tag {
-        margin: 10px;
-      }
-
-      .tag-active {
-        background-color: #fe871f;
-        border-color: #fe871f;
-      }
-    }
   }
 
   .setting-spec {
@@ -118,6 +102,19 @@ view, text, scroll-view {
         color: #fe871f;
       }
     }
+  }
+}
+
+.tag-wrapper {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding-left: 20px;
+  .tag {
+    margin: 10px;
+  }
+  .tag-active {
+    background-color: #fe871f;
+    border-color: #fe871f;
   }
 }
 
@@ -159,10 +156,9 @@ view, text, scroll-view {
   padding: 0;
 }
 
-.wx-pay {
+.wx-pay-address {
   display: flex;
   flex-direction: column;
-
   .store {
     display: flex;
     flex-direction: column;
@@ -199,8 +195,60 @@ view, text, scroll-view {
   .addressimg{
 		margin: 20px;
 		font-size: 52px;
-		color: #fe871f;
+    color: #fe871f;
+    display: flex;
+    align-items: center;
+  }
+}
+.data-start-end {
+  display: flex;
+  flex-direction: row;
+  font-size: 32px;
+  justify-content: space-between;
+  padding: 10px;
+  .data-title {
+    margin-left: 20px;
+    
+  }
+  .data-content {
+    margin-right: 20px;
+  }
+}
+.at-list__item-extra {
+  max-width: 100%;
+}
+
+.station {
+  width: 100%;
+  // background-color: yellow;
+  .station-item {
+    border-radius: 3px;
+    color: black;
+    background-color: #eeeeee;
+    display: flex;
+    flex-direction: row;
+    padding: 12px 15px;
+    // border-top: 1px solid gray;
+    // border-left: 1px solid gray;
+    // border-right: 1px solid gray;
+  }
+  .area {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    .area-item {
+      .area-checkbox {
+        padding: 20px 20px;
+      }
+      // border-top: 1px solid gray;
+      // border-left: 1px solid gray;
+      // border-right: 1px solid gray;
+    }
   }
 }
 
-
+.pay-address-userName-phone-address{
+  display: flex;
+  align-items: center;
+  font-size: 32px;
+}

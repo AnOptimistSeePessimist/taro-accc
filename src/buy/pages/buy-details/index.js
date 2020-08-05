@@ -1,5 +1,15 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View, Text, Swiper, SwiperItem, ScrollView, Button, Picker } from '@tarojs/components'
+import { 
+  View,
+  Text, 
+  Swiper, 
+  SwiperItem, 
+  ScrollView, 
+  Button, 
+  Picker, 
+  CheckboxGroup,
+  Checkbox,
+} from '@tarojs/components'
 import {connect} from '@tarojs/redux'
 import Gallery from './gallery'
 import InfoBase from './infoBase'
@@ -7,8 +17,8 @@ import InfoParam from './infoParam'
 import Footer from './footer'
 import classnames from 'classnames'
 import { getWindowHeight } from '@utils/style'
-import { API_ORDER_CREATE, API_CALLBACK_WX } from '@constants/api';
-import {formatTimeStampToTime} from '@utils/common';
+import { API_ORDER_CREATE, API_CALLBACK_WX, API_CARGOSTATION_LIST } from '@constants/api';
+import cloneDeep from 'lodash.clonedeep';
 import {
   AtFloatLayout,
   AtTag,
@@ -38,23 +48,25 @@ export default class BuyDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: '1',
-      isOpeneds: false,
-      isAtModal: false,
-      loaded: false,
-      dataImg: {},
-      dataList: '',
-      textTitle: '请选择:规格',
-      dollar: '',
-      timeStart: '',
-      timeEnd: '',
-      orderNo: '',
-      dateStart: '',
-      dateEnd: '',
-      timeNum: 1,
-      address: {
-				userAddress: '上海市浦东国际机场厂区7号仓库'
-			},
+      value: '1', //人数
+      isOpeneds: false, //显示选择规格
+      isAtModal: false, //支付弹框
+      isDataStart: false, //是否显示日期选择
+      dataImg: {}, //基础数据
+      textTitle: '请选择:规格', //规格头部
+      dollar: '', //金额
+      timeStart: '', //开始时间
+      timeEnd: '', //结束时间
+      orderNo: '', //订单编号
+      timeNum: 1, //买家选择的时长
+      dataTitle: '请选择日期', //日期说明
+      workDateList: [], //缓存的日期
+      workDateTitle: [], //买家选择的日期
+      address: '', //货站
+      areaCode: '', //货站区域
+      isOpenedPassarea: false,// 是否显示通行证选择列表
+      passareaList: [], // 通行证适用区域列表
+      displayCheckedPassareaList: {}, // 显示在界面上的通行证适用区域
       list: [
         {
           id: 1,
@@ -89,20 +101,68 @@ export default class BuyDetails extends Component {
     navigationBarTitleText: '商品详情'
   }
 
-  componentWillPreload (params) {
-    return this.fetchData(params.item)
+  componentDidMount(){
+   // this.station()
   }
 
-  fetchData (item) {
-    console.log('《《《《',JSON.parse(item))
+  componentWillPreload (params) {
+    return this.fetchData(params.item, params.hresCargostationMap)
+  }
+
+  fetchData (item, hresCargostationMap) {
+    console.log('《《《《',JSON.parse(item), JSON.parse(hresCargostationMap))
     const data = JSON.parse(item)
+    const hresCargostationList = JSON.parse(hresCargostationMap)
+    let workDateList = []
+    data.workdateList.map((item, index) => {
+      workDateList.push({id: index, name: item, active: false})
+    })
+    let newPassareaList
+     hresCargostationList.map(item => {
+      console.log('hresCargostation',item)
+      newPassareaList = item.map(station => {
+        const {passareaDtoList: areas} = station;
+        const newAreas = areas.map(area => {
+          area.checked = false;
+          return area;
+        });
+        station.passareaDtoList = newAreas;
+        return station;
+      })
+    });
+    console.log('newPassareaList: ', newPassareaList);
     this.setState({
       dataImg: data,
       dollar: data.price * 4 + '-' +data.price * 8,
-      dateStart: data.dateStart,
-      dateEnd: data.dateEnd
+      workDateList,
+      passareaList: newPassareaList,
     })
   }
+
+  // station = () => {
+  //   const token = this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
+  //   let address = [[], []]
+  //   let areaCode = []
+  //   fetch({
+  //     url: API_CARGOSTATION_LIST,
+  //     accessToken: token
+  //   }).then((res) => {
+  //     const {data, statusCode} = res
+  //     if(statusCode === 200){
+  //       data.map((item) => {
+  //         address[0].push(item.stationdsc)
+  //         item.passareaDtoList.map((items) => {
+  //           areaCode.push(items.areaCode)
+  //           address[1] = [...new Set(areaCode)].sort()
+  //         })
+  //       })
+  //       console.log('所有货站',address)
+  //       this.setState({
+  //         address
+  //       })
+  //     }
+  //   })
+  // }
 
   handleOpened = () => {
     this.setState({
@@ -116,9 +176,18 @@ export default class BuyDetails extends Component {
     })
   }
 
+  handleClosePassarea = () => {
+    this.setState({
+      isOpenedPassarea: false,
+    })
+  };
+
   handleBuy = () => {
     const token =  this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
-    const {dataImg:{ price, publishBy, publishRecid}, value, AtToastLoading, AtToastText, timeStart, timeEnd, dollar, dateEnd, dateStart} = this.state
+    const {dataImg:{ price, publishRecid}, value, timeStart, timeEnd, workDateTitle} = this.state
+    let address = ''
+    let areaCode = ''
+    
 
     if(!token){
       Taro.navigateTo({url: '/user/pages/user-login/index'})
@@ -134,22 +203,46 @@ export default class BuyDetails extends Component {
       return
     }
 
+    if(Object.keys(this.state.displayCheckedPassareaList).length === 0){
+      Taro.showToast({
+        icon: "none",
+        title: '请选择地址',
+        duration: 2000
+      })
+      return
+    }
+    Object.keys(this.state.displayCheckedPassareaList).map(passarea => {
+      address = passarea;   
+      areaCode = this.state.displayCheckedPassareaList[passarea].join()
+    })
+
+    if(workDateTitle.length === 0 ){
+      Taro.showToast({
+        icon: "none",
+        title: '请选择时间',
+        duration: 2000
+      })
+      return
+    }
+
     Taro.showLoading({
       title: '加载中',
     })
 
+   
+
     const payload = {
-      address: "上海市浦东国际机场厂区7号仓库",
+      stationCode: address,
+      address: areaCode,
       discountSum: 0,
       orderDetailDto: {
         count: value,
-        dateEnd: dateEnd,
-        dateStart: dateStart,
         price: price,
         publishRecid: publishRecid,
         timeEnd: timeEnd,
         timeStart:timeStart
       },
+      workdateList: workDateTitle
     }
    console.log('订单数据', payload)
     fetch({
@@ -178,9 +271,8 @@ export default class BuyDetails extends Component {
   }
 
   handleClickCatogory = (category) => {
-    const {dataImg, list, value, dateEnd,dateStart} = this.state;
-    const day = datePoor(dateStart, dateEnd)
-    console.log('时间差', day)
+    const {dataImg, list, value, workDateTitle} = this.state;
+    const days = workDateTitle.length
     const newList = list.slice();
     newList.forEach((item) => {
       if (item.id === category) {
@@ -188,7 +280,7 @@ export default class BuyDetails extends Component {
         if(item.checked){
           this.setState({
             textTitle: `已选：${item.timeStart}-${item.timeEnd}(共计${item.time}小时)`,
-            dollar: dataImg.price * item.time * value * day,
+            dollar: days===0?dataImg.price * 4 + '-' + dataImg.price * 8 : dataImg.price * item.time * value * days,
             timeNum: item.time,
             timeStart: item.timeStart,
             timeEnd: item.timeEnd
@@ -213,9 +305,143 @@ export default class BuyDetails extends Component {
     });
   };
 
+  workDate = (e) => {
+    console.log(e)
+    const { workDateList, workDateTitle, dataImg, timeNum, value, textTitle} = this.state
+    const findIndex = workDateList.findIndex(item => item.name === e.name)
+    workDateList[findIndex].active = !workDateList[findIndex].active
+    if(!e.active){
+      workDateTitle.push(e.name).toString()
+    } else {
+      const index = workDateTitle.indexOf(e.name);
+      workDateTitle.splice(index, 1).toString()
+    }
+    const days = workDateTitle.length
+    // console.log('整理后的数据', workDateTitle)
+    this.setState({ 
+      workDateList, 
+      workDateTitle,
+      dollar: textTitle === '请选择:规格'? dataImg.price * 4 + '-' + dataImg.price * 8 : dataImg.price * timeNum * value * days,
+      dataTitle: days===0? '请选择日期': ''
+    })
+  }
+
+  // addressChoose = (e) => {
+  //   const {address} = this.state
+  //   let stationdsc
+  //   let areaCode
+  //   e.detail.value.map((item,index) => {
+  //        index === 0? stationdsc = address[index][item] : areaCode = address[index][item]
+  //   })
+  //   this.setState({
+  //     addressTitle: stationdsc + areaCode,
+  //     areaCode
+  //   })
+  //   console.log('选择地址', stationdsc + areaCode)
+
+  // }
+
+  handlePassareaChange = (e) => {
+    const {passareaList, displayCheckedPassareaList: displayCheckedPassarea} = this.state;
+    const stationId = e.target.dataset.stationId;
+    const areaId = e.target.dataset.areaId;
+    console.log('handlePassareaChange: ', e);
+    const newPassareaList = passareaList.slice();
+    
+    
+      newPassareaList.forEach((station) => {
+        const {recid, stationcode, stationdsc, passareaDtoList} = station;
+        console.log('newPassareaList', station)
+        if (recid === stationId) {
+          passareaDtoList.forEach(area => {
+            if (area.recId === areaId) {
+              if (!!!displayCheckedPassarea[stationcode]) {
+                displayCheckedPassarea[stationcode] = [];
+              }
+              area.checked = !area.checked;
+              if (area.checked) {
+                displayCheckedPassarea[stationcode].push(area.areaCode);
+              } else {
+                displayCheckedPassarea[stationcode].forEach((areaCode1, index) => {
+                  if (areaCode1 === area.areaCode) {
+                    displayCheckedPassarea[stationcode].splice(index, 1);
+                  }
+                });
+                displayCheckedPassarea[stationcode].splice();
+                if (displayCheckedPassarea[stationcode].length === 0) {
+                  delete displayCheckedPassarea[stationcode];
+                }
+              }
+            }
+          });
+        }else {
+          passareaDtoList.forEach(area => {
+            area.checked = false
+            if(displayCheckedPassarea[stationcode]){
+              displayCheckedPassarea[stationcode].forEach((areaCode1, index) => {
+                if (areaCode1 === area.areaCode) {
+                  displayCheckedPassarea[stationcode].splice(index, 1);
+                }
+              });
+                displayCheckedPassarea[stationcode].splice();
+                if (displayCheckedPassarea[stationcode].length === 0) {
+                  delete displayCheckedPassarea[stationcode];
+                }
+            }
+          })
+        }
+      });
+    
+    console.log('选中后的区域列表: ',  newPassareaList);
+    this.setState({
+      passareaList: newPassareaList,
+      displayCheckedPassareaList: displayCheckedPassarea,
+    });
+  };
+
+  renderPassarea = () => {
+    const {passareaList, displayCheckedPassareaList: displayCheckedPassarea} = this.state;
+    console.log('displayCheckedPassarea', displayCheckedPassarea)
+    return passareaList.map((stationItem) => {
+      const {recid: stationId, stationcode, stationdsc, passareaDtoList} = stationItem;
+      return (
+        <View className='station' key={stationId}>
+          <View className='station-item'>
+            <Text>{stationdsc}</Text>
+          </View>
+          <View className='area'>
+            {
+              passareaDtoList.map((areaItem) => {
+                const {recId, areaCode, checked} = areaItem;
+                console.log('areaCode', areaCode)
+                return (
+                  <View className='area-item' key={recId}>
+                    <CheckboxGroup 
+                      data-station-id={stationItem.recid}  
+                      data-area-id={recId} 
+                      onChange={this.handlePassareaChange}
+                    >
+                      <Checkbox 
+                        className='area-checkbox' 
+                        value="还未给"
+                        checked={checked}
+                      >
+                       {areaCode.toString()}
+                      </Checkbox>
+                    </CheckboxGroup>
+                  </View>
+                );
+              })
+            }
+          </View>
+        </View>
+      );
+    });
+  };
+
   handleValueChange = (value) => {
-    const {dataImg, dateEnd, dateStart, timeNum, textTitle} = this.state
-    const day = datePoor(dateStart, dateEnd)
+    const {dataImg, workDateTitle, timeNum, textTitle} = this.state
+    const day = workDateTitle.length
     if(textTitle === '请选择:规格'){
       this.setState({
         value,
@@ -229,63 +455,15 @@ export default class BuyDetails extends Component {
     });
   };
 
-  onDateStartChange = e => {
-    const {dataImg, dateEnd, timeNum, textTitle, value} = this.state
-    const day = datePoor(e.detail.value, dateEnd)
-
-    if(day <=0 ) {
-        Taro.showToast({
-          icon: "none",
-          title:'起始时间不能超过结束时间',
-          duration: 2000
-        })
-        return
-    }
-
-    if(textTitle === '请选择:规格'){
-      this.setState({
-        dateStart: e.detail.value,
-        dollar: dataImg.price * 4 + '-' + dataImg.price * 8,
-      });
-      return
-    }
-
-    this.setState({
-      dateStart: e.detail.value,
-      dollar: dataImg.price * timeNum * value * day
-    });
-  };
-
-  onDateEndChange = e => {
-    const {dataImg, dateStart, timeNum, textTitle, value} = this.state
-    const day = datePoor(dateStart, e.detail.value)
-
-    if(day <= 0) {
-      Taro.showToast({
-        icon: "none",
-        title:'结束时间不能小于起始时间',
-        duration: 2000
-      })
-      return
-    }
-
-    if(textTitle === '请选择:规格'){
-      this.setState({
-        dateEnd: e.detail.value,
-        dollar: dataImg.price * 4 + '-' + dataImg.price * 8,
-      });
-      return
-    }
-
-    this.setState({
-      dateEnd: e.detail.value,
-      dollar: dataImg.price * timeNum * value * day
-    });
-  };
-
   closeModal = () => {
 		this.setState({
 			isAtModal: !this.state.isAtModal
+    })
+  }
+
+  closeDataModal = () => {
+    this.setState({
+      isDataStart: !this.state.isDataStart
     })
   }
 
@@ -320,8 +498,9 @@ export default class BuyDetails extends Component {
 
   render() {
     const height = getWindowHeight(false);
-    const { dataImg, isOpeneds, textTitle, dollar, dateEnd, dateStart, address: {userAddress } } = this.state;
+    const { dataImg, isOpeneds, textTitle, workDateList, workDateTitle, dollar, dataTitle } = this.state;
     const res = Taro.getSystemInfoSync();
+    const paddingBottom = res.safeArea == undefined ? 0 : res.screenHeight - res.safeArea.bottom;
     const safety = res.screenHeight - res.safeArea.bottom;
     console.log(dataImg)
     console.log('屏幕高度', height, safety)
@@ -381,27 +560,10 @@ export default class BuyDetails extends Component {
               </View>
             </View>
 
-            <Picker
-              className='date'
-              mode='date'
-              onChange={this.onDateStartChange}
-              //start={formatTimeStampToTime(Date.now())}
-            >
-              <AtList className='date-at-list'>
-                <AtListItem className='item' title='起始日期' extraText={dateStart} />
-              </AtList>
-            </Picker>
-
-            <Picker
-              className='date'
-              mode='date'
-              onChange={this.onDateEndChange}
-              //start={formatTimeStampToTime(Date.now())}
-            >
-              <AtList className='date-at-list'>
-                <AtListItem className='item' title='结束日期' extraText={dateEnd} />
-              </AtList>
-            </Picker>
+            <View className='data-start-end'>
+              <Text className='data-title'>工作日期</Text>
+              <Text className='data-content' onClick={this.closeDataModal}>{dataTitle}{workDateTitle.join()} </Text>
+            </View>
 
             <View className='setting-spec'>
               <Text>工人人数</Text>
@@ -416,12 +578,29 @@ export default class BuyDetails extends Component {
             </View>
             <View className='pay-address'>
               <View className={`iconfont iconionc-- addressimg`} />
-              <View className='pay-address-userName-phone-address'>
-                <View className='pay-address-userName-phone'>
-                  {/* <Text>{userName}</Text>
-                  <Text className='pay-address-phone'>{phone}</Text> */}
-                  <Text className='pay-address-address'>{userAddress}</Text>
-                </View>
+              <View 
+                className='pay-address-userName-phone-address' 
+                onClick={() => {
+                  this.setState({
+                     isOpenedPassarea: true,
+                    })
+                  }}
+                >
+                  {Object.keys(this.state.displayCheckedPassareaList).length === 0? '请选择地址':
+                  this.state.passareaList.length !== 0 && Object.keys(this.state.displayCheckedPassareaList).map(passarea => {
+                        let desc = '';
+                        this.state.passareaList.forEach((passareaItem) => {
+                          if (passarea === passareaItem.stationcode) {
+                            desc = passareaItem.stationdsc;
+                          }
+                        });
+                        
+                      return (
+                        <View key={passarea}>
+                          {desc + this.state.displayCheckedPassareaList[passarea]}
+                        </View>
+                      );
+                    })}
               </View>
             </View>
           </ScrollView>
@@ -437,18 +616,32 @@ export default class BuyDetails extends Component {
           </View>
         </AtFloatLayout>
 
+        <AtFloatLayout
+          className='at-float-layout-container'
+          scrollY={true}
+          isOpened={this.state.isOpenedPassarea} 
+          title="选择适用区域" 
+          onClose={this.handleClosePassarea}
+        >
+          <ScrollView
+            enableFlex={true}
+            style={{'padding-bottom': Taro.pxTransform(paddingBottom)}} 
+            className='passarea-wrapper'
+          > 
+             {this.renderPassarea()}
+          </ScrollView>
+        </AtFloatLayout>
+
         <View className='item-footer' style={{paddingBottom: `${safety}px`}}>
           <Footer onAdd={this.handleAdd} onIsOpened={this.handleOpened}/>
         </View>
-
-
 
         <AtModal
           isOpened={this.state.isAtModal}
           onClose={this.closeModal}
         >
           <AtModalContent>
-              <View className='wx-pay'>
+              <View className='wx-pay-address'>
                 <View className='store'>
                   <Text className='store-name'>{dataImg.station}</Text>
                   <Text className='store-dollar'>￥{this.state.dollar}</Text>
@@ -461,8 +654,36 @@ export default class BuyDetails extends Component {
             </Button>
 					</AtModalAction>
         </AtModal>
+      
+        <AtModal
+          isOpened={this.state.isDataStart}
+          onClose={this.closeDataModal}
+        >
+          <AtModalContent>
+              <View className='wx-pay-address'>
+                <View className='store'>
+                  <Text className='store-name'>选择日期</Text>
+                </View>
+                <View className='tag-wrapper'>
+                  {workDateList.map((item) => {
+                      return(
+                        <AtTag 
+                          key={item.id}
+                          type='primary'
+                          className={classnames('tag', item.active && 'tag-active')}
+                          active={item.active}
+                          name={item.name}
+                          circle
+                          onClick={this.workDate}
+                        >{item.name}</AtTag>
+                      )
+                  })}
+                </View>
+                
+              </View>
+          </AtModalContent>
+        </AtModal>
       </View>
     )
   }
-
 }
