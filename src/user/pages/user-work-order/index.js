@@ -113,13 +113,13 @@ class UserWorkOrder extends Component {
   };
 
   checkInRequest = (qrCodeData) => {
-    console.log('checkInRequest - qrCodeData: ', qrCodeData);
     const {checkInCode, curWorkOrder: {checkInCode: workOrderCheckInCode, workRecid, orderDto: {address}}} = this.state;
     const newestCheckInCode = qrCodeData || checkInCode;
-    const {userInfo: {userToken: {accessToken}}} = this.props;
+    const {userInfo: {userToken: {accessToken}, auth: {id: userId}}} = this.props;
+    console.log('newestCheckInCode - workOrderCheckInCode: ', newestCheckInCode, workOrderCheckInCode);
 
     // workOrderCheckInCode 暂时还没有
-    if (newestCheckInCode === workOrderCheckInCode) {
+    if (newestCheckInCode == workOrderCheckInCode) {
       Taro.showLoading({
         icon: 'none',
         title: '正在签到中',
@@ -134,7 +134,8 @@ class UserWorkOrder extends Component {
           checkInBy: userId,
           checkInType: 1,
           staffId: userId,
-          workRecid: workRecid
+          workRecid: workRecid,
+          checkInCode: newestCheckInCode,
         }
       })
         .then((res) => {
@@ -176,9 +177,9 @@ class UserWorkOrder extends Component {
   };
 
   checkOutRequest = (qrCodeData) => {
-    console.log('checkOutRequest - qrCodeData: ', qrCodeData);
     const {checkOutCode, curWorkOrder: {checkOutCode: workOrderCheckOutCode, workRecid, orderDto: {address}}} = this.state;
     const newestCheckOutCode = qrCodeData || checkOutCode;
+    console.log('newestCheckOutCode - workOrderCheckOutCode: ', newestCheckOutCode, workOrderCheckOutCode);
 
     const {userInfo: {userToken: {accessToken}, auth: {id: userId}}} = this.props;
 
@@ -198,6 +199,7 @@ class UserWorkOrder extends Component {
           checkOutType: 1,
           staffId: userId,
           workRecid: workRecid,
+          checkOutCode: newestCheckOutCode,
         }
       })
         .then((res) => {
@@ -238,7 +240,13 @@ class UserWorkOrder extends Component {
         checkOutTime,
         orderDto: {
           address,
-          orderDetailDto: {dateEnd, dateStart, timeEnd, timeStart}}} = workOrderItem;
+          stationCode,
+          orderDetailDto: {
+            dateEnd,
+            dateStart,
+            timeEnd,
+            timeStart
+        }}} = workOrderItem;
       return (
         <View className='work-order-item' key={workRecid.toString() + orderRecid.toString()}>
           <View className='info-wrapper'>
@@ -349,8 +357,9 @@ class UserWorkOrder extends Component {
             <Input
               value={this.state.checkInCode}
               onInput={(e) => {
+                console.log('输入的签到码: ', e);
                 this.setState({
-                  checkInCode: e.target.value
+                  checkInCode: e.detail.value
                 });
               }}
               className='check-in-code'
@@ -363,8 +372,8 @@ class UserWorkOrder extends Component {
           }
           </AtModalContent>
           <AtModalAction>
-            <Button onClick={this.checkIn}>扫码</Button>
-            <Button onClick={this.checkInRequest}>确定</Button>
+            <Button onClick={() => this.checkIn()}>扫码</Button>
+            <Button onClick={() => this.checkInRequest()}>确定</Button>
           </AtModalAction>
         </AtModal>
         <AtModal
@@ -385,7 +394,7 @@ class UserWorkOrder extends Component {
                 value={this.state.checkOutCode}
                 onInput={(e) => {
                   this.setState({
-                    checkInCode: e.target.value
+                    checkOutCode: e.detail.value
                   });
                 }}
                 className='check-out-code'
@@ -398,8 +407,8 @@ class UserWorkOrder extends Component {
             }
           </AtModalContent>
           <AtModalAction>
-            <Button onClick={this.checkOut}>扫码</Button>
-            <Button onClick={this.checkOutRequest}>确定</Button>
+            <Button onClick={() => this.checkOut()}>扫码</Button>
+            <Button onClick={() => this.checkOutRequest()}>确定</Button>
           </AtModalAction>
         </AtModal>
         </ScrollView>
