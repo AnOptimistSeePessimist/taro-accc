@@ -241,6 +241,7 @@ class UserWorkOrder extends Component {
         orderDto: {
           address,
           stationCode,
+          stationdsc,
           orderDetailDto: {
             dateEnd,
             dateStart,
@@ -251,7 +252,7 @@ class UserWorkOrder extends Component {
         <View className='work-order-item' key={workRecid.toString() + orderRecid.toString()}>
           <View className='info-wrapper'>
             <View className='location'>
-              工作地点:  <Text>{address}</Text>
+              工作地点:  <Text>{stationdsc}({address})</Text>
             </View>
             <View className='date'>
               工作日期:  <Text>{workDate}</Text>
