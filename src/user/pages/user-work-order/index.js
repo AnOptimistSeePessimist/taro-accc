@@ -29,6 +29,7 @@ class UserWorkOrder extends Component {
       checkInCode: '', // 签到码
       checkOutCode: '', // 手工码
       refresherTriggered: false, // 刷新器是否触发刷新
+      pageNum: 2, // 页码
     };
   }
 
@@ -66,7 +67,7 @@ class UserWorkOrder extends Component {
     this.setState({
       refresherTriggered: true,
     }, () => {
-      this.fetchWorkOrder(1, 10, () => {
+      this.fetchWorkOrder(1, 2, () => {
         this.setState({
           refresherTriggered: false,
         });
@@ -76,7 +77,12 @@ class UserWorkOrder extends Component {
   };
 
   scrollToLower = () => {
+    console.log('scrollToLower');
+    const {pageNum} = this.state;
 
+    this.fetchWorkOrder(pageNum, 2, () => {
+
+    });
   };
 
   fetchEditWorkOrder = (workRecId) => {
@@ -437,6 +443,7 @@ class UserWorkOrder extends Component {
           style={{height: getWindowHeight(false)}}
           refresherEnabled={true}
           refresherThreshold={100}
+          lowerThreshold={100}
           refresherDefaultStyle="black"
           refresherBackground="white"
           refresherTriggered={this.state.refresherTriggered}
