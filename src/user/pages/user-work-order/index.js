@@ -10,7 +10,6 @@ import {
 } from '@constants/api';
 import {connect} from '@tarojs/redux';
 import {AtButton, AtModal, AtModalHeader, AtModalContent, AtModalAction} from 'taro-ui';
-import replaceAll  from 'string.prototype.replaceall';
 
 import './index.scss';
 import { getWindowHeight } from '@utils/style';
@@ -29,6 +28,7 @@ class UserWorkOrder extends Component {
       curWorkOrder: {}, // 当前正在操作的工单
       checkInCode: '', // 签到码
       checkOutCode: '', // 手工码
+      refresherTriggered: false, // 刷新器是否触发刷新
     };
   }
 
@@ -37,24 +37,21 @@ class UserWorkOrder extends Component {
   };
 
   componentDidMount() {
-    this.fetchWorkOrder();
+    this.refresherRefresh();
   }
 
   // 获取工单
-  fetchWorkOrder = () => {
-    Taro.showLoading({
-      icon: 'none',
-      title: '正在加载我的工单',
-    });
+  fetchWorkOrder = (pageNum, pageSize, callback) => {
     const {userInfo} = this.props;
-    fetch({url: API_WORK_ORDER_MY, accessToken: userInfo.userToken.accessToken})
+    fetch({url: API_WORK_ORDER_MY + `?pageNum=${pageNum}&pageSize=${pageSize}`, accessToken: userInfo.userToken.accessToken})
       .then((res) => {
-        Taro.hideLoading();
         const {data: {list}, status, } = res.data;
 
         if (status === 200) {
           this.setState({
             workOrderList: list,
+          }, () => {
+            callback();
           });
         }
 
@@ -62,6 +59,24 @@ class UserWorkOrder extends Component {
       .catch(() => {
 
       });
+  };
+
+
+  refresherRefresh = () => {
+    this.setState({
+      refresherTriggered: true,
+    }, () => {
+      this.fetchWorkOrder(1, 10, () => {
+        this.setState({
+          refresherTriggered: false,
+        });
+        this._freshing = false;
+      });
+    });
+  };
+
+  scrollToLower = () => {
+
   };
 
   fetchEditWorkOrder = (workRecId) => {
@@ -230,7 +245,9 @@ class UserWorkOrder extends Component {
   renderWorkOrder = () => {
     const {workOrderList} = this.state;
     console.log('workOrderList: ', workOrderList);
-    return workOrderList.map((workOrderItem) => {
+    const systemInfo = Taro.getSystemInfoSync();
+    const marginBottom = systemInfo.safeArea == undefined ? 0 : systemInfo.screenHeight - systemInfo.safeArea.bottom;
+    return workOrderList.map((workOrderItem, index, sourceArray) => {
       const {
         workRecid,
         orderRecid,
@@ -250,31 +267,31 @@ class UserWorkOrder extends Component {
             timeStart
         }}} = workOrderItem;
       return (
-        <View className='work-order-item' key={workRecid.toString() + orderRecid.toString()}>
+        <View className='work-order-item' style={{marginBottom: index === sourceArray.length - 1 ? marginBottom + 'px' : Taro.pxTransform(20)}} key={workRecid.toString() + orderRecid.toString()}>
           <View className='info-wrapper'>
             <View className='location'>
-              工作站点:  <Text>{stationdsc}</Text>
+              <Text>工作站点: </Text><Text>{stationdsc}</Text>
             </View>
             <View className='location'>
-              工作区域:  <Text>{address.split(',').sort().join('、')}</Text>
+              <Text>工作区域: </Text><Text>{address.split(',').sort().join('、')}</Text>
             </View>
             <View className='date'>
-              工作日期:  <Text>{workDate}</Text>
+              <Text>工作日期: </Text><Text>{workDate}</Text>
             </View>
             <View className='time'>
-              工作时间:  <Text>{timeStart} - {timeEnd}</Text>
+              <Text>工作时间: </Text><Text>{timeStart} - {timeEnd}</Text>
             </View>
             {
               checkInBy && (
                 <View className='check-in-time'>
-                  签到时间: <Text>{checkInTime}</Text>
+                  <Text>签到时间: </Text><Text>{checkInTime}</Text>
                 </View>
               )
             }
             {
               checkOutBy && (
                 <View className='check-out-time'>
-                  收工时间: <Text>{checkOutTime}</Text>
+                  <Text>收工时间: </Text><Text>{checkOutTime}</Text>
                 </View>
               )
             }
@@ -339,21 +356,9 @@ class UserWorkOrder extends Component {
   render() {
     return (
       <View className='user-work-order'>
-        <ScrollView
-          className='scroll-view'
-          scrollY
-          enableFlex={true}
-          style={{height: getWindowHeight(false)}}
-        >
-          {this.renderWorkOrder()}
         <AtModal
           isOpened={this.state.isOpenedCheckInModal}
-          onClose={() => {
-            this.setState({
-              isOpenedCheckInModal: false,
-              isFocusCheckInInput: false,
-            });
-          }}
+          closeOnClickOverlay={false}
           className='check-in-modal'
         >
           <AtModalHeader>输入签到码</AtModalHeader>
@@ -378,17 +383,19 @@ class UserWorkOrder extends Component {
           </AtModalContent>
           <AtModalAction>
             <Button onClick={() => this.checkIn()}>扫码</Button>
+            <Button onClick={() => {
+              this.setState({
+                isOpenedCheckInModal: false,
+                isFocusCheckInInput: false,
+                checkInCode: '',
+              });
+            }}>取消</Button>
             <Button onClick={() => this.checkInRequest()}>确定</Button>
           </AtModalAction>
         </AtModal>
         <AtModal
           isOpened={this.state.isOpenedCheckOutModal}
-          onClose={() => {
-            this.setState({
-              isOpenedCheckOutModal: false,
-              isFocusCheckOutInput: false,
-            });
-          }}
+          closeOnClickOverlay={false}
           className='check-out-modal'
         >
           <AtModalHeader>输入收工码</AtModalHeader>
@@ -413,9 +420,36 @@ class UserWorkOrder extends Component {
           </AtModalContent>
           <AtModalAction>
             <Button onClick={() => this.checkOut()}>扫码</Button>
+            <Button onClick={() => {
+              this.setState({
+                isOpenedCheckOutModal: false,
+                isFocusCheckOutInput: false,
+                checkOutCode: '',
+              });
+            }}>取消</Button>
             <Button onClick={() => this.checkOutRequest()}>确定</Button>
           </AtModalAction>
         </AtModal>
+        <ScrollView
+          className='scroll-view'
+          scrollY
+          enableFlex={true}
+          style={{height: getWindowHeight(false)}}
+          refresherEnabled={true}
+          refresherThreshold={100}
+          refresherDefaultStyle="black"
+          refresherBackground="white"
+          refresherTriggered={this.state.refresherTriggered}
+          onRefresherRefresh={() => {
+            if (this._freshing) return;
+            this._freshing = true;
+            this.refresherRefresh();
+          }}
+          onScrollToLower={this.scrollToLower}
+        >
+          <View className='placeholder'>微信小程序 ScrollView 全是 bug, 这是必不可少的占位元素</View>
+          {this.renderWorkOrder()}
+          <View className='footer'>用户底部撑开 ios 安全区使用</View>
         </ScrollView>
       </View>
     );
