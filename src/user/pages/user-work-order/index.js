@@ -10,6 +10,7 @@ import {
 } from '@constants/api';
 import {connect} from '@tarojs/redux';
 import {AtButton, AtModal, AtModalHeader, AtModalContent, AtModalAction} from 'taro-ui';
+import replaceAll  from 'string.prototype.replaceall';
 
 import './index.scss';
 import { getWindowHeight } from '@utils/style';
@@ -252,7 +253,10 @@ class UserWorkOrder extends Component {
         <View className='work-order-item' key={workRecid.toString() + orderRecid.toString()}>
           <View className='info-wrapper'>
             <View className='location'>
-              工作地点:  <Text>{stationdsc}({address})</Text>
+              工作站点:  <Text>{stationdsc}</Text>
+            </View>
+            <View className='location'>
+              工作区域:  <Text>{address.split(',').sort().join('、')}</Text>
             </View>
             <View className='date'>
               工作日期:  <Text>{workDate}</Text>
