@@ -29,8 +29,9 @@ class UserWorkOrder extends Component {
       checkInCode: '', // 签到码
       checkOutCode: '', // 手工码
       refresherTriggered: false, // 刷新器是否触发刷新
-      pageNum: 2, // 页码
+      nextPage: -1, // 是否有下一页
     };
+    this._pageSize = 4; // 每页数据量
   }
 
   config = {
@@ -46,42 +47,71 @@ class UserWorkOrder extends Component {
     const {userInfo} = this.props;
     fetch({url: API_WORK_ORDER_MY + `?pageNum=${pageNum}&pageSize=${pageSize}`, accessToken: userInfo.userToken.accessToken})
       .then((res) => {
-        const {data: {list}, status, } = res.data;
+        const {data, status} = res.data;
 
         if (status === 200) {
-          this.setState({
-            workOrderList: list,
-          }, () => {
-            callback();
-          });
+          callback(data);
         }
-
       })
       .catch(() => {
-
+        this._loadMore = false;
+        Taro.hideLoading();
       });
   };
 
-
+  // 下拉刷新
   refresherRefresh = () => {
+    this._loadMore = false;
+    Taro.showLoading({
+      mask: true,
+      title: '正在刷新中'
+    });
+    this._pageNum = 1;
     this.setState({
       refresherTriggered: true,
     }, () => {
-      this.fetchWorkOrder(1, 2, () => {
+      this.fetchWorkOrder(this._pageNum, this._pageSize, (data) => {
         this.setState({
+          workOrderList: data.list,
           refresherTriggered: false,
+          nextPage: data.nextPage,
+        }, () => {
+          Taro.hideLoading();
+          this._freshing = false;
         });
-        this._freshing = false;
       });
     });
   };
 
-  scrollToLower = () => {
-    console.log('scrollToLower');
-    const {pageNum} = this.state;
+  // 加载更多也叫上拉刷新
+  loadMore = () => {
+    console.log('loadMore...');
+    Taro.showLoading({
+      mask: true,
+      title: '正在加载更多',
+    });
+    const {nextPage} = this.state;
 
-    this.fetchWorkOrder(pageNum, 2, () => {
+    if (nextPage === 0) {
+      Taro.showToast({
+        icon: 'none',
+        title: '没有更多了',
+      });
+      this._loadMore = false;
+      return;
+    }
 
+    this._pageNum = this._pageNum + 1;
+    this.fetchWorkOrder(this._pageNum, this._pageSize, ({list, nextPage}) => {
+      this.setState((prevState) => {
+        return {
+          workOrderList: prevState.workOrderList.concat(list),
+          nextPage: nextPage,
+        };
+      }, () => {
+        Taro.hideLoading();
+        this._loadMore = false;
+      });
     });
   };
 
@@ -250,7 +280,6 @@ class UserWorkOrder extends Component {
 
   renderWorkOrder = () => {
     const {workOrderList} = this.state;
-    console.log('workOrderList: ', workOrderList);
     const systemInfo = Taro.getSystemInfoSync();
     const marginBottom = systemInfo.safeArea == undefined ? 0 : systemInfo.screenHeight - systemInfo.safeArea.bottom;
     return workOrderList.map((workOrderItem, index, sourceArray) => {
@@ -448,13 +477,19 @@ class UserWorkOrder extends Component {
           refresherBackground="white"
           refresherTriggered={this.state.refresherTriggered}
           onRefresherRefresh={() => {
+            console.log('onRefresherRefresh...');
             if (this._freshing) return;
             this._freshing = true;
             this.refresherRefresh();
           }}
-          onScrollToLower={this.scrollToLower}
+          onScrollToLower={() => {
+            console.log('onScrollToLower...');
+            if (this._loadMore) return;
+            this._loadMore = true;
+            this.loadMore();
+          }}
         >
-          <View className='placeholder'>微信小程序 ScrollView 全是 bug, 这是必不可少的占位元素</View>
+          {/* <View className='placeholder'>微信小程序 ScrollView 全是 bug, 这是必不可少的占位元素</View> */}
           {this.renderWorkOrder()}
           <View className='footer'>用户底部撑开 ios 安全区使用</View>
         </ScrollView>
