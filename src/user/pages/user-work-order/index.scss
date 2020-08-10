@@ -4,13 +4,23 @@
   @include wh(100%, 100%);
   .scroll-view {
     @include wh(100%, 100%);
+    background-color: #eeeeee;
+    .placeholder {
+      font-size: 1px;
+      color: #eeeeee;
+    }
+    .footer {
+      font-size: 1px;
+      color: #eeeeee;
+    }
     .work-order-item {
       border-radius: 10px;
       display: flex;
       flex-direction: column;
       margin: 20px;
       padding: 20px;
-      border: 2px solid #eee;
+      border: 2px solid white;
+      background-color: white;
       .info-wrapper {
         .location {
           margin-bottom: 10px;
@@ -37,35 +47,69 @@
         .card {
           margin-right: 20px;
           border: 2px solid #fe871f;
+          color: white;
+          background-color: #fe871f;
         }
         .work {
           border: 2px solid #fe871f;
+          color: white;
+          background-color: #fe871f;
         }
       }
     }
   }
   .check-in-modal {
+    // .at-modal__header {
+    //   &::after {
+    //     border-bottom-width: 0;
+    //   }
+    // }
     .at-modal__content {
       min-height: 0;
+      display: flex;
+      align-items: center;
       padding: 0;
+      padding-top: 20px;
+      padding-bottom: 20px;
       .check-in-code {
         border: 2px solid #bababa;
-        margin: 20px 20px;
+        margin-left: 20px;
+        margin-right: 20px;
         padding: 10px;
 
       }
     }
+    // .at-modal__footer {
+    //   &::before {
+    //     border-top-width: 0;
+    //   }
+    // }
   }
   .check-out-modal {
+    // .at-modal__header {
+    //   &::after {
+    //     border-bottom-width: 0;
+    //   }
+    // }
     .at-modal__content {
       min-height: 0;
+      display: flex;
+      align-items: center;
       padding: 0;
+      padding-top: 20px;
+      padding-bottom: 20px;
       .check-out-code {
         border: 2px solid #bababa;
-        margin: 20px 20px;
+        margin-left: 20px;
+        margin-right: 20px;
         padding: 10px;
 
       }
     }
+    // .at-modal__footer {
+    //   &::before {
+    //     border-top-width: 0;
+    //   }
+    // }
   }
 }

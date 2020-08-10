@@ -28,7 +28,7 @@ export const dispatchLogout = () => ({type: actionTypes.USER_LOGOUT});
 export const login = payload => {
   return dispatch => {
     Taro.showLoading({
-      title: '正在登陆中',
+      title: '正在登录中',
       mask: true,
     });
     fetch({url: API_USER_LOGIN + `?mobilePhone=${payload.mobilePhone}&securityCode=${payload.securityCode}`, method: 'POST', payload}).then((res) => {
