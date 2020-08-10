@@ -10,6 +10,8 @@ import {
 } from '@constants/api';
 import {connect} from '@tarojs/redux';
 import {AtButton, AtModal, AtModalHeader, AtModalContent, AtModalAction} from 'taro-ui';
+import chunk from 'lodash.chunk';
+import throttle from 'lodash.throttle';
 
 import './index.scss';
 import { getWindowHeight } from '@utils/style';
@@ -29,9 +31,9 @@ class UserWorkOrder extends Component {
       checkInCode: '', // 签到码
       checkOutCode: '', // 手工码
       refresherTriggered: false, // 刷新器是否触发刷新
-      nextPage: -1, // 是否有下一页
+      total: -1, // 列表总数
     };
-    this._pageSize = 4; // 每页数据量
+    this._pageSize = 5; // 每页数据量
   }
 
   config = {
@@ -74,7 +76,6 @@ class UserWorkOrder extends Component {
         this.setState({
           workOrderList: data.list,
           refresherTriggered: false,
-          nextPage: data.nextPage,
         }, () => {
           Taro.hideLoading();
           this._freshing = false;
@@ -86,27 +87,41 @@ class UserWorkOrder extends Component {
   // 加载更多也叫上拉刷新
   loadMore = () => {
     console.log('loadMore...');
+
     Taro.showLoading({
       mask: true,
       title: '正在加载更多',
     });
-    const {nextPage} = this.state;
-
-    if (nextPage === 0) {
-      Taro.showToast({
-        icon: 'none',
-        title: '没有更多了',
-      });
-      this._loadMore = false;
-      return;
-    }
 
     this._pageNum = this._pageNum + 1;
-    this.fetchWorkOrder(this._pageNum, this._pageSize, ({list, nextPage}) => {
+
+    this.fetchWorkOrder(this._pageNum, this._pageSize, ({list, total, nextPage}) => {
       this.setState((prevState) => {
+        const workOrderListLen = prevState.workOrderList.length;
+        const matrixWorkOrderList = chunk(prevState.workOrderList, this._pageSize);
+        const mwoLen = matrixWorkOrderList.length;
+        let newestWorkOrderList;
+
+        if (nextPage === 0) {
+          this._pageNum = Math.floor(total / this._pageSize);
+        }
+
+        if (workOrderListLen === total) {
+          matrixWorkOrderList[mwoLen - 1] = list;
+          newestWorkOrderList = matrixWorkOrderList.flat(1);
+        } else {
+          if (Math.ceil(workOrderListLen / this._pageSize) === Math.ceil(total / this._pageSize)) {
+            matrixWorkOrderList[mwoLen - 1] = list;
+            newestWorkOrderList = matrixWorkOrderList.flat(1);
+          } else {
+            newestWorkOrderList = prevState.workOrderList.concat(list);
+          }
+        }
+
+        console.log('metrixWorkOrderList: ', matrixWorkOrderList);
+
         return {
-          workOrderList: prevState.workOrderList.concat(list),
-          nextPage: nextPage,
+          workOrderList: newestWorkOrderList,
         };
       }, () => {
         Taro.hideLoading();
@@ -388,6 +403,13 @@ class UserWorkOrder extends Component {
     });
   }
 
+  scrollToLower = throttle(() => {
+    console.log('onScrollToLower...');
+    if (this._loadMore) return;
+    this._loadMore = true;
+    this.loadMore();
+  }, 1000);
+
   render() {
     return (
       <View className='user-work-order'>
@@ -472,7 +494,7 @@ class UserWorkOrder extends Component {
           style={{height: getWindowHeight(false)}}
           refresherEnabled={true}
           refresherThreshold={100}
-          lowerThreshold={100}
+          // lowerThreshold={100}
           refresherDefaultStyle="black"
           refresherBackground="white"
           refresherTriggered={this.state.refresherTriggered}
@@ -482,12 +504,7 @@ class UserWorkOrder extends Component {
             this._freshing = true;
             this.refresherRefresh();
           }}
-          onScrollToLower={() => {
-            console.log('onScrollToLower...');
-            if (this._loadMore) return;
-            this._loadMore = true;
-            this.loadMore();
-          }}
+          onScrollToLower={() => this.scrollToLower()}
         >
           {/* <View className='placeholder'>微信小程序 ScrollView 全是 bug, 这是必不可少的占位元素</View> */}
           {this.renderWorkOrder()}

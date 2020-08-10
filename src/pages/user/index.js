@@ -14,7 +14,7 @@ import './index.scss';
 }))
 class User extends Component {
  componentDidMount() {
-   
+
  }
 
   config = {
