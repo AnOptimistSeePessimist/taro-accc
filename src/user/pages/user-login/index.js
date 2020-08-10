@@ -71,18 +71,54 @@ class Login extends Component {
     });
   }
 
-  login = async () => {
+  // 微信登录
+  wxLogin = () => {
     const {mobilePhone, code} = this.state;
     if (
       mobilePhone == '' ||
       mobilePhone.length != 11 ||
       code == ''
     ) {
-      this.showToast('请输入有效的手机号或输入有效验证码！');
+      Taro.showToast({
+        icon: 'none',
+        title: '请输入有效的手机号或输入有效验证码！',
+        mask: true,
+      });
       return;
     }
 
-    this.props.dispatchLogin({mobilePhone, securityCode: code});
+    Taro.login({
+      success: (res) => {
+        if (res.code) {
+          console.log('res.code: ', res.code);
+          this.login(res.code);
+        } else {
+          Taro.showToast({
+            icon: 'none',
+            title: `登录失败！` + res.errMsg
+          });
+        }
+      }
+    });
+  };
+
+  // 用户登录
+  login = async (wxCode) => {
+    const {mobilePhone, code} = this.state;
+    if (
+      mobilePhone == '' ||
+      mobilePhone.length != 11 ||
+      code == ''
+    ) {
+      Taro.showToast({
+        icon: 'none',
+        title: '请输入有效的手机号或输入有效验证码！',
+        mask: true,
+      });
+      return;
+    }
+
+    this.props.dispatchLogin({mobilePhone, securityCode: code, wxCode: wxCode});
   };
 
   handleRegister = () => {
@@ -121,7 +157,7 @@ class Login extends Component {
                 {sending === 0 ? '获取验证码' : sending === 1 ? `${smsTime}秒后重发` : '重新获取'}
               </View>
             </View>
-            <Button className='button' onClick={this.login}>
+            <Button className='button' onClick={() => this.wxLogin()}>
               登录
             </Button>
             <View className='register-btn' onClick={this.handleRegister}>注册</View>

@@ -1,5 +1,5 @@
 import Taro, {Component} from '@tarojs/taro';
-import {View, Text, Button} from '@tarojs/components';
+import {View, Text, Button, ScrollView} from '@tarojs/components';
 import {connect} from '@tarojs/redux';
 import {API_HRES_LIST, API_HRES_VERIFY} from '@constants/api';
 import fetch from '@utils/request';
@@ -9,6 +9,7 @@ import {
   AtModalContent,
   AtModalAction,
 } from 'taro-ui';
+import { getWindowHeight } from '@utils/style';
 
 import './index.scss';
 
@@ -66,7 +67,7 @@ class UserResource extends Component {
 
   renderResource = () => {
     const {resource} = this.state;
-  
+
     return resource.map((resourceItem) => {
       const {hresRecid, name, worktypeRecid, isverify, sex, workTypeDesc} = resourceItem;
       return (
@@ -77,7 +78,7 @@ class UserResource extends Component {
           <View>
           <View>
             <Button
-              className='validate-button' 
+              className='validate-button'
               disabled={isverify === 'Y'}
               onClick={() => this.validate(hresRecid)}
             >
@@ -134,17 +135,25 @@ class UserResource extends Component {
   render() {
     return (
       <View className='user-resource'>
-        {this.renderResource()}
+        <ScrollView
+          className='scroll-view'
+          scrollY
+          enableFlex={true}
+          style={{height: getWindowHeight(false)}}
+        >
+          {this.renderResource()}
+        </ScrollView>
         <AtModal
-          isOpened={this.state.isOpened}
-          title='是否审核该用户'
-          cancelText='取消'
-          confirmText='确认'
-          onCancel={ this.handleCancel }
-          onConfirm={ this.handleConfirm }
-          content=''
-          closeOnClickOverlay={false}
-        />
+            className='is-check-user'
+            isOpened={this.state.isOpened}
+            title='是否审核该用户'
+            cancelText='取消'
+            confirmText='确认'
+            onCancel={ this.handleCancel }
+            onConfirm={ this.handleConfirm }
+            content=''
+            closeOnClickOverlay={false}
+          />
       </View>
     );
   }
