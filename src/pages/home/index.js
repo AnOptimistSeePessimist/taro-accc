@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro';
 import { View, Text, Image, ScrollView, Button } from '@tarojs/components';
 import { connect } from '@tarojs/redux'
-import { drawerShowHide, dataPageList } from '../../actions/home'
+import {dataPageList } from '../../actions/home'
 import { AtDrawer } from 'taro-ui'
 import { API_RSPUBLISH_LIST } from '@constants/api';
 import fetch from '@utils/request';
@@ -18,9 +18,6 @@ function listImgSrc() {
   userInfo: state.user.userInfo,
   home: state.home
 }), (dispatch) => ({
-  drawerShowHides(data) {
-    dispatch(drawerShowHide(data))
-  },
   dispatchPageList(payload) {
     dispatch(dataPageList(payload))
   }
@@ -34,9 +31,10 @@ class Home extends Component {
     super(props);
     this.state = {
       dataList: [],
+      AtDrawer: false,
       refresherTriggered: false,
       pageNum: 1,
-      pageMax: ''
+      pageMax: '',
     }
   }
 
@@ -100,75 +98,85 @@ class Home extends Component {
 
 
   todrawerShowHide = (e) => {
-    this.props.drawerShowHides(true)
+    this.setState({
+      AtDrawer: true
+    })
+  }
+
+  onClose = () => {
+    this.setState({
+      AtDrawer: false
+    })
   }
 
   render() {
     return (
-      // <View className='home'>
-      //   <Text className='title'>Home</Text>
-      //   {this.props.home.showHideDrawer}
-      //   <Button onClick={this.todrawerShowHide}>测试抽屉</Button>
-      //   <AtDrawer
-      //     show={this.props.home.showHideDrawer}
-      //     mask
-      //     right
-      //     items={['菜单1', '菜单2']}
-      //   ></AtDrawer>
-      // </View>
-
-      <ScrollView
-        className='home'
-        style={{height: getWindowHeight(true)}}
-        scrollY
-        enableFlex={true}
-        refresherEnabled={true}
-        refresherThreshold={100}
-        refresherDefaultStyle="white"
-        refresherBackground="#fe871f"
-        refresherTriggered={this.state.refresherTriggered}
-        onRefresherRefresh={() => {
-          if (this._freshing) return;
-          this._freshing = true;
-          this.pageListData();
-        }}
-        onScrollToLower={this.scrollToLower}
-      >
-        <View className='data-list'>
-          {this.state.dataList.map((item, index) => {
-            const evenNum = index % 2 === 0
-            const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
-            rspublishDto.imgSrc = listImgSrc()
-            rspublishDto.listImg = [
-              { img: listImgSrc() },
-              { img: listImgSrc() }
-            ]
-            // console.log('返回的数据',hresCargostationMap)
-            if (evenNum) {
-              return (
-                <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} />
-              )
-            }
-          })}
+      <View>
+        <View className='header'>
+          <Text onClick={this.todrawerShowHide}>筛选</Text>
         </View>
-        <View className='data-list'>
-          {this.state.dataList.map((item, index) => {
-            const evenNum = index % 2 === 1
-            const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
-            rspublishDto.imgSrc = listImgSrc()
-            rspublishDto.listImg = [
-              { img: listImgSrc() },
-              { img: listImgSrc() }
-            ]
+        <View className='height-margin'></View>
+        <ScrollView
+          className='home'
+          style={{height: getWindowHeight(true)}}
+          scrollY
+          enableFlex={true}
+          refresherEnabled={true}
+          refresherThreshold={100}
+          refresherDefaultStyle="black"
+          refresherBackground="white"
+          refresherTriggered={this.state.refresherTriggered}
+          onRefresherRefresh={() => {
+            if (this._freshing) return;
+            this._freshing = true;
+            this.pageListData();
+          }}
+          onScrollToLower={this.scrollToLower}
+        > 
+          <View className='data-list'>
+            {this.state.dataList.map((item, index) => {
+              const evenNum = index % 2 === 0
+              const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
+              rspublishDto.imgSrc = listImgSrc()
+              rspublishDto.listImg = [
+                { img: listImgSrc() },
+                { img: listImgSrc() }
+              ]
+              // console.log('返回的数据',hresCargostationMap)
+              if (evenNum) {
+                return (
+                  <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} />
+                )
+              }
+            })}
+          </View>
+          <View className='data-list'>
+            {this.state.dataList.map((item, index) => {
+              const evenNum = index % 2 === 1
+              const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
+              rspublishDto.imgSrc = listImgSrc()
+              rspublishDto.listImg = [
+                { img: listImgSrc() },
+                { img: listImgSrc() }
+              ]
 
-            if (evenNum) {
-              return (
-                <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap}/>
-              )
-            }
-          })}
-        </View>
-      </ScrollView>
+              if (evenNum) {
+                return (
+                  <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap}/>
+                )
+              }
+            })}
+          </View>
+        </ScrollView>
+
+        <AtDrawer
+          show={this.state.AtDrawer}
+          mask
+          right
+          items={['菜单1', '菜单2']}
+          onClose={this.onClose}
+        ></AtDrawer>
+      </View>
     );
   }
 }

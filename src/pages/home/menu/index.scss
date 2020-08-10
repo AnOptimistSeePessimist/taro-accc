@@ -20,6 +20,17 @@
     line-height: 48px;
     padding: 10px;
   }
+  &-data {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    &-text {
+      display: flex;
+      flex-direction: column;
+      font-size: 33px;
+      padding: 10px;
+    }
+  }
 
   &-hours {
     font-size: 33px;

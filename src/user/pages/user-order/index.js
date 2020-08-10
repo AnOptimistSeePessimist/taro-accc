@@ -13,6 +13,7 @@ class UserOrder extends Component {
     super(props);
     this.state = {
       orderList: [],
+      refresherTriggered: false,
     };
   }
 
@@ -23,6 +24,48 @@ class UserOrder extends Component {
   componentDidMount() {
     this.fetchMyOrder();
   }
+
+  scrollToLower = () => {
+    console.log('scrollToLower底部上拉');
+  };
+
+  onRefresherRefresh = () => {
+    this.setState({
+      refresherTriggered: true,
+    }, () => {
+      const {userInfo} = this.props;
+      fetch({url: API_ORDER_MYORDER, accessToken: userInfo.userToken.accessToken})
+      .then((res) => {
+        const {data: {status, data}} = res;
+        console.log('我的交易: ', res);
+
+        if (status === 200) {
+          if(data.list.length !== 0) {
+            this.setState({
+              orderList: data.list,
+            }, () => {
+              this.setState({
+                refresherTriggered: false,
+              })
+              this._freshing = false
+            });  
+          } else {
+            Taro.showToast({
+              icon: 'none',
+              title: '暂无发布信息',
+              duration: 2000,
+            });
+            setTimeout(() => {
+              Taro.navigateBack();
+            }, 2000);
+          }
+        }
+      })
+      .catch(() => {
+        Taro.hideLoading();
+      });
+    });
+  };
 
   fetchMyOrder = () => {
     Taro.showLoading({
@@ -36,9 +79,20 @@ class UserOrder extends Component {
         console.log('我的交易: ', res);
 
         if (status === 200) {
-          this.setState({
-            orderList: data.list,
-          });
+          if(data.list.length !== 0) {
+            this.setState({
+              orderList: data.list,
+            });  
+          } else {
+            Taro.showToast({
+              icon: 'none',
+              title: '暂无发布信息',
+              duration: 2000,
+            });
+            setTimeout(() => {
+              Taro.navigateBack();
+            }, 2000);
+          }  
         }
       })
       .catch(() => {
@@ -78,6 +132,19 @@ class UserOrder extends Component {
         className='user-order'
         scrollY
         style={{height: getWindowHeight(false)}}
+        refresherEnabled={true}
+        refresherThreshold={100}
+        lowerThreshold={150}
+        refresherDefaultStyle="black"
+        refresherBackground="white"
+        refresherTriggered={this.state.refresherTriggered}
+        onRefresherRefresh={() => {
+          if (this._freshing) return;
+          this._freshing = true;
+          this.onRefresherRefresh();
+        }}
+        enableBackToTop={true}
+        onScrollToLower={this.scrollToLower}
       >
         {this.renderOrderList()}
       </ScrollView>
