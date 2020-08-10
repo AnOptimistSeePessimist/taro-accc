@@ -3,13 +3,15 @@ import { View, Text, Image, ScrollView, Button, Picker } from '@tarojs/component
 import { connect } from '@tarojs/redux'
 import {dataPageList } from '../../actions/home'
 import { AtDrawer, AtList, AtListItem, AtTag } from 'taro-ui'
-import classnames from 'classnames';
+import {formatTimeStampToTime} from '@utils/common';
+import { getWindowHeight } from '@utils/style';
 import { API_RSPUBLISH_LIST, API_COMP_WORK_TYPE } from '@constants/api';
+import classnames from 'classnames';
+import chunk from 'lodash.chunk';
+import throttle from 'lodash.throttle';
 import fetch from '@utils/request';
 import Menu from './menu'
 import './index.scss';
-import {formatTimeStampToTime} from '@utils/common';
-import { getWindowHeight } from '@utils/style';
 
 function listImgSrc() {
   return `https://picsum.photos/seed/${Math.ceil(Math.random() * 100)}/110/70`
@@ -39,38 +41,56 @@ class Home extends Component {
       pageMax: '',
       date: formatTimeStampToTime(Date.now()),
       // outOfdate: formatTimeStampToTime(Date.now()),
-      workTypeList: (new Array(8).fill)({})
-
+      workTypeList: (new Array(8).fill)({}),
+      total: -1, // 列表总数
     }
+    this._pageSize = 5; // 每页数据量
   }
 
   componentDidMount() {
-    this.pageListData();
+    this.refresherRefresh();
     this.workType();
   }
 
-  pageListData = () => {
-    this.setState({
-      refresherTriggered: true,
-      pageNum: 1
-    }, () => {
-      fetch({
-        url: API_RSPUBLISH_LIST + `?pageNum=${this.state.pageNum}&pageSize=${3}`,
-      }).then((res) => {
-        console.log('分页返回参数', res)
-        const { data: { data } } = res;
-        this.setState({
-          dataList: data.list,
-          pageMax: data.pages
-        }, () => {
-          this.setState({
-            refresherTriggered: false,
-          })
-          this._freshing = false
-        })
+  
+  // 获取工单
+  fetchWorkOrder = (pageNum, pageSize, callback) => {
+    fetch({url: API_RSPUBLISH_LIST + `?pageNum=${pageNum}&pageSize=${pageSize}`})
+      .then((res) => {
+        const {data, status} = res.data;
+
+        if (status === 200) {
+          callback(data);
+        }
       })
+      .catch(() => {
+        this._loadMore = false;
+        Taro.hideLoading();
+      });
+  };
+
+ // 下拉刷新
+ refresherRefresh = () => {
+  this._loadMore = false;
+  Taro.showLoading({
+    mask: true,
+    title: '正在刷新中'
+  });
+  this._pageNum = 1;
+  this.setState({
+    refresherTriggered: true,
+  }, () => {
+    this.fetchWorkOrder(this._pageNum, this._pageSize, (data) => {
+      this.setState({
+        dataList: data.list,
+        refresherTriggered: false,
+      }, () => {
+        Taro.hideLoading();
+        this._freshing = false;
+      });
     });
-  }
+  });
+};
 
   workType = () => {
     fetch({
@@ -112,37 +132,60 @@ class Home extends Component {
     });
   };
 
-  scrollToLower = () => {
-    console.log('滚动到底部事件')
-    const {dataList, pageMax, pageNum} = this.state
-    console.log(dataList)
-    if(pageNum === pageMax) {
-      Taro.showToast({
-        icon: "none",
-        title: '已经没有了',
-        duration: 2000
-      })
-      return;
-    }
-    fetch({
-      url: API_RSPUBLISH_LIST + `?pageNum=${pageNum + 1}&pageSize=${3}`
-    })
-    .then((res) => {
-      console.log('分页参数',res, pageNum + 1)
-      const {data: {data, status}} = res
-      if(status === 200) {
-        data.list.map((item) => {
-          console.log('分页', item)
-          dataList.push(item)
-        })
-        console.log('数据',dataList)
-        this.setState({
-          dataList,
-          pageNum: pageNum + 1
-        })
-      }
-    })
-  }
+
+  scrollToLower = throttle(() => {
+    console.log('onScrollToLower...');
+    if (this._loadMore) return;
+    this._loadMore = true;
+    this.loadMore();
+  }, 1000);
+
+   // 加载更多也叫上拉刷新
+   loadMore = () => {
+    console.log('loadMore...');
+
+    Taro.showLoading({
+      mask: true,
+      title: '正在加载更多',
+    });
+
+    this._pageNum = this._pageNum + 1;
+
+    this.fetchWorkOrder(this._pageNum, this._pageSize, ({list, total, nextPage}) => {
+      this.setState((prevState) => {
+        console.log('下拉',prevState)
+        const dataListLen = prevState.dataList.length;
+        const matrixdataList = chunk(prevState.dataList, this._pageSize);
+        const mwoLen = matrixdataList.length;
+        let newestWorkOrderList;
+
+        if (nextPage === 0) {
+          this._pageNum = Math.floor(total / this._pageSize);
+        }
+
+        if (dataListLen === total) {
+          matrixdataList[mwoLen - 1] = list;
+          newestWorkOrderList = matrixdataList.flat();
+        } else {
+          if (Math.ceil(dataListLen / this._pageSize) === Math.ceil(total / this._pageSize)) {
+            matrixdataList[mwoLen - 1] = list;
+            newestWorkOrderList = matrixdataList.flat();
+          } else {
+            newestWorkOrderList = prevState.dataList.concat(list);
+          }
+        }
+
+        console.log('metrixWorkOrderList: ', matrixdataList);
+
+        return {
+          dataList: newestWorkOrderList,
+        };
+      }, () => {
+        Taro.hideLoading();
+        this._loadMore = false;
+      });
+    });
+  };
 
 
   todrawerShowHide = (e) => {
@@ -179,9 +222,9 @@ class Home extends Component {
         <View className='height-margin'></View>
         <ScrollView
           className='home'
-          style={{height: getWindowHeight(true)}}
           scrollY
           enableFlex={true}
+          style={{height: getWindowHeight(false)}}
           refresherEnabled={true}
           refresherThreshold={100}
           refresherDefaultStyle="black"
@@ -190,9 +233,10 @@ class Home extends Component {
           onRefresherRefresh={() => {
             if (this._freshing) return;
             this._freshing = true;
-            this.pageListData();
+            this.refresherRefresh();
           }}
-          onScrollToLower={this.scrollToLower}
+         
+          onScrollToLower={() => this.scrollToLower()}
         > 
           <View className='data-list'>
             {this.state.dataList.map((item, index) => {
