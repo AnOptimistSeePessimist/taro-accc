@@ -38,14 +38,8 @@ export default class UserDetails extends Component {
 			bottonTitle: '',  //按钮内容
 			isBotton: false,  //是否展示按钮
 			signInWorkOver: false, //是否签到收工按钮
-			signInbtnTitle: '', //签到按钮内容
-			workOverBtnTitle: '', //收工按钮内容
 			workStatus: [],
-			workRecid: '',  //工单 
-			staffId: '', //工人id
-			status: '', //步骤状态 3 签到 4 收工
-			isSignInClick: false, //签到点击
-			isWorkOverClick: false, //手工点击
+			checkInOrOut: '', //签到码或收工码
 		}
 		
 	}
@@ -86,8 +80,6 @@ export default class UserDetails extends Component {
 		 let signInbtnTitle
 		 let workOverBtnTitle
 		 let signInWorkOver
-		 let isSignInClick
-		 let isWorkOverClick
 		switch (orderstatusDtoList[0].status) {
 			case 1:
 				 bottonTitle ='支付'
@@ -101,25 +93,16 @@ export default class UserDetails extends Component {
 				break;
 				case 3:
 				 isBotton = false
-				 signInbtnTitle = '未签到'
-				 workOverBtnTitle = '未收工'
 				 signInWorkOver = true
 				break;
 				case 4:
 				 isBotton = false
-				 signInbtnTitle = '已签到'
-				 workOverBtnTitle = '未收工'
 				 signInWorkOver = true
-				 isSignInClick = true
 				break;
 				case 5:
-				 signInbtnTitle = '已签到'
-				 workOverBtnTitle = '已收工'
 				 bottonTitle ='完成'
 				 isBotton = true
 				 signInWorkOver = true
-				 isSignInClick = true
-				 isWorkOverClick = true
 				break;
 				case 6:
 				 bottonTitle= '完成'
@@ -136,8 +119,6 @@ export default class UserDetails extends Component {
 			signInbtnTitle,
 			workOverBtnTitle,
 			signInWorkOver,
-			isSignInClick,
-			isWorkOverClick
 		})
 	}
 
@@ -247,31 +228,29 @@ export default class UserDetails extends Component {
 	}
 
 	//签到
-	signIn = (workRecid, staffId, status, orderRecid) => {
-		console.log('签到')
+	signIn = (checkInCode, orderRecid) => {
+		console.log('签到', checkInCode)
 		this.setState({
 			isWqrCode: !this.state.isWqrCode,
-			workRecid,
-			staffId,
-			status
+			checkInOrOut: checkInCode,
 		}, () => {
 			setTimeout(() => {
 				this.orderStatusUpload(orderRecid)
+				this.orderWorkInformation()
 			}, 5000)
 		})
 	}
 
 	//收工
-	workOver = (workRecid, staffId, status, orderRecid) => {
-		console.log('收工')
+	workOver = (checkOutTime, orderRecid) => {
+		console.log('收工', checkOutTime)
 		this.setState({
 			isWqrCode: !this.state.isWqrCode,
-			workRecid,
-			staffId,
-			status
+			checkInOrOut: checkOutTime
 		}, () => {
 			setTimeout(() => {
 				this.orderStatusUpload(orderRecid)
+				this.orderWorkInformation()
 			}, 5000)
 		})
 		
@@ -288,15 +267,8 @@ export default class UserDetails extends Component {
 			orderInformation:{orderstatusDtoList, orderNo, orderRecid, createTime, paidSum, orderDetailDto, publishByCompanyName}, atTimeline, 
 			bottonTitle, 
 			atTimeline2, 
-			signInbtnTitle, 
-			workOverBtnTitle,
 			workStatus,
 			signInWorkOver,
-			workRecid,
-			staffId,
-			status,
-			isSignInClick,
-			isWorkOverClick
 		} = this.state
 		
 		console.log('订单详情', orderInformation, workStatus, signInWorkOver)
@@ -341,8 +313,22 @@ export default class UserDetails extends Component {
 										<View className='iconfont iconionc-- addressimg'></View>
 										<Text className='work-text'>{item.staffName} {item.workDate}</Text> 
 										<View className='work-over'>
-											<Button className='release btn' disabled={isSignInClick} onClick={() => {this.signIn(item.workRecid, item.staffId, 3, orderRecid)}}>{signInbtnTitle}</Button> 
-											<Button className='release btn' disabled={isWorkOverClick} onClick={() => {this.workOver(item.workRecid, item.staffId, 4, orderRecid)}}>{workOverBtnTitle}</Button>
+											<Button 
+											className='release btn' 
+											style={{opacity: item.checkInTime? '0.6': '1'}} 
+											onClick={() => {item.checkInTime?console.log('执行签到'):this.signIn(item.checkInCode,orderRecid)}}
+											>
+												{item.checkInTime? '已签到': '未签到'}
+											</Button>
+											<Button 
+											className='release btn'
+											style={{opacity: item.checkOutTime?'0.6': '1'}} 
+											onClick={() => {item.checkOutTime?console.log('执行收工') : this.workOver(item.checkOutCode, orderRecid)}}
+											>
+												{item.checkOutTime?'已收工': '未收工'}
+											</Button>
+											
+											
 										</View>
 									</View>
 								)
@@ -370,7 +356,7 @@ export default class UserDetails extends Component {
 									 <WQRCode 
 										makeOnLoad 
 										cid="qrcode2302" 
-										text={workRecid +'/'+ staffId+'/'+ status + '/' + Math.ceil(Math.random() * 100)} 
+										text={this.state.checkInOrOut} 
 									 />
 									 }
 								</View>

@@ -213,7 +213,7 @@ export default class BuyDetails extends Component {
     }
     Object.keys(this.state.displayCheckedPassareaList).map(passarea => {
       address = passarea;   
-      areaCode = this.state.displayCheckedPassareaList[passarea].join()
+      areaCode = this.state.displayCheckedPassareaList[passarea].sort().join()
     })
 
     if(workDateTitle.length === 0 ){
@@ -560,9 +560,9 @@ export default class BuyDetails extends Component {
               </View>
             </View>
 
-            <View className='data-start-end'>
+            <View className='data-start-end' onClick={this.closeDataModal}>
               <Text className='data-title'>工作日期</Text>
-              <Text className='data-content' onClick={this.closeDataModal}>{dataTitle}{workDateTitle.join()} </Text>
+              <Text className='data-content'>{dataTitle}{workDateTitle.join()} </Text>
             </View>
 
             <View className='setting-spec'>
@@ -576,16 +576,16 @@ export default class BuyDetails extends Component {
                 onChange={this.handleValueChange}
               />
             </View>
-            <View className='pay-address'>
-              <View className={`iconfont iconionc-- addressimg`} />
-              <View 
-                className='pay-address-userName-phone-address' 
-                onClick={() => {
+            <View 
+            className='pay-address' 
+            onClick={() => {
                   this.setState({
                      isOpenedPassarea: true,
                     })
-                  }}
-                >
+                }}
+              >
+              <View className={`iconfont iconionc-- addressimg`} />
+              <View className='pay-address-userName-phone-address'>
                   {Object.keys(this.state.displayCheckedPassareaList).length === 0? '请选择地址':
                   this.state.passareaList.length !== 0 && Object.keys(this.state.displayCheckedPassareaList).map(passarea => {
                         let desc = '';
