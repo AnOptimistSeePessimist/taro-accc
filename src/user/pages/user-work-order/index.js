@@ -108,11 +108,11 @@ class UserWorkOrder extends Component {
 
         if (workOrderListLen === total) {
           matrixWorkOrderList[mwoLen - 1] = list;
-          newestWorkOrderList = matrixWorkOrderList.flat(1);
+          newestWorkOrderList = matrixWorkOrderList.flat();
         } else {
           if (Math.ceil(workOrderListLen / this._pageSize) === Math.ceil(total / this._pageSize)) {
             matrixWorkOrderList[mwoLen - 1] = list;
-            newestWorkOrderList = matrixWorkOrderList.flat(1);
+            newestWorkOrderList = matrixWorkOrderList.flat();
           } else {
             newestWorkOrderList = prevState.workOrderList.concat(list);
           }
@@ -495,6 +495,7 @@ class UserWorkOrder extends Component {
           refresherEnabled={true}
           refresherThreshold={100}
           // lowerThreshold={100}
+          scrollAnchoring={true}
           refresherDefaultStyle="black"
           refresherBackground="white"
           refresherTriggered={this.state.refresherTriggered}
@@ -506,9 +507,11 @@ class UserWorkOrder extends Component {
           }}
           onScrollToLower={() => this.scrollToLower()}
         >
-          {/* <View className='placeholder'>微信小程序 ScrollView 全是 bug, 这是必不可少的占位元素</View> */}
-          {this.renderWorkOrder()}
-          <View className='footer'>用户底部撑开 ios 安全区使用</View>
+          <View style={{height: `${Taro.getSystemInfoSync().windowHeight + 1}px`}}>
+            <View className='placeholder'>微信小程序 ScrollView 全是 bug, 这是必不可少的占位元素</View>
+            {this.renderWorkOrder()}
+            <View className='footer'>用户底部撑开 ios 安全区使用</View>
+          </View>
         </ScrollView>
       </View>
     );
