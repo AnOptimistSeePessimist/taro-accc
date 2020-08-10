@@ -31,7 +31,7 @@ export const login = payload => {
       title: '正在登录中',
       mask: true,
     });
-    fetch({url: API_USER_LOGIN + `?mobilePhone=${payload.mobilePhone}&securityCode=${payload.securityCode}&placeholder=${payload.wxCode}`, method: 'POST', payload}).then((res) => {
+    fetch({url: API_USER_LOGIN + `?mobilePhone=${payload.mobilePhone}&securityCode=${payload.securityCode}&jscode=${payload.wxCode}`, method: 'POST', payload}).then((res) => {
       Taro.hideLoading();
       console.log('login: ', res);
       const {data: {code, data, message, status}} = res;
