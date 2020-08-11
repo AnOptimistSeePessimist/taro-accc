@@ -101,11 +101,13 @@ export default class BuyDetails extends Component {
     navigationBarTitleText: '商品详情'
   }
 
-  componentDidMount(){
-   // this.station()
+  componentWillMount () {
+    console.log('执行componentWillMount', this.$preloadData)
+    this.fetchData(this.$router.params.item, this.$router.params.hresCargostationMap)
   }
 
   componentWillPreload (params) {
+    console.log('执行componentWillPreload')
     return this.fetchData(params.item, params.hresCargostationMap)
   }
 

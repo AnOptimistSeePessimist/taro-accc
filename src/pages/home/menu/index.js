@@ -55,13 +55,11 @@ export default class Menu extends Component {
 				<View className='text'>
 					<Text className='text-workerName' onClick={this.confirm}>{listImg.workTypeName} </Text>
 					<Text className='text-hours' onClick={this.confirm}>{listImg.timeStart} - {listImg.timeEnd} ({time}小时)</Text>
-					<View className='text-data'  onClick={this.confirm}>
-						<View className='text-hours'>日期:</View>
-						<View className='text-data-text'>
+					<Text className='text-hours'>日期:</Text>
+					<View className='text-data-text'>
 							{listImg.workdateList && listImg.workdateList.map((item) => {
 								return (<Text key={item}>{item}</Text>)
 							})}
-						</View>
 					</View>
 					<Text className='text-dollar' onClick={this.confirm}>￥{listImg.price}/小时</Text>
 					<Text className='text-workerStation' onClick={this.closeModal}> ({listImg.rsNum}人)</Text>

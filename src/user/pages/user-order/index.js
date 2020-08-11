@@ -52,7 +52,7 @@ class UserOrder extends Component {
           } else {
             Taro.showToast({
               icon: 'none',
-              title: '暂无发布信息',
+              title: '暂无订单信息',
               duration: 2000,
             });
             setTimeout(() => {
@@ -86,7 +86,7 @@ class UserOrder extends Component {
           } else {
             Taro.showToast({
               icon: 'none',
-              title: '暂无发布信息',
+              title: '暂无订单信息',
               duration: 2000,
             });
             setTimeout(() => {
