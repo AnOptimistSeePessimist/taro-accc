@@ -44,7 +44,7 @@ class Home extends Component {
       workTypeList: (new Array(8).fill)({}),
       total: -1, // 列表总数
     }
-    this._pageSize = 5; // 每页数据量
+    this._pageSize = 4; // 每页数据量
   }
 
   componentDidMount() {
@@ -157,7 +157,7 @@ class Home extends Component {
         const dataListLen = prevState.dataList.length;
         const matrixdataList = chunk(prevState.dataList, this._pageSize);
         const mwoLen = matrixdataList.length;
-        let newestDataList;
+        let newestWorkOrderList;
 
         if (nextPage === 0) {
           this._pageNum = Math.floor(total / this._pageSize);
@@ -165,20 +165,20 @@ class Home extends Component {
 
         if (dataListLen === total) {
           matrixdataList[mwoLen - 1] = list;
-          newestDataList = matrixdataList.flat();
+          newestWorkOrderList = matrixdataList.flat();
         } else {
           if (Math.ceil(dataListLen / this._pageSize) === Math.ceil(total / this._pageSize)) {
             matrixdataList[mwoLen - 1] = list;
-            newestDataList = matrixdataList.flat();
+            newestWorkOrderList = matrixdataList.flat();
           } else {
-            newestDataList = prevState.dataList.concat(list);
+            newestWorkOrderList = prevState.dataList.concat(list);
           }
         }
 
         console.log('metrixWorkOrderList: ', matrixdataList);
 
         return {
-          dataList: newestDataList,
+          dataList: newestWorkOrderList,
         };
       }, () => {
         Taro.hideLoading();
@@ -215,13 +215,13 @@ class Home extends Component {
   render() {
     console.log('workTypeList: ', this.state.workTypeList);
     return (
-      <View>
+      <View className='home'>
         <View className='header'>
           <Text onClick={this.todrawerShowHide}>筛选</Text>
         </View>
         <View className='height-margin'></View>
         <ScrollView
-          className='home'
+          className='home-scroll-view'
           scrollY
           enableFlex={true}
           style={{height: getWindowHeight(false)}}
@@ -238,42 +238,46 @@ class Home extends Component {
          
           onScrollToLower={() => this.scrollToLower()}
         > 
-          <View className='data-list'>
-            {this.state.dataList.map((item, index) => {
-              const evenNum = index % 2 === 0
-              const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
-              rspublishDto.imgSrc = listImgSrc()
-              rspublishDto.listImg = [
-                { img: listImgSrc() },
-                { img: listImgSrc() }
-              ]
-              // console.log('返回的数据',hresCargostationMap)
-              if (evenNum) {
-                return (
-                  <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} />
-                )
-              }
-            })}
-          </View>
-          <View className='data-list'>
-            {this.state.dataList.map((item, index) => {
-              const evenNum = index % 2 === 1
-              const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
-              rspublishDto.imgSrc = listImgSrc()
-              rspublishDto.listImg = [
-                { img: listImgSrc() },
-                { img: listImgSrc() }
-              ]
+          <View className='placeholder'>23123</View>
+          <View className='data-item'>
+            <View className='data-list'>
+              {this.state.dataList.map((item, index) => {
+                const evenNum = index % 2 === 0
+                const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
+                rspublishDto.imgSrc = listImgSrc()
+                rspublishDto.listImg = [
+                  { img: listImgSrc() },
+                  { img: listImgSrc() }
+                ]
+                // console.log('返回的数据',hresCargostationMap)
+                if (evenNum) {
+                  return (
+                    <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} />
+                  )
+                }
+              })}
+            </View>
+            <View className='data-list'>
+              {this.state.dataList.map((item, index) => {
+                const evenNum = index % 2 === 1
+                const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
+                rspublishDto.imgSrc = listImgSrc()
+                rspublishDto.listImg = [
+                  { img: listImgSrc() },
+                  { img: listImgSrc() }
+                ]
 
-              if (evenNum) {
-                return (
-                  <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap}/>
-                )
-              }
-            })}
+                if (evenNum) {
+                  return (
+                    <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap}/>
+                  )
+                }
+              })}
+            </View>
           </View>
+          <View className='placeholder'>23123</View>
         </ScrollView>
-
+        
         <AtDrawer
           show={this.state.AtDrawer}
           mask

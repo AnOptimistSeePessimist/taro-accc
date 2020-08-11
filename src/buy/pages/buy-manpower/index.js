@@ -12,9 +12,10 @@ import {
   AtListItem,
   AtInputNumber,
 } from 'taro-ui';
-import classnames from 'classnames';
+import {API_COMP_WORK_TYPE} from '@constants/api'
 import {formatTimeStampToTime} from '@utils/common';
-
+import fetch from '@utils/request';
+import classnames from 'classnames';
 import './index.scss';
 
 class BuyManpower extends Component {
@@ -25,32 +26,7 @@ class BuyManpower extends Component {
       startTime: '08:00',
       endTime: '16:00',
       value: '1',
-      list: [
-        {
-          id: 1,
-          value: '1',
-          text: '装卸工',
-          checked: false,
-        },
-        {
-          id: 2,
-          value: '2',
-          text: '叉车司机',
-          checked: false,
-        },
-        {
-          id: 3,
-          value: '3',
-          text: '组板工',
-          checked: false,
-        },
-        {
-          id: 4,
-          value: '4',
-          text: '杂工',
-          checked: false,
-        },
-      ]
+      workTypeList: (new Array(8).fill)({}),
     };
   }
 
@@ -58,15 +34,37 @@ class BuyManpower extends Component {
     navigationBarTitleText: '租人力'
   };
 
+  componentWillMount(){
+    this.workType()
+  }
+
   onSubmit = e => {
     console.log('submit: ', e);
   };
 
 	submit = () => {
-		const {date, startTime, endTime, value, list} = this.state;
-		const buyData = { date: date, startTime: startTime, endTime: endTime, workersNum: value, list: list }
-		Taro.navigateTo({ url: `/buy/pages/buy-manpower-information/index?buyData=${JSON.stringify(buyData)}` })
-	}
+		const {workTypeList} = this.state;
+		console.log('workTypeList::',workTypeList)
+		//Taro.navigateTo({ url: `/buy/pages/buy-manpower-information/index?buyData=${JSON.stringify(buyData)}` })
+  }
+  
+  workType = () => {
+    fetch({
+      url: API_COMP_WORK_TYPE + `/AC`,
+    })
+      .then((res) => {
+        const {data: {data}} = res;
+        console.log('compWorkType: ', res);
+        const workTypeList = data.map((item) => {
+          item.checked = false;
+          return item;
+        });
+        this.setState({
+          workTypeList,
+        });
+      })
+      .catch(() => {});
+  }
 
   onDateChange = e => {
     this.setState({
@@ -90,21 +88,25 @@ class BuyManpower extends Component {
     this.setState({value});
   };
 
-  handleClickCatogory = (category) => {
-    const {list} = this.state;
-    const newList = list.slice();
+  handleClickWorkType = (typeRecId) => {
+    const {workTypeList} = this.state;
+    const newList = workTypeList.slice();
+    let date;
+    if(typeRecId === -1){
+      date = formatTimeStampToTime(Date.now())
+      this.setState({
+        date
+      })
+    }
     newList.forEach((item) => {
-      if (item.id === category) {
-        item.checked = !item.checked;
-        this.setState({
-          list: newList,
-        });
-      } else {
-        item.checked = false;
-        this.setState({
-          list: newList,
-        });
+      item.checked = false;
+      if (item.typeRecId === typeRecId) {
+        item.checked = true;
       }
+    });
+
+    this.setState({
+      workTypeList: newList,
     });
   };
 
@@ -120,17 +122,20 @@ class BuyManpower extends Component {
             <View className='category'>
               <View className='at-article__h3'>工种</View>
                 <View className='tag-wrapper'>
-                  {
-                    this.state.list.map((item) => {
+                {
+                    this.state.workTypeList.filter((item) => {
+                      return item.workTypeName !== "销售员";
+                    })
+                    .map((item) => {
                       return (
                         <AtTag
-                          key={item.value}
+                          key={item.typeRecId}
                           className={classnames('tag', item.checked && 'tag-active')}
                           active={item.checked}
                           type='primary'
-                          onClick={() => this.handleClickCatogory(item.id)}
+                          onClick={() => this.handleClickWorkType(item.typeRecId)}
                         >
-                          {item.text}
+                          {item.workTypeName}
                         </AtTag>
                       );
                     })
