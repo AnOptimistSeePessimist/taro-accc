@@ -88,16 +88,9 @@ class Login extends Component {
     }
 
     Taro.login({
-      success: (res) => {
-        if (res.code) {
-          console.log('res.code: ', res.code);
-          this.login(res.code);
-        } else {
-          Taro.showToast({
-            icon: 'none',
-            title: `登录失败！` + res.errMsg
-          });
-        }
+      complete: (res) => {
+        console.log('res.code: ', res.code);
+        this.login(res.code);
       }
     });
   };

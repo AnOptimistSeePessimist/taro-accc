@@ -1,7 +1,7 @@
 import Taro, {Component} from '@tarojs/taro';
 import {View, Text, Button} from '@tarojs/components';
 import {AtTimeline, AtButton, AtModal, AtModalHeader, AtModalContent, AtModalAction, AtCheckbox} from 'taro-ui';
-import {API_ORDER_RS, API_WORK_ORDER_DISTRIBUTE, API_ORDER_ORDERONE} from '@constants/api';
+import {API_ORDER_RS, API_WORK_ORDER_DISTRIBUTE, API_ORDER_ORDERONE, API_SEND_SUBSCRIBE_MSG} from '@constants/api';
 import fetch from '@utils/request';
 import { connect } from '@tarojs/redux';
 
@@ -144,46 +144,63 @@ class UserTransactionDetails extends Component {
     );
   }
 
-  doing = () => {
-    const {transactionRecord, checkedManpower} = this.state;
+  sendSubscribeMsg = () => {
     const {userToken: {accessToken}} = this.props.userInfo;
-    const manpowerCount = transactionRecord.orderDetailDto.count;
-    console.log('购买的人数: ', transactionRecord.orderDetailDto.count);
-    console.log('选择派工的人数: ', checkedManpower.length);
-
-    if (manpowerCount !== checkedManpower.length) {
-      Taro.showToast({
-        icon: 'none',
-        title: `请选择${manpowerCount}名工人`,
-      });
-      return;
-    }
-
-    this.toggleManpowerModal(() => {
-      Taro.showLoading({
-        title: '正在派工中',
-      });
-
-      fetch({
-        url: API_WORK_ORDER_DISTRIBUTE + `?orderRecid=${transactionRecord.orderRecid}&staffIds=${checkedManpower.toString()}`,
-        method: 'POST',
-        accessToken: accessToken,
+    fetch({
+      method: 'POST',
+      url: API_SEND_SUBSCRIBE_MSG,
+      accessToken: accessToken,
+    })
+      .then((res) => {
+        console.log('sendSubscribeMsg: ', res);
       })
-        .then((res) => {
-          Taro.hideLoading();
-          console.log('doing 派工: ', res);
-          const {data: {status}} = res;
+      .catch(() => {
 
-          if (status === 200) {
-            this.queryOrder();
-            Taro.eventCenter.trigger('update', '触发了上一个界面的更新');
-          }
+      });
+  };
 
-        })
-        .catch(() => {
+  doing = () => {
+    this.sendSubscribeMsg();
 
-        });
-    });
+    // const {transactionRecord, checkedManpower} = this.state;
+    // const {userToken: {accessToken}} = this.props.userInfo;
+    // const manpowerCount = transactionRecord.orderDetailDto.count;
+    // console.log('购买的人数: ', transactionRecord.orderDetailDto.count);
+    // console.log('选择派工的人数: ', checkedManpower.length);
+
+    // if (manpowerCount !== checkedManpower.length) {
+    //   Taro.showToast({
+    //     icon: 'none',
+    //     title: `请选择${manpowerCount}名工人`,
+    //   });
+    //   return;
+    // }
+
+    // this.toggleManpowerModal(() => {
+    //   Taro.showLoading({
+    //     title: '正在派工中',
+    //   });
+
+    //   fetch({
+    //     url: API_WORK_ORDER_DISTRIBUTE + `?orderRecid=${transactionRecord.orderRecid}&staffIds=${checkedManpower.toString()}`,
+    //     method: 'POST',
+    //     accessToken: accessToken,
+    //   })
+    //     .then((res) => {
+    //       Taro.hideLoading();
+    //       console.log('doing 派工: ', res);
+    //       const {data: {status}} = res;
+
+    //       if (status === 200) {
+    //         this.queryOrder();
+    //         Taro.eventCenter.trigger('update', '触发了上一个界面的更新');
+    //       }
+
+    //     })
+    //     .catch(() => {
+
+    //     });
+    // });
   };
 
 

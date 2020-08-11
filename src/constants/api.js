@@ -30,21 +30,23 @@ export const API_RSPUBLISH_LIST = `${host}/rspublish/list`; // 发布列表
 export const API_CARGOSTATION_LIST = `${host}/cargostation/list`; // 获取所有货站与对应区域
 
 //order
-export const API_ORDER_CREATE = `${host}/order/create`; //创建订单和详情
-export const API_ORDER_ONELIST = `${host}/orderstatus/list` //通过订单id获取订单所有状态
+export const API_ORDER_CREATE = `${host}/order/create`; // 创建订单和详情
+export const API_ORDER_ONELIST = `${host}/orderstatus/list` // 通过订单id获取订单所有状态
 export const API_ORDER_MYORDER = `${host}/order/myOrder`; // 我的订单
 export const API_ORDER_MYTRADE = `${host}/order/myTrade`; // 我的交易
-export const API_ORDER_ORDERONE = `${host}/order`; //通过订单编号获取订单信息
+export const API_ORDER_ORDERONE = `${host}/order`; // 通过订单编号获取订单信息
 export const API_ORDER_RS = `${host}/order/rs`; // 通过订单id获取对应的员工
 
 //callback
-export const API_CALLBACK_WX = `${host}/callback/wx-pay`; //微信支付
-
+export const API_CALLBACK_WX = `${host}/callback/wx-pay`; // 微信支付
 
 //workorder
-export const API_WORK_ORDER_LIST = `${host}/workorder/list`; //工单条件查询
+export const API_WORK_ORDER_LIST = `${host}/workorder/list`; // 工单条件查询
 export const API_WORK_ORDER_MY = `${host}/workorder/my`; // 我的工单
 export const API_WORK_ORDER_DISTRIBUTE = `${host}/workorder/distribute`; // 派工单
 export const API_WORK_ORDER_CHECK_IN = `${host}/workorder/check-in`; // 签到打卡
 export const API_WORK_ORDER_CHECK_OUT = `${host}/workorder/check-out` // 完工打卡
 export const API_WORK_ORDER_RECID = `${host}/workorder`; // 通过工单id查询工单
+
+// wechat
+export const API_SEND_SUBSCRIBE_MSG = `${host}/wechat/sendSubscribeMsg`; // 发送订阅消息

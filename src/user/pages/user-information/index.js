@@ -291,6 +291,20 @@ class UserInfomation extends Component {
 
   };
 
+
+  // 请求订阅消息权限
+  requestSubscribeMessage = () => {
+    Taro.requestSubscribeMessage({
+      tmplIds: ['u46Ky51R7RK9QLTjoH84oDZh4qOCf9IIl9-GnDioIhg'],
+      complete: (res) => {
+        console.log('requestSubscribeMessage: ', res);
+        this.save();
+      }
+    });
+  };
+
+
+  // 保存用户信息
   save = () => {
     const {
       idCard,
@@ -365,7 +379,12 @@ class UserInfomation extends Component {
         sex: sexList[sexId] && sexList[sexId].code, // 性别
         status: 1, // 在职状态
         usrRecId: this.props.userInfo.auth.id, // 用户ID
-        worktypeRecid: compWorkTypes.filter(item => item.checked === true).map(item => item.typeRecId)[0] // 工种ID
+        worktypeRecid: compWorkTypes.reduce((accumulator, item) => {
+          if (item.checked === true) {
+            accumulator.push(item.typeRecId);
+          }
+          return accumulator;
+        }, [])[0] // 工种ID
       },
       userDetailDto: {
         identityCard: idCard,
@@ -763,7 +782,10 @@ class UserInfomation extends Component {
           </View>
           <Button
             className='button'
-            onClick={this.save}
+            onClick={() => {
+              // 先请求订阅消息权限，然后保存用户数据
+              this.requestSubscribeMessage();
+            }}
             disabled={false}
           >
             保存
