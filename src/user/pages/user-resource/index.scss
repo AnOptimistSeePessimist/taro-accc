@@ -4,10 +4,18 @@
   @include wh(100%, 100%);
   .scroll-view {
     @include wh(100%, 100%);
+    .placeholder {
+      font-size: 1px;
+      color: #eeeeee;
+    }
+    .footer {
+      font-size: 1px;
+      color: #eeeeee;
+    }
     .resource-item {
       display: flex;
       flex-direction: row;
-      // margin: 20px 20px;
+      margin: 20px 20px;
       padding: 10px 10px;
       // border-bottom: 1px solid #eeeeee;
       border: 1px solid #bababa;

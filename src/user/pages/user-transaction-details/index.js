@@ -160,47 +160,46 @@ class UserTransactionDetails extends Component {
   };
 
   doing = () => {
-    this.sendSubscribeMsg();
+    // this.sendSubscribeMsg();
+    const {transactionRecord, checkedManpower} = this.state;
+    const {userToken: {accessToken}} = this.props.userInfo;
+    const manpowerCount = transactionRecord.orderDetailDto.count;
+    console.log('购买的人数: ', transactionRecord.orderDetailDto.count);
+    console.log('选择派工的人数: ', checkedManpower.length);
 
-    // const {transactionRecord, checkedManpower} = this.state;
-    // const {userToken: {accessToken}} = this.props.userInfo;
-    // const manpowerCount = transactionRecord.orderDetailDto.count;
-    // console.log('购买的人数: ', transactionRecord.orderDetailDto.count);
-    // console.log('选择派工的人数: ', checkedManpower.length);
+    if (manpowerCount !== checkedManpower.length) {
+      Taro.showToast({
+        icon: 'none',
+        title: `请选择${manpowerCount}名工人`,
+      });
+      return;
+    }
 
-    // if (manpowerCount !== checkedManpower.length) {
-    //   Taro.showToast({
-    //     icon: 'none',
-    //     title: `请选择${manpowerCount}名工人`,
-    //   });
-    //   return;
-    // }
+    this.toggleManpowerModal(() => {
+      Taro.showLoading({
+        title: '正在派工中',
+      });
 
-    // this.toggleManpowerModal(() => {
-    //   Taro.showLoading({
-    //     title: '正在派工中',
-    //   });
+      fetch({
+        url: API_WORK_ORDER_DISTRIBUTE + `?orderRecid=${transactionRecord.orderRecid}&staffIds=${checkedManpower.toString()}`,
+        method: 'POST',
+        accessToken: accessToken,
+      })
+        .then((res) => {
+          Taro.hideLoading();
+          console.log('doing 派工: ', res);
+          const {data: {status}} = res;
 
-    //   fetch({
-    //     url: API_WORK_ORDER_DISTRIBUTE + `?orderRecid=${transactionRecord.orderRecid}&staffIds=${checkedManpower.toString()}`,
-    //     method: 'POST',
-    //     accessToken: accessToken,
-    //   })
-    //     .then((res) => {
-    //       Taro.hideLoading();
-    //       console.log('doing 派工: ', res);
-    //       const {data: {status}} = res;
+          if (status === 200) {
+            this.queryOrder();
+            Taro.eventCenter.trigger('update', '触发了上一个界面的更新');
+          }
 
-    //       if (status === 200) {
-    //         this.queryOrder();
-    //         Taro.eventCenter.trigger('update', '触发了上一个界面的更新');
-    //       }
+        })
+        .catch(() => {
 
-    //     })
-    //     .catch(() => {
-
-    //     });
-    // });
+        });
+    });
   };
 
 

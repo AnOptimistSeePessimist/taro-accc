@@ -10,6 +10,8 @@ import {
   AtModalAction,
 } from 'taro-ui';
 import { getWindowHeight } from '@utils/style';
+import chunk from 'lodash.chunk';
+import throttle from 'lodash.throttle';
 
 import './index.scss';
 
@@ -26,7 +28,9 @@ class UserResource extends Component {
       resource: [],
       isOpened: false,
       hresRecId: '',
+      refresherTriggered: false, // 刷新器是否触发刷新
     };
+    this._pageSize = 10; // 每页数据量
   }
 
   config = {
@@ -34,28 +38,24 @@ class UserResource extends Component {
   };
 
   componentDidMount() {
-    console.log('UserResource: ', this.props.userInfo);
-    this.fetchManpower();
+    this.refresherRefresh();
   }
 
-  fetchManpower = () => {
-    Taro.showLoading({title: '正在获取我的资源'});
+  fetchManpower = (pageNum, pageSize, callback) => {
     const {hresDto: {companyCode}, userToken: {accessToken}} = this.props.userInfo;
-    fetch({url: API_HRES_LIST + `?companyCode=${companyCode}`, accessToken})
+    fetch({url: API_HRES_LIST + `?companyCode=${companyCode}&pageNum=${pageNum}&pageSize=${pageSize}`, accessToken})
       .then((res) => {
-        setTimeout(Taro.hideLoading, 1000);
-        const {data: {status, data: {list: resource}}} = res;
+        const {data: {status, data}} = res;
         console.log('获取人力资源: ', res);
 
         if (status === 200) {
-          this.setState({
-            resource,
-          });
+          callback(data);
         }
-
-
       })
-      .catch(() => {});
+      .catch(() => {
+        this._loadMore = false;
+        Taro.hideLoading();
+      });
   };
 
   validate = (hresRecId) => {
@@ -132,6 +132,82 @@ class UserResource extends Component {
     });
   };
 
+  refresherRefresh = () => {
+    this._loadMore = false;
+    Taro.showLoading({
+      mask: true,
+      title: '正在刷新中'
+    });
+    this._pageNum = 1;
+    this.setState({
+      refresherTriggered: true,
+    }, () => {
+      this.fetchManpower(this._pageNum, this._pageSize, (data) => {
+        this.setState({
+          resource: data.list,
+          refresherTriggered: false,
+        }, () => {
+          Taro.hideLoading();
+          this._freshing = false;
+        });
+      });
+    });
+  };
+
+  scrollToLower = throttle(() => {
+    console.log('onScrollToLower...');
+    if (this._loadMore) return;
+    this._loadMore = true;
+    this.loadMore();
+  }, 1000);
+
+
+  // 加载更多也叫上拉刷新
+  loadMore = () => {
+    console.log('loadMore...');
+
+    Taro.showLoading({
+      mask: true,
+      title: '正在加载更多',
+    });
+
+    this._pageNum = this._pageNum + 1;
+
+    this.fetchManpower(this._pageNum, this._pageSize, ({list, total, nextPage}) => {
+      this.setState((prevState) => {
+        const resourceLen = prevState.resource.length;
+        const matrixResource = chunk(prevState.resource, this._pageSize);
+        const mrLen = matrixResource.length;
+        let newestResource;
+
+        if (nextPage === 0) {
+          this._pageNum = Math.floor(total / this._pageSize);
+        }
+
+        if (resourceLen === total) {
+          matrixResource[mrLen - 1] = list;
+          newestResource = matrixResource.flat();
+        } else {
+          if (Math.ceil(resourceLen / this._pageSize) === Math.ceil(total / this._pageSize)) {
+            matrixResource[mrLen - 1] = list;
+            newestResource = matrixResource.flat();
+          } else {
+            newestResource = prevState.resource.concat(list);
+          }
+        }
+
+        console.log('matrixResource: ', matrixResource);
+
+        return {
+          resource: newestResource,
+        };
+      }, () => {
+        Taro.hideLoading();
+        this._loadMore = false;
+      });
+    });
+  };
+
   render() {
     return (
       <View className='user-resource'>
@@ -140,8 +216,27 @@ class UserResource extends Component {
           scrollY
           enableFlex={true}
           style={{height: getWindowHeight(false)}}
+
+          refresherEnabled={true}
+          refresherThreshold={100}
+          // // lowerThreshold={100}
+          scrollAnchoring={true}
+          refresherDefaultStyle="black"
+          refresherBackground="white"
+          refresherTriggered={this.state.refresherTriggered}
+          onRefresherRefresh={() => {
+            console.log('onRefresherRefresh...');
+            if (this._freshing) return;
+            this._freshing = true;
+            this.refresherRefresh();
+          }}
+          onScrollToLower={() => this.scrollToLower()}
         >
-          {this.renderResource()}
+          <View style={{height: `${Taro.getSystemInfoSync().windowHeight + 1}px`}}>
+            <View className='placeholder'>微信小程序 ScrollView 全是 bug, 这是必不可少的占位元素</View>
+            {this.renderResource()}
+            <View className='footer'>用户底部撑开 ios 安全区使用</View>
+          </View>
         </ScrollView>
         <AtModal
             className='is-check-user'

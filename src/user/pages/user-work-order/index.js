@@ -12,9 +12,9 @@ import {connect} from '@tarojs/redux';
 import {AtButton, AtModal, AtModalHeader, AtModalContent, AtModalAction} from 'taro-ui';
 import chunk from 'lodash.chunk';
 import throttle from 'lodash.throttle';
+import { getWindowHeight } from '@utils/style';
 
 import './index.scss';
-import { getWindowHeight } from '@utils/style';
 
 @connect(state => ({
   userInfo: state.user.userInfo,
