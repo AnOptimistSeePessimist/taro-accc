@@ -157,7 +157,7 @@ class Home extends Component {
         const dataListLen = prevState.dataList.length;
         const matrixdataList = chunk(prevState.dataList, this._pageSize);
         const mwoLen = matrixdataList.length;
-        let newestWorkOrderList;
+        let newestDataList;
 
         if (nextPage === 0) {
           this._pageNum = Math.floor(total / this._pageSize);
@@ -165,20 +165,20 @@ class Home extends Component {
 
         if (dataListLen === total) {
           matrixdataList[mwoLen - 1] = list;
-          newestWorkOrderList = matrixdataList.flat();
+          newestDataList = matrixdataList.flat();
         } else {
           if (Math.ceil(dataListLen / this._pageSize) === Math.ceil(total / this._pageSize)) {
             matrixdataList[mwoLen - 1] = list;
-            newestWorkOrderList = matrixdataList.flat();
+            newestDataList = matrixdataList.flat();
           } else {
-            newestWorkOrderList = prevState.dataList.concat(list);
+            newestDataList = prevState.dataList.concat(list);
           }
         }
 
         console.log('metrixWorkOrderList: ', matrixdataList);
 
         return {
-          dataList: newestWorkOrderList,
+          dataList: newestDataList,
         };
       }, () => {
         Taro.hideLoading();
