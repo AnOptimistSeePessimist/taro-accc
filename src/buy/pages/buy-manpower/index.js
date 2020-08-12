@@ -12,12 +12,16 @@ import {
   AtListItem,
   AtInputNumber,
 } from 'taro-ui';
-import {API_COMP_WORK_TYPE} from '@constants/api'
+import {API_WORK_TYPE_LIST} from '@constants/api'
 import {formatTimeStampToTime} from '@utils/common';
+import {connect} from '@tarojs/redux'
 import fetch from '@utils/request';
 import classnames from 'classnames';
 import './index.scss';
 
+@connect(state => ({
+  userInfo: state.user.userInfo,
+}))
 class BuyManpower extends Component {
   constructor(props) {
     super(props);
@@ -26,7 +30,7 @@ class BuyManpower extends Component {
       startTime: '08:00',
       endTime: '16:00',
       value: '1',
-      workTypeList: (new Array(8).fill)({}),
+      workTypeList: new Array(8).fill({}),
     };
   }
 
@@ -49,8 +53,14 @@ class BuyManpower extends Component {
   }
   
   workType = () => {
+    const token = this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
+    if(!token){
+      Taro.navigateTo({url: '/user/pages/user-login/index'})
+      return
+    }
     fetch({
-      url: API_COMP_WORK_TYPE + `/AC`,
+      url: API_WORK_TYPE_LIST,
+      accessToken: token
     })
       .then((res) => {
         const {data: {data}} = res;

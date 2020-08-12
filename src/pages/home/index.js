@@ -41,13 +41,13 @@ class Home extends Component {
       pageMax: '',
       date: formatTimeStampToTime(Date.now()),
       // outOfdate: formatTimeStampToTime(Date.now()),
-      workTypeList: (new Array(8).fill)({}),
+      workTypeList: new Array(8).fill({}),
       total: -1, // 列表总数
     }
     this._pageSize = 4; // 每页数据量
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.refresherRefresh();
     this.workType();
   }
@@ -155,30 +155,30 @@ class Home extends Component {
       this.setState((prevState) => {
         console.log('下拉',prevState)
         const dataListLen = prevState.dataList.length;
-        const matrixdataList = chunk(prevState.dataList, this._pageSize);
-        const mwoLen = matrixdataList.length;
-        let newestWorkOrderList;
+        const matrixDataList = chunk(prevState.dataList, this._pageSize);
+        const mdlLen = matrixDataList.length;
+        let newestDataList;
 
         if (nextPage === 0) {
           this._pageNum = Math.floor(total / this._pageSize);
         }
 
         if (dataListLen === total) {
-          matrixdataList[mwoLen - 1] = list;
-          newestWorkOrderList = matrixdataList.flat();
+          matrixDataList[mdlLen - 1] = list;
+          newestDataList = matrixDataList.flat();
         } else {
           if (Math.ceil(dataListLen / this._pageSize) === Math.ceil(total / this._pageSize)) {
-            matrixdataList[mwoLen - 1] = list;
-            newestWorkOrderList = matrixdataList.flat();
+            matrixDataList[mdlLen - 1] = list;
+            newestDataList = matrixDataList.flat();
           } else {
-            newestWorkOrderList = prevState.dataList.concat(list);
+            newestDataList = prevState.dataList.concat(list);
           }
         }
 
-        console.log('metrixWorkOrderList: ', matrixdataList);
+        console.log('metrixWorkOrderList: ', matrixDataList);
 
         return {
-          dataList: newestWorkOrderList,
+          dataList: newestDataList,
         };
       }, () => {
         Taro.hideLoading();
