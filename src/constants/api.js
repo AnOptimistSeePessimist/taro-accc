@@ -25,6 +25,7 @@ export const API_HRES_VERIFY = `${host}/hres/verify` // 设置员工审核状态
 // rspublish
 export const API_RSPUBLISH_SAVE = `${host}/rspublish/save`; // 创建人力资源发布
 export const API_RSPUBLISH_LIST = `${host}/rspublish/list`; // 发布列表
+export const API_RSPUBLISH_DELETE = `${host}/rspublish`; // 删除发布的资源
 
 // cargostation
 export const API_CARGOSTATION_LIST = `${host}/cargostation/list`; // 获取所有货站与对应区域

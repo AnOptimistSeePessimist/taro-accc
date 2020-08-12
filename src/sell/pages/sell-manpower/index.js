@@ -125,7 +125,7 @@ class SellManpower extends Component {
       endTimeList: ['12:00', '16:00'],
       endTimeIndex: 1,
       value: 10,
-      workTypeList: (new Array(8).fill)({}), // Taro.getStorageSync('workType') ||
+      workTypeList: (new Array(8)).fill({}), // Taro.getStorageSync('workType') ||
       checkedWorkTypeRecId: -1,
       isOpened: false, // 是否打开人员选择模态
       manpowerTitle: '', // 人员模态框标题

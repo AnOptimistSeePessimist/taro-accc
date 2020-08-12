@@ -1,6 +1,6 @@
 import Taro, {Component} from '@tarojs/taro';
 import {View, Text, Button} from '@tarojs/components';
-import {AtTimeline, AtButton, AtModal, AtModalHeader, AtModalContent, AtModalAction, AtCheckbox} from 'taro-ui';
+import {AtTimeline, AtButton, AtModal, AtModalHeader, AtModalContent, AtModalAction, AtCheckbox, AtMessage} from 'taro-ui';
 import {API_ORDER_RS, API_WORK_ORDER_DISTRIBUTE, API_ORDER_ORDERONE, API_SEND_SUBSCRIBE_MSG} from '@constants/api';
 import fetch from '@utils/request';
 import { connect } from '@tarojs/redux';
@@ -188,13 +188,18 @@ class UserTransactionDetails extends Component {
         .then((res) => {
           Taro.hideLoading();
           console.log('doing 派工: ', res);
-          const {data: {status}} = res;
+          const {data: {status, message}} = res;
 
           if (status === 200) {
             this.queryOrder();
             Taro.eventCenter.trigger('update', '触发了上一个界面的更新');
+          } else {
+            Taro.atMessage({
+              'message': message,
+              'type': 'warning',
+              duration: 10000,
+            })
           }
-
         })
         .catch(() => {
 
@@ -232,6 +237,7 @@ class UserTransactionDetails extends Component {
     const orderDetail = transactionRecord.orderDetailDto === undefined ? {} : transactionRecord.orderDetailDto;
     return (
       <View className='user-transaction-details'>
+        <AtMessage />
         <View className='order-no'>
           <Text className='title'>订单编号:</Text>
           <Text>{transactionRecord.orderNo}</Text>
@@ -250,6 +256,11 @@ class UserTransactionDetails extends Component {
         <View className='order-content'>
           <Text className='title'>订单内容:</Text>
           <Text>{orderDetail.workTypeName || ''}</Text>
+        </View>
+
+        <View className='work-date'>
+          <Text className='title'>工作时间:</Text>
+          <Text>{transactionRecord.workdateList && transactionRecord.workdateList.join('、')}({transactionRecord.orderDetailDto.timeStart} - {transactionRecord.orderDetailDto.timeEnd})</Text>
         </View>
 
         <View className='order-status'>

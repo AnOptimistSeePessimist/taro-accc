@@ -48,7 +48,7 @@ class UserOrder extends Component {
                 refresherTriggered: false,
               })
               this._freshing = false
-            });  
+            });
           } else {
             Taro.showToast({
               icon: 'none',
@@ -82,7 +82,7 @@ class UserOrder extends Component {
           if(data.list.length !== 0) {
             this.setState({
               orderList: data.list,
-            });  
+            });
           } else {
             Taro.showToast({
               icon: 'none',
@@ -92,7 +92,7 @@ class UserOrder extends Component {
             setTimeout(() => {
               Taro.navigateBack();
             }, 2000);
-          }  
+          }
         }
       })
       .catch(() => {
