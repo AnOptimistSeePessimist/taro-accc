@@ -13,7 +13,7 @@ export const API_COMPANY_ALL = `${host}/company/all`; // 查询全部公司
 
 // work-type
 export const API_COMP_WORK_TYPE = `${host}/work-type/all/companyCode`; // 查询工作类型
-export const API_WORK_TYPE_LIST = `${host}/work-type/list` //根据条件分页查询工作类型
+export const API_WORK_TYPE_LIST = `${host}/work-type/list` // 根据条件分页查询工作类型
 
 // passarea
 export const API_PASSAREA_ALL = `${host}/passarea/all/companyCode`; // 获取公司所有通行证
@@ -27,6 +27,7 @@ export const API_HRES_VERIFY = `${host}/hres/verify` // 设置员工审核状态
 export const API_RSPUBLISH_SAVE = `${host}/rspublish/save`; // 创建人力资源发布
 export const API_RSPUBLISH_LIST = `${host}/rspublish/list`; // 发布列表
 export const API_RSPUBLISH_DELETE = `${host}/rspublish`; // 删除发布的资源
+export const API_RSPUBLISH_GET = `${host}/rspublish`; // 根据记录id获取资源发布
 
 // cargostation
 export const API_CARGOSTATION_LIST = `${host}/cargostation/list`; // 获取所有货站与对应区域

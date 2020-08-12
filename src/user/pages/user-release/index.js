@@ -6,6 +6,7 @@ import {API_RSPUBLISH_LIST} from '@constants/api';
 import { getWindowHeight } from '@utils/style';
 import chunk from 'lodash.chunk';
 import throttle from 'lodash.throttle';
+import {AtSwipeAction} from 'taro-ui';
 
 import './index.scss';
 
@@ -50,8 +51,6 @@ class UserRelease extends Component {
 
   renderItem = () => {
     console.log('renderItem');
-    const systemInfo = Taro.getSystemInfoSync();
-    const marginBottom = systemInfo.safeArea == undefined ? 0 : systemInfo.screenHeight - systemInfo.safeArea.bottom;
     const {publishList} = this.state;
     return publishList.map((publish, key, sourceArray) => {
       const {
@@ -70,10 +69,27 @@ class UserRelease extends Component {
           }
       } = publish;
       return (
+      <AtSwipeAction
+        key={rsId.toString() + publishRecid.toString()}
+        autoClose={true}
+        onClick={(e) => {
+          if (e.text === '删除') {
+
+          } else {
+
+          }
+        }}
+        options={[
+          {
+            text: '删除',
+            style: {
+              backgroundColor: '#FF4949'
+            }
+          }
+        ]}
+      >
         <View
           className='publish-item'
-          key={rsId.toString() + publishRecid.toString()}
-          style={{marginBottom: key === sourceArray.length - 1 ? marginBottom + 'px' : Taro.pxTransform(10)}}
           onClick={() => {
             this.$preload({
               flag: 1,
@@ -109,6 +125,7 @@ class UserRelease extends Component {
             </View>
           </View>
         </View>
+      </AtSwipeAction>
       );
     });
   };
@@ -204,7 +221,7 @@ class UserRelease extends Component {
   render() {
     const {publishList} = this.state;
     const systemInfo = Taro.getSystemInfoSync();
-    const paddingBottom = systemInfo.safeArea == undefined ? 0 : systemInfo.screenHeight - systemInfo.safeArea.bottom;
+    const height = systemInfo.safeArea == undefined ? 0 : systemInfo.screenHeight - systemInfo.safeArea.bottom;
     return (
       <ScrollView
         className='user-release'
@@ -227,7 +244,7 @@ class UserRelease extends Component {
         <View style={{height: `${Taro.getSystemInfoSync().windowHeight + 1}px`}}>
           <View className='placeholder'>微信小程序 ScrollView 全是 bug, 这是必不可少的占位元素</View>
           {this.renderItem()}
-          <View className='footer'>用户底部撑开 ios 安全区使用</View>
+          <View className='footer' style={{height: height + 'px'}}>用户底部撑开 ios 安全区使用</View>
         </View>
       </ScrollView>
     );
