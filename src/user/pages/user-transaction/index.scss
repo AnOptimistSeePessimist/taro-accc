@@ -4,6 +4,14 @@
 .user-transaction {
   @include wh(100%, 100%);
   background-color: #eee;
+  .placeholder {
+    font-size: 1px;
+    color: #eeeeee;
+  }
+  .footer {
+    font-size: 1px;
+    color: #eeeeee;
+  }
   .transaction-record {
     display: flex;
     flex-direction: column;

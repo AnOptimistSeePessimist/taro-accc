@@ -20,6 +20,13 @@ export const dispatchLogout = () => ({type: actionTypes.USER_LOGOUT});
 
 /**
  *
+ * 是否可以获取验证码
+ *
+ */
+export const dispatchSendSms = (payload) => ({type: actionTypes.USER_CODE, payload: payload});
+
+/**
+ *
  * 用户登录
  *
  * action creator

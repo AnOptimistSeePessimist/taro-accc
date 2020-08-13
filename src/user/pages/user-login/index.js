@@ -1,16 +1,21 @@
 import Taro, {Component} from '@tarojs/taro';
 import {View, Text, Input, Button} from '@tarojs/components';
 import {connect} from '@tarojs/redux';
-import {login as loginFunc} from '@actions/user';
+import {login as loginFunc, dispatchSendSms as dispatchSendSmsFunc} from '@actions/user';
 import fetch from '@utils/request';
 import {API_USER_CODE} from '@constants/api';
 
 import './index.scss';
 
+let setIntervalTime = null;
+
 @connect(state => state.user, (dispatch) => ({
   dispatchLogin(payload) {
     dispatch(loginFunc(payload));
   },
+  dispatchSendSms(payload) {
+    dispatch(dispatchSendSmsFunc(payload));
+  }
 }))
 class Login extends Component {
   constructor(props) {
@@ -18,14 +23,24 @@ class Login extends Component {
     this.state = {
       mobilePhone: '15060170315', // 手机号 15837621762 18350863236
       code: '', // 验证码
-      sending: 0, // 0 == 获取验证码 1 == 多少秒后重新发送验证码   2 == 重新获取验证码
-      smsTime: 60, // 默认为 60s 再次重新获取验证码
+      // sending: 0, // 0 == 获取验证码 1 == 多少秒后重新发送验证码   2 == 重新获取验证码
+      // smsTime: 60, // 默认为 60s 再次重新获取验证码
     };
   }
 
   config = {
     navigationBarTitleText: '登录',
   };
+
+  componentWillUnmount() {
+    setIntervalTime && clearInterval(setIntervalTime);
+  }
+
+  componentDidMount() {
+    if (this.props.sending === 1) {
+      this.setIntervalTime(200);
+    }
+  }
 
   // 发送验证码
   sendSms = () => {
@@ -40,16 +55,45 @@ class Login extends Component {
     }
 
     Taro.showLoading({
-      title: '正在发送验证码'
+      title: '正在发送验证码',
+      mask: true,
     });
 
     fetch({url: API_USER_CODE + `/${this.state.mobilePhone}`})
       .then((res) => {
-        Taro.hideLoading();
-        this.setState({code: res.data.data.toString()});
+        console.log('返送验证码是否成功的响应: ', res);
+        const {data: {status, data: code}} = res;
+        this.setIntervalTime(status);
+        setTimeout(Taro.hideLoading, 1000);
+
+        if (status === 200) {
+          this.setState({code: code.toString()});
+        }
       }).catch((e) => {
 
       });
+  };
+
+  setIntervalTime = (status) => {
+    setIntervalTime && clearInterval(setIntervalTime);
+    let {smsTime} = this.props;
+    setIntervalTime = setInterval(() => {
+      smsTime--;
+
+      this.props.dispatchSendSms({
+        sending: 1,
+        smsTime: smsTime,
+      });
+
+      if (smsTime == 0 || status != 200) {
+        setIntervalTime && clearInterval(setIntervalTime);
+
+        this.props.dispatchSendSms({
+          sending: 0,
+          smsTime: 60,
+        });
+      }
+    }, 1000);
   };
 
   showToast(title) {
@@ -88,16 +132,9 @@ class Login extends Component {
     }
 
     Taro.login({
-      success: (res) => {
-        if (res.code) {
-          console.log('res.code: ', res.code);
-          this.login(res.code);
-        } else {
-          Taro.showToast({
-            icon: 'none',
-            title: `登录失败！` + res.errMsg
-          });
-        }
+      complete: (res) => {
+        console.log('res.code: ', res.code);
+        this.login(res.code);
       }
     });
   };
@@ -126,7 +163,9 @@ class Login extends Component {
   };
 
   render() {
-    const {sending, smsTime} = this.state;
+    console.log('Login - render');
+    const {sending, smsTime} = this.props;
+    console.log('sending - smsTime: ', sending, smsTime);
     return (
       <View className='login'>
         <Text className='title'>您好，请登录</Text>
@@ -153,8 +192,12 @@ class Login extends Component {
                 value={this.state.code}
                 onInput={this.getCode}
               />
-              <View className='fetch-button' onClick={this.sendSms}>
-                {sending === 0 ? '获取验证码' : sending === 1 ? `${smsTime}秒后重发` : '重新获取'}
+              <View
+                className='fetch-button'
+                onClick={this.sendSms}
+                style={{opacity: sending === 0 ? 1 : 0.5}}
+              >
+                {sending == 0 ? '获取验证码' : `${smsTime}s后重发`}
               </View>
             </View>
             <Button className='button' onClick={() => this.wxLogin()}>

@@ -4,6 +4,9 @@ import {connect} from '@tarojs/redux';
 import fetch from '@utils/request';
 import {API_RSPUBLISH_LIST} from '@constants/api';
 import { getWindowHeight } from '@utils/style';
+import chunk from 'lodash.chunk';
+import throttle from 'lodash.throttle';
+import {AtSwipeAction} from 'taro-ui';
 
 import './index.scss';
 
@@ -19,6 +22,7 @@ class UserRelease extends Component {
       publishList: [], // 发布列表
       refresherTriggered: false, // 刷新器被触发
     };
+    this._pageSize = 6; // 每页数据量
   }
 
   config = {
@@ -26,27 +30,29 @@ class UserRelease extends Component {
   };
 
   componentDidMount() {
-    this.onRefresherRefresh();
+    this.refresherRefresh();
   }
 
   getReleaseData = (pageNum, pageSize, callback) => {
     fetch({url: API_RSPUBLISH_LIST + `?pageNum=${pageNum}&pageSize=${pageSize}`, accessToken: this.props.userInfo.userToken.accessToken})
       .then((res) => {
         console.log('publishList: ', res);
-        const {data: {data: {list}, status}} = res;
+        const {data: {data, status}} = res;
 
         if (status === 200) {
-          callback(list);
+          callback(data);
         }
       })
       .catch(() => {
+        this._loadMore = false;
+        Taro.hideLoading();
       });
   };
 
   renderItem = () => {
     console.log('renderItem');
     const {publishList} = this.state;
-    return publishList.map((publish, key) => {
+    return publishList.map((publish, key, sourceArray) => {
       const {
         rspublishDto:
           {
@@ -57,15 +63,33 @@ class UserRelease extends Component {
             timeEnd,
             timeStart,
             rsId,
+            publishRecid,
             workTypeName,
             workdateList,
           }
       } = publish;
       return (
+      <AtSwipeAction
+        key={rsId.toString() + publishRecid.toString()}
+        autoClose={true}
+        onClick={(e) => {
+          if (e.text === '删除') {
+
+          } else {
+
+          }
+        }}
+        options={[
+          {
+            text: '删除',
+            style: {
+              backgroundColor: '#FF4949'
+            }
+          }
+        ]}
+      >
         <View
           className='publish-item'
-          key='a'
-          style={{'padding-bottom': key === publishList.length - 1 ? Taro.pxTransform(15) : '0px'}}
           onClick={() => {
             this.$preload({
               flag: 1,
@@ -101,22 +125,28 @@ class UserRelease extends Component {
             </View>
           </View>
         </View>
+      </AtSwipeAction>
       );
     });
   };
 
-  onRefresherRefresh = () => {
+  refresherRefresh = () => {
+    this._loadMore = false;
+    Taro.showLoading({
+      mask: true,
+      title: '正在刷新中'
+    });
+    this._pageNum = 1;
     this.setState({
       refresherTriggered: true,
     }, () => {
-      this.getReleaseData(1, 5, (list) => {
-        if (list.length !== 0) {
+      this.getReleaseData(this._pageNum, this._pageSize, (data) => {
+        if (data.list.length !== 0) {
           this.setState({
-            publishList: list,
+            publishList: data.list,
+            refresherTriggered: false,
           }, () => {
-            this.setState({
-              refresherTriggered: false,
-            })
+            Taro.hideLoading();
             this._freshing = false
           });
         } else {
@@ -133,14 +163,65 @@ class UserRelease extends Component {
     });
   };
 
-  scrollToLower = () => {
-    console.log('scrollToLower');
+  scrollToLower = throttle(() => {
+    console.log('onScrollToLower...');
+    if (this._loadMore) return;
+    this._loadMore = true;
+    this.loadMore();
+  }, 1000);
+
+  // 加载更多也叫上拉刷新
+  loadMore = () => {
+    console.log('loadMore...');
+
+    Taro.showLoading({
+      mask: true,
+      title: '正在加载更多',
+    });
+
+    this._pageNum = this._pageNum + 1;
+
+    this.getReleaseData(this._pageNum, this._pageSize, ({list, total, nextPage}) => {
+      this.setState((prevState) => {
+        const publishListLen = prevState.publishList.length;
+        const matrixPublishList = chunk(prevState.publishList, this._pageSize);
+        const mpLen = matrixPublishList.length;
+        let newestPublishList;
+
+        if (nextPage === 0) {
+          this._pageNum = Math.floor(total / this._pageSize);
+        }
+
+        if (publishListLen === total) {
+          matrixPublishList[mpLen - 1] = list;
+          newestPublishList = matrixPublishList.flat();
+        } else {
+          if (Math.ceil(publishListLen / this._pageSize) === Math.ceil(total / this._pageSize)) {
+            matrixPublishList[mpLen - 1] = list;
+            newestPublishList = matrixPublishList.flat();
+          } else {
+            newestPublishList = prevState.publishList.concat(list);
+          }
+        }
+
+        console.log('matrixPublishList: ', matrixPublishList);
+
+        return {
+          publishList: newestPublishList,
+        };
+      }, () => {
+        Taro.hideLoading();
+        this._loadMore = false;
+      });
+    });
   };
+
+
 
   render() {
     const {publishList} = this.state;
     const systemInfo = Taro.getSystemInfoSync();
-    const paddingBottom = systemInfo.safeArea == undefined ? 0 : systemInfo.screenHeight - systemInfo.safeArea.bottom;
+    const height = systemInfo.safeArea == undefined ? 0 : systemInfo.screenHeight - systemInfo.safeArea.bottom;
     return (
       <ScrollView
         className='user-release'
@@ -155,12 +236,16 @@ class UserRelease extends Component {
         onRefresherRefresh={() => {
           if (this._freshing) return;
           this._freshing = true;
-          this.onRefresherRefresh();
+          this.refresherRefresh();
         }}
         enableBackToTop={true}
-        onScrollToLower={this.scrollToLower}
+        onScrollToLower={() => this.scrollToLower()}
       >
-        {this.renderItem()}
+        <View style={{height: `${Taro.getSystemInfoSync().windowHeight + 1}px`}}>
+          <View className='placeholder'>微信小程序 ScrollView 全是 bug, 这是必不可少的占位元素</View>
+          {this.renderItem()}
+          <View className='footer' style={{height: height + 'px'}}>用户底部撑开 ios 安全区使用</View>
+        </View>
       </ScrollView>
     );
   }
