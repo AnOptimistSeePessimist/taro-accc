@@ -5,7 +5,7 @@ import {dataPageList } from '../../actions/home'
 import { AtDrawer, AtList, AtListItem, AtTag } from 'taro-ui'
 import {formatTimeStampToTime} from '@utils/common';
 import { getWindowHeight } from '@utils/style';
-import { API_RSPUBLISH_LIST, API_COMP_WORK_TYPE } from '@constants/api';
+import { API_RSPUBLISH_LIST, API_WORK_TYPE_DISTINCT } from '@constants/api';
 import classnames from 'classnames';
 import chunk from 'lodash.chunk';
 import throttle from 'lodash.throttle';
@@ -44,7 +44,7 @@ class Home extends Component {
       workTypeList: new Array(8).fill({}),
       total: -1, // 列表总数
     }
-    this._pageSize = 4; // 每页数据量
+    this._pageSize = 10; // 每页数据量
   }
 
   componentWillMount() {
@@ -94,7 +94,7 @@ class Home extends Component {
 
   workType = () => {
     fetch({
-      url: API_COMP_WORK_TYPE + `/AC`,
+      url:API_WORK_TYPE_DISTINCT,
     })
       .then((res) => {
         const {data: {data}} = res;
@@ -112,7 +112,7 @@ class Home extends Component {
 
   handleClickWorkType = (typeRecId) => {
     const {workTypeList} = this.state;
-    const newList = workTypeList.slice();
+    const newWorkTypeList = workTypeList.slice();
     let date;
     if(typeRecId === -1){
       date = formatTimeStampToTime(Date.now())
@@ -120,7 +120,12 @@ class Home extends Component {
         date
       })
     }
-    newList.forEach((item) => {
+    // const findIdx = newWorkTypeList.findIndex(item => item.typeRecId === typeRecId);
+    // const findItem = newWorkTypeList[findIdx];
+    // newWorkTypeList[findIdx] = {...findItem, checked: !findItem.checked};
+
+    // console.log('newWorkTypeList: ', newWorkTypeList);
+    newWorkTypeList.forEach((item) => {
       item.checked = false;
       if (item.typeRecId === typeRecId) {
         item.checked = true;
@@ -128,7 +133,7 @@ class Home extends Component {
     });
 
     this.setState({
-      workTypeList: newList,
+      workTypeList: newWorkTypeList,
     });
   };
 
@@ -187,6 +192,37 @@ class Home extends Component {
     });
   };
 
+  //筛选
+  screening = () => {
+    let workTypeName 
+    this.state.workTypeList.map(item => {
+      if(item.checked){
+        workTypeName = item.workTypeName
+      }
+    })
+    // const workTypeName=this.state.workTypeList.filter(item => item.checked === true).map(item => {
+    //   return item.workTypeName
+    // })
+    console.log('workTypeName',workTypeName)
+    fetch({
+      url: API_RSPUBLISH_LIST + `?contentType=1&dateStart=${this.state.date}&worktypeName=${workTypeName}`
+    })
+    .then(res => {
+      const {data: {data, status, message}} = res
+      if(status === 200){
+        this.setState({
+          dataList: data.list,
+          AtDrawer: false
+        })
+      } else {
+        Taro.showToast({
+          icon: "none",
+          title: message,
+          duration: 2000
+        })
+      }
+    })
+  }
 
   todrawerShowHide = (e) => {
     this.setState({
@@ -213,7 +249,7 @@ class Home extends Component {
   // }
 
   render() {
-    console.log('workTypeList: ', this.state.workTypeList);
+    // console.log('workTypeList: ', this.state.dataList.length);
     return (
       <View className='home'>
         <View className='header'>
@@ -238,44 +274,50 @@ class Home extends Component {
          
           onScrollToLower={() => this.scrollToLower()}
         > 
+        <View style={{height: `${Taro.getSystemInfoSync().windowHeight + 1}px`}}>
           <View className='placeholder'>23123</View>
-          <View className='data-item'>
-            <View className='data-list'>
-              {this.state.dataList.map((item, index) => {
-                const evenNum = index % 2 === 0
-                const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
-                rspublishDto.imgSrc = listImgSrc()
-                rspublishDto.listImg = [
-                  { img: listImgSrc() },
-                  { img: listImgSrc() }
-                ]
-                // console.log('返回的数据',hresCargostationMap)
-                if (evenNum) {
-                  return (
-                    <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} />
-                  )
-                }
-              })}
-            </View>
-            <View className='data-list'>
-              {this.state.dataList.map((item, index) => {
-                const evenNum = index % 2 === 1
-                const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
-                rspublishDto.imgSrc = listImgSrc()
-                rspublishDto.listImg = [
-                  { img: listImgSrc() },
-                  { img: listImgSrc() }
-                ]
+            {this.state.dataList.length === 0? 
+              <View className='data-null' style={{height: getWindowHeight(false)}}>暂无数据</View>
+              : 
+              <View className='data-item'>
+                <View className='data-list'>
+                  {this.state.dataList.map((item, index) => {
+                    const evenNum = index % 2 === 0
+                    const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
+                    rspublishDto.imgSrc = listImgSrc()
+                    rspublishDto.listImg = [
+                      { img: listImgSrc() },
+                      { img: listImgSrc() }
+                    ]
+                    // console.log('返回的数据',hresCargostationMap)
+                    if (evenNum) {
+                      return (
+                        <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} />
+                      )
+                    }
+                  })}
+                </View>
+                <View className='data-list'>
+                  {this.state.dataList.map((item, index) => {
+                    const evenNum = index % 2 === 1
+                    const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
+                    rspublishDto.imgSrc = listImgSrc()
+                    rspublishDto.listImg = [
+                      { img: listImgSrc() },
+                      { img: listImgSrc() }
+                    ]
 
-                if (evenNum) {
-                  return (
-                    <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap}/>
-                  )
-                }
-              })}
-            </View>
-          </View>
+                    if (evenNum) {
+                      return (
+                        <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap}/>
+                      )
+                    }
+                  })}
+                </View>
+              </View>
+            }
           <View className='placeholder'>23123</View>
+        </View>  
         </ScrollView>
         
         <AtDrawer
@@ -299,10 +341,7 @@ class Home extends Component {
               <View className='at-article__h3 title'>工种</View>
                 <View className='tag-wrapper'>
                   {
-                    this.state.workTypeList.filter((item) => {
-                      return item.workTypeName !== "销售员";
-                    })
-                    .map((item) => {
+                    this.state.workTypeList.map((item) => {
                       return (
                         <AtTag
                           key={item.typeRecId}
@@ -320,7 +359,7 @@ class Home extends Component {
             </View>
             <View className='screeningReset'>
               <View className='reset screeningResetText' onClick={() => this.handleClickWorkType(-1)}>重置</View>
-              <View className='screening screeningResetText'>完成</View>
+              <View className='screening screeningResetText' onClick={() => {this.screening()}}>完成</View>
             </View>
             {/* <Picker
               className='date'

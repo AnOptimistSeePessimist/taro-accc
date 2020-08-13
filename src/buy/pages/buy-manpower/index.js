@@ -12,7 +12,7 @@ import {
   AtListItem,
   AtInputNumber,
 } from 'taro-ui';
-import {API_WORK_TYPE_LIST} from '@constants/api'
+import {API_WORK_TYPE_DISTINCT} from '@constants/api'
 import {formatTimeStampToTime} from '@utils/common';
 import {connect} from '@tarojs/redux'
 import fetch from '@utils/request';
@@ -53,14 +53,8 @@ class BuyManpower extends Component {
   }
   
   workType = () => {
-    const token = this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
-    if(!token){
-      Taro.navigateTo({url: '/user/pages/user-login/index'})
-      return
-    }
     fetch({
-      url: API_WORK_TYPE_LIST,
-      accessToken: token
+      url: API_WORK_TYPE_DISTINCT,
     })
       .then((res) => {
         const {data: {data}} = res;
@@ -133,10 +127,7 @@ class BuyManpower extends Component {
               <View className='at-article__h3'>工种</View>
                 <View className='tag-wrapper'>
                 {
-                    this.state.workTypeList.filter((item) => {
-                      return item.workTypeName !== "销售员";
-                    })
-                    .map((item) => {
+                    this.state.workTypeList.map((item) => {
                       return (
                         <AtTag
                           key={item.typeRecId}

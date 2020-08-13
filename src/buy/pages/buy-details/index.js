@@ -662,11 +662,11 @@ export default class BuyDetails extends Component {
           onClose={this.closeDataModal}
         >
           <AtModalContent>
-              <View className='wx-pay-address'>
+              <View className='wx-pay-address select-date'>
                 <View className='store'>
                   <Text className='store-name'>选择日期</Text>
                 </View>
-                <View className='tag-wrapper'>
+                <View className='tag-wrapper tag-date'>
                   {workDateList.map((item) => {
                       return(
                         <AtTag 

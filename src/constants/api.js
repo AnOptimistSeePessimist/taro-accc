@@ -14,6 +14,7 @@ export const API_COMPANY_ALL = `${host}/company/all`; // 查询全部公司
 // work-type
 export const API_COMP_WORK_TYPE = `${host}/work-type/all/companyCode`; // 查询工作类型
 export const API_WORK_TYPE_LIST = `${host}/work-type/list` //根据条件分页查询工作类型
+export const API_WORK_TYPE_DISTINCT = `${host}/work-type/distinct/all` //获取可出租的工作类型
 
 // passarea
 export const API_PASSAREA_ALL = `${host}/passarea/all/companyCode`; // 获取公司所有通行证

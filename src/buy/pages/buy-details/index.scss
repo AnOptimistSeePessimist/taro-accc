@@ -131,7 +131,10 @@ view, text, scroll-view {
     border-color: #fe871f;
   }
 }
-
+.tag-date {
+  justify-content: space-around;
+  align-items: center;
+}
 
 .img {
   width: 100%;
@@ -227,6 +230,11 @@ view, text, scroll-view {
   }
   .data-content {
     margin-right: 20px;
+    width: 55%;
+    text-align: right;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
   }
 }
 .at-list__item-extra {

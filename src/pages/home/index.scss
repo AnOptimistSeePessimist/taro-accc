@@ -48,6 +48,11 @@ $fontWeight: 600;
   height: 70px;
   
 }
+.data-null {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .data-item{
   display: flex;
   flex-direction: row;
