@@ -5,6 +5,8 @@ import classNames from 'classnames';
 
 import './index.scss';
 
+const COUNT_LINE = 2;
+
 const menuList = [
   {
     sectionName: '买家',
@@ -27,8 +29,6 @@ const menuList = [
     ]
   }
 ];
-
-const COUNT_LINE = 2;
 
 @connect(state => ({
   userInfo: state.user.userInfo,

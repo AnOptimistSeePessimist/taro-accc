@@ -26,8 +26,7 @@ class User extends Component {
     const {userInfo} = this.props;
     return (
       <View className='user'>
-        {/* <OpenData type='userAvatarUrl'/>
-        <OpenData type='userNickName'/> */}
+        {/* <OpenData type='userNickName'/> */}
         <Profile userInfo={userInfo} />
         <Menu userInfo={userInfo} />
       </View>

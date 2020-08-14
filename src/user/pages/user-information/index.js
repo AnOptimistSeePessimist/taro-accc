@@ -35,8 +35,6 @@ import {
 } from '@actions/compWorkType';
 import {dispatchLogin} from '@actions/user';
 import cloneDeep from 'lodash.clonedeep';
-import intersectionWith from 'lodash.intersectionwith';
-import differenceWith from 'lodash.differencewith';
 
 import './index.scss';
 
@@ -213,6 +211,7 @@ class UserInfomation extends Component {
       companyCode: companyCode,
       accessToken:  (this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken) || accessToken
     }, (workTypeList) => {
+      console.log('workTypeList: ', workTypeList);
       // 将工种列表缓存
       try {
         Taro.setStorageSync('workType', workTypeList);
@@ -222,25 +221,19 @@ class UserInfomation extends Component {
       const {userInfo} = this.props;
 
       const workTypeRecId =  userInfo.hresDto && userInfo.hresDto.worktypeRecid;
+      const userCompanyCode = userInfo.hresDto && userInfo.hresDto.companyCode;
       console.log('用户默认的工种: ', workTypeRecId);
 
-      if (workTypeRecId != null) {
+      if (workTypeRecId != null && userCompanyCode === companyCode) {
         const workTypeRecIdList = [workTypeRecId];
 
-        const comparator = function (arrVal, othVal) {return arrVal.typeRecId === othVal};
-
-        const differenceWorkType = differenceWith(workTypeList, workTypeRecIdList, comparator);
-        console.log('differenceWorkType: ', differenceWorkType);
-        const intersectionWorkType = intersectionWith(workTypeList, workTypeRecIdList, comparator);
-        console.log('intersectionWorkType: ', intersectionWorkType);
-
-        const intersectionWorkTypewithCheck = intersectionWorkType.map(workTypeItem => {
-          workTypeItem.checked = true;
-          return workTypeItem;
+        workTypeRecIdList.forEach((workTypeItem) => {
+          const workTypeIndex = workTypeList.findIndex(workTypeItem2 => workTypeItem === workTypeItem2.typeRecId);
+          workTypeList[workTypeIndex].checked = true;
         });
 
         this.setState({
-          compWorkTypes: [...intersectionWorkTypewithCheck, ...differenceWorkType],
+          compWorkTypes: workTypeList,
         });
       } else {
         this.setState({compWorkTypes: workTypeList});

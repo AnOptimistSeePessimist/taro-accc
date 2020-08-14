@@ -251,6 +251,11 @@ $fontWeight: 600;
                   padding: 16px 20px 16px 20px;
                 }
               }
+              .at-checkbox__option--selected {
+                .at-checkbox__icon-cnt {
+                  background-color: #fe871f;
+                }
+              }
             }
           }
         }
