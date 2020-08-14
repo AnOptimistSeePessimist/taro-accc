@@ -660,6 +660,7 @@ export default class BuyDetails extends Component {
         <AtModal
           isOpened={this.state.isDataStart}
           onClose={this.closeDataModal}
+          className='at-modal-date'
         >
           <AtModalContent>
               <View className='wx-pay-address select-date'>

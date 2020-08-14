@@ -106,11 +106,12 @@ view, text, scroll-view {
   }
 }
 
-.at-modal__container {
-  width: 95%;
-  .at-modal__content {
-    padding: 10px 8px;
-    
+.at-modal-date {
+  .at-modal__container {
+    width: 95%;
+    .at-modal__content {
+      padding: 10px 8px;  
+    }
   }
 }
 
@@ -132,7 +133,7 @@ view, text, scroll-view {
   }
 }
 .tag-date {
-  justify-content: space-around;
+  padding-left: 0px;
   align-items: center;
 }
 
@@ -243,7 +244,6 @@ view, text, scroll-view {
 
 .station {
   width: 100%;
-  // background-color: yellow;
   .station-item {
     border-radius: 3px;
     color: black;
@@ -251,9 +251,6 @@ view, text, scroll-view {
     display: flex;
     flex-direction: row;
     padding: 12px 15px;
-    // border-top: 1px solid gray;
-    // border-left: 1px solid gray;
-    // border-right: 1px solid gray;
   }
   .area {
     display: flex;
@@ -263,9 +260,6 @@ view, text, scroll-view {
       .area-checkbox {
         padding: 20px 20px;
       }
-      // border-top: 1px solid gray;
-      // border-left: 1px solid gray;
-      // border-right: 1px solid gray;
     }
   }
 }
