@@ -24,7 +24,6 @@ import {
 import fetch from '@utils/request';
 import {
   API_COMPANY_ALL,
-  API_PASSAREA_ALL,
   API_USER_USERDETAIL,
   API_CARGOSTATION_LIST
 } from '@constants/api';
@@ -34,11 +33,8 @@ import {
   dispatchCompWorkType
 } from '@actions/compWorkType';
 import {dispatchLogin} from '@actions/user';
-import cloneDeep from 'lodash.clonedeep';
 
 import './index.scss';
-
-const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxODM1MDg2MzIzNiIsImV4cCI6MTU5Mzg1NTc0NX0.hbeBbBTa0gWZ9wNi052wHKQYx62RhISQvj0BQiV4t30';
 
 const sexList = [
   {name: '女', code: 'F'},
@@ -65,56 +61,55 @@ class UserInfomation extends Component {
       checkedCompanyId: -1, // 选中的公司索引
       isOpened: false, // 是否打开职位选择modal
       compWorkTypes: [], // 职位列表(包括了是否选中的标志)
-      passarea: [], // 通行证列表
       passareaList: [], // 通行证适用区域列表
-      displayCheckedPassareaList: cloneDeep(props.userInfo.stationArea), // 显示在界面上的通行证适用区域
-      // stationList: [], // 站点列表
-      // areaList: [], // 区域列表
       checkedPassarea: '',
-      checkedPassareaId: 0,
       name: '', // 姓名
       nickName: '', // 昵称
       sexName: '', // 性别
       sexId: -1, // 性别 ID
       idCard: '', // 身份证号
-      // isBound: false, // 是否已绑定工种
-      // disabled: true, // 是否禁用保存按钮
       isOpenedPassarea: false, // 是否显示通行证选择列表
     };
   }
 
-  // static getDerivedStateFromProps(props, state) {
-  //   if (state.compWorkTypes !== props.compWorkType) {
-  //     return {
-  //       compWorkTypes: props.compWorkType,
-  //     };
-  //   }
-
-  //   return null;
-  // }
-
+  // 得到通行证适用区域列表
   fetchPassareaList = () => {
     fetch({
       url: API_CARGOSTATION_LIST,
-      accessToken: (this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken) || accessToken})
+      accessToken: this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
+    })
       .then((res) => {
         const {data: passareaList, statusCode} = res;
-        console.log('区域位置: ', res);
+        console.log('通行证适用区域列表: ', res);
 
         if (statusCode === 200) {
-          const newPassareaList = passareaList.map(station => {
-            const {passareaDtoList: areas} = station;
-            const newAreas = areas.map(area => {
-              area.checked = false;
-              return area;
+          const {stationArea} = this.props.userInfo;
+
+          console.log('stationArea: ', stationArea);
+          if (stationArea) {
+            Object.keys(stationArea).forEach((currentStation) => {
+              const currentStationIdx = passareaList.findIndex((passarea) => {
+                return passarea.stationcode === currentStation;
+              });
+
+              stationArea[currentStation].forEach((currentArea) => {
+                passareaList[currentStationIdx].passareaDtoList.forEach((area) => {
+                  if (currentArea === area.areaCode) {
+                    area.checked = true;
+                  } else {
+                    if (!area.checked) {
+                      area.checked = false;
+                    }
+                  }
+                });
+              });
             });
-            station.passareaDtoList = newAreas;
-            return station;
-          });
-          console.log('newPassareaList: ', newPassareaList);
+          }
+
+          console.log('passareaList: ', passareaList);
 
           this.setState({
-            passareaList: newPassareaList,
+            passareaList,
           });
         }
       })
@@ -123,7 +118,7 @@ class UserInfomation extends Component {
 
   componentDidMount() {
     this.retrieveAllCompany();
-    setTimeout(this.fetchPassareaList, 2000);
+    this.fetchPassareaList();
   }
 
   retrieveAllCompany = () => {
@@ -135,7 +130,7 @@ class UserInfomation extends Component {
 
     fetch({
       url: API_COMPANY_ALL,
-      accessToken: (this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken) || accessToken
+      accessToken: this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
     })
       .then((res) => {
         Taro.hideLoading();
@@ -209,7 +204,7 @@ class UserInfomation extends Component {
   fetchWorkType = (companyCode) => {
     this.props.dispatchGetCompWorkType({
       companyCode: companyCode,
-      accessToken:  (this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken) || accessToken
+      accessToken: this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
     }, (workTypeList) => {
       console.log('workTypeList: ', workTypeList);
       // 将工种列表缓存
@@ -241,45 +236,6 @@ class UserInfomation extends Component {
     });
   };
 
-
-
-  // 通行证适用区域
-  // fetchPassarea = (companyCode) => {
-  //   fetch({
-  //     url: API_PASSAREA_ALL + `/${companyCode}`,
-  //     accessToken:  (this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken) || accessToken
-  //   })
-  //     .then((res) => {
-  //       const {data: {data}} = res;
-  //       console.log('通行证适用区域: ', res);
-
-  //       const {userInfo} = this.props;
-
-  //       const passareaRecId =  userInfo.hresDto && userInfo.hresDto.passareaRecid;
-  //       console.log('passareaRecId: ', passareaRecId);
-
-  //       if (passareaRecId != null) {
-  //         const checkedPassareaId = data.findIndex((item) => {
-  //           return item.recId === passareaRecId;
-  //         });
-  //         const userAreaName = data[checkedPassareaId].areaName;
-  //         console.log('userAreaName: ', userAreaName);
-  //         this.setState({
-  //           passarea: data,
-  //           checkedPassarea: userAreaName,
-  //           checkedPassareaId,
-  //         })
-  //       } else {
-  //         this.setState({
-  //           passarea: data,
-  //         })
-  //       }
-  //     })
-  //     .catch(() => {
-
-  //     });
-  // };
-
   handleClickCatogory = () => {
 
   };
@@ -305,8 +261,6 @@ class UserInfomation extends Component {
       checkedCompanyId,
       companyList,
       sexId,
-      passarea,
-      checkedPassareaId,
       passareaList,
       nickName,
       compWorkTypes,
@@ -350,7 +304,6 @@ class UserInfomation extends Component {
             hresareaDtoList.push({
               areaCode: area.areaCode, // 区域代码
               stationcode: station.stationcode, // 货站
-              usrRecId: this.props.userInfo.auth.id // 用户id
             });
           }
         });
@@ -389,7 +342,7 @@ class UserInfomation extends Component {
       }
     };
 
-    console.log('保存用户信息的数据: ', JSON.stringify(payload));
+    console.log('保存用户信息的数据: ', payload);
 
     Taro.showLoading({
       title: '保存用户信息中',
@@ -399,7 +352,7 @@ class UserInfomation extends Component {
       url: API_USER_USERDETAIL,
       payload,
       method: 'POST',
-      accessToken: (this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken) || accessToken
+      accessToken: this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
     })
       .then((res) => {
         Taro.hideLoading();
@@ -439,16 +392,6 @@ class UserInfomation extends Component {
     });
   };
 
-  onChangePassarea = (e) => {
-    console.log('passarea: ', e.detail.value);
-    const passareaName = this.state.passarea[e.detail.value].areaName;
-
-    this.setState({
-      checkedPassarea: passareaName,
-      checkedPassareaId: e.detail.value,
-    });
-  };
-
   onChangeSex = (e) => {
     const sexName = sexList[e.detail.value].name;
 
@@ -465,52 +408,26 @@ class UserInfomation extends Component {
   };
 
   handlePassareaChange = (e) => {
-    const {passareaList, displayCheckedPassareaList: displayCheckedPassarea} = this.state;
+    console.log('handlePassareaChange: ', e);
     const stationId = e.target.dataset.stationId;
     const areaId = e.target.dataset.areaId;
-    console.log('handlePassareaChange: ', e);
+    const stationIndex = e.target.dataset.stationIndex;
+    const areaIndex = e.target.dataset.areaIndex;
+    const {passareaList} = this.state;
     const newPassareaList = passareaList.slice();
-    try {
-      newPassareaList.forEach((station) => {
-        const {recid, stationcode, stationdsc, passareaDtoList} = station;
-        if (recid === stationId) {
-          passareaDtoList.forEach(area => {
-            if (area.recId === areaId) {
-              if (!!!displayCheckedPassarea[stationcode]) {
-                displayCheckedPassarea[stationcode] = [];
-              }
-              area.checked = !area.checked;
-              if (area.checked) {
-                displayCheckedPassarea[stationcode].push(area.areaCode);
-              } else {
-                displayCheckedPassarea[stationcode].forEach((areaCode1, index) => {
-                  if (areaCode1 === area.areaCode) {
-                    displayCheckedPassarea[stationcode].splice(index, 1);
-                  }
-                });
-                displayCheckedPassarea[stationcode].splice();
-                if (displayCheckedPassarea[stationcode].length === 0) {
-                  delete displayCheckedPassarea[stationcode];
-                }
-              }
-              throw new Error('完成更新');
-            }
-          });
-        }
-      });
-    } catch (e) {
 
-    }
-    console.log('选中后的区域列表: ',  newPassareaList);
+    const areaChecked = newPassareaList[stationIndex].passareaDtoList[areaIndex].checked;
+
+    newPassareaList[stationIndex].passareaDtoList[areaIndex].checked = !areaChecked;
+
     this.setState({
       passareaList: newPassareaList,
-      displayCheckedPassareaList: displayCheckedPassarea,
     });
   };
 
   renderPassarea = () => {
-    const {passareaList, displayCheckedPassareaList: displayCheckedPassarea} = this.state;
-    return passareaList.map((stationItem) => {
+    const {passareaList} = this.state;
+    return passareaList.map((stationItem, stationIndex) => {
       const {recid: stationId, stationcode, stationdsc, passareaDtoList} = stationItem;
       return (
         <View className='station' key={stationId}>
@@ -519,24 +436,13 @@ class UserInfomation extends Component {
           </View>
           <View className='area'>
             {
-              passareaDtoList.map((areaItem) => {
-                // console.log('stationItem: ', stationItem);
+              passareaDtoList.map((areaItem, areaIndex) => {
                 const {recId, areaCode, checked} = areaItem;
-
-                Object.keys(displayCheckedPassarea).forEach((passareaItem) => {
-                  if (stationItem.stationcode === passareaItem) {
-                    displayCheckedPassarea[passareaItem].forEach((areaVal) => {
-                      if (areaCode === areaVal) {
-                        areaItem.checked = true;
-                      }
-                    });
-                  }
-                });
-
-
                 return (
                   <View className='area-item' key={recId}>
                     <CheckboxGroup
+                      data-station-index={stationIndex}
+                      data-area-index={areaIndex}
                       data-station-id={stationItem.recid}
                       data-area-id={recId}
                       onChange={this.handlePassareaChange}
@@ -643,16 +549,10 @@ class UserInfomation extends Component {
                   </View>
                 </AtModalContent>
                 <AtModalAction>
-                  {/* <Button onClick={() => {
-                    this.setState({isOpened: false});
-                    // this.handleClickWorkType('');
-                  }}
-                  >
-                    取消
-                  </Button>*/}
-                  <Button onClick={() => {
-                    this.setState({isOpened: false});
-                  }}
+                  <Button
+                    onClick={() => {
+                      this.setState({isOpened: false});
+                    }}
                   >
                     确定
                   </Button>
@@ -715,21 +615,6 @@ class UserInfomation extends Component {
                   />
                 </AtList>
               </Picker>
-              {/* <Picker
-                mode='selector'
-                range={this.state.passarea}
-                rangeKey='areaName'
-                onChange={this.onChangePassarea}
-                value={this.state.checkedPassareaId}
-              >
-              <AtList className='at-list-passarea'>
-                <AtListItem
-                  className='at-list-passarea-item'
-                  title='通行证适用区域'
-                  extraText={this.state.checkedPassarea}
-                />
-              </AtList>
-            </Picker> */}
             <View
               className='passarea'
               onClick={() => {
@@ -741,19 +626,24 @@ class UserInfomation extends Component {
               <Text className='passarea-title'>通行证{'\n'}适用区域</Text>
               <View className='passarea-value'>
                 {
-                  this.state.passareaList.length !== 0 && Object.keys(this.state.displayCheckedPassareaList).map(passarea => {
-                    let desc = '';
-                    this.state.passareaList.forEach((passareaItem) => {
-                      if (passarea === passareaItem.stationcode) {
-                        desc = passareaItem.stationdsc;
-                      }
+                  this.state.passareaList.length !== 0 &&
+                  this.state.passareaList.map((passarea) => {
+                    const areaCheckedIdx = passarea.passareaDtoList.findIndex((area) => {
+                      return area.checked === true;
                     });
-                  return (
-                    <View key={passarea}>
-                      {desc + '...'}
-                    </View>
-                  );
-                })}
+
+                    if (areaCheckedIdx !== -1) {
+                      return (
+                        <View key={passarea.recid}>
+                          {passarea.stationdsc + '...'}
+                        </View>
+                      );
+                    }
+                    return (
+                      <Text />
+                    );
+                  })
+                }
               </View>
             </View>
             <AtFloatLayout
