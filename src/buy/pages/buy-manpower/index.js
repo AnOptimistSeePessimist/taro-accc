@@ -12,7 +12,7 @@ import {
   AtListItem,
   AtInputNumber,
 } from 'taro-ui';
-import {API_WORK_TYPE_DISTINCT} from '@constants/api'
+import {API_WORK_TYPE_DISTINCT, API_RSPUBLISH_LIST} from '@constants/api'
 import {formatTimeStampToTime} from '@utils/common';
 import {connect} from '@tarojs/redux'
 import fetch from '@utils/request';
@@ -35,7 +35,7 @@ class BuyManpower extends Component {
   }
 
   config = {
-    navigationBarTitleText: '租人力'
+    navigationBarTitleText: '人力查询'
   };
 
   componentWillMount(){
@@ -47,9 +47,41 @@ class BuyManpower extends Component {
   };
 
 	submit = () => {
-		const {workTypeList} = this.state;
-		console.log('workTypeList::',workTypeList)
-		//Taro.navigateTo({ url: `/buy/pages/buy-manpower-information/index?buyData=${JSON.stringify(buyData)}` })
+    //Taro.navigateTo({ url: `/buy/pages/buy-manpower-information/index?buyData=${JSON.stringify(buyData)}` })
+    let workTypeName 
+    this.state.workTypeList.map(item => {
+      if(item.checked){
+        workTypeName = item.workTypeName
+      }
+    })
+    // const workTypeName=this.state.workTypeList.filter(item => item.checked === true).map(item => {
+    //   return item.workTypeName
+    // })
+    console.log('workTypeName',workTypeName)
+    fetch({
+      url: API_RSPUBLISH_LIST + `?contentType=1&dateStart=${this.state.date}&worktypeName=${workTypeName}`
+    })
+    .then(res => {
+      const {data: {data, status, message}} = res
+      if(status === 200){
+        if(data.list.length ===0){
+          Taro.showToast({
+            icon: "none",
+            title: '没有人力数据',
+            duration: 2000
+          })
+          return
+        }
+        console.log('workTypeName',workTypeName)
+        Taro.navigateTo({ url: `/buy/pages/buy-manpower-information/index?item=${JSON.stringify(data.list)}&worktypeName=${workTypeName}`})
+      } else {
+        Taro.showToast({
+          icon: "none",
+          title: message,
+          duration: 2000
+        })
+      }
+    })
   }
   
   workType = () => {
@@ -94,14 +126,7 @@ class BuyManpower extends Component {
 
   handleClickWorkType = (typeRecId) => {
     const {workTypeList} = this.state;
-    const newList = workTypeList.slice();
-    let date;
-    if(typeRecId === -1){
-      date = formatTimeStampToTime(Date.now())
-      this.setState({
-        date
-      })
-    }
+    const newList = workTypeList.slice(); 
     newList.forEach((item) => {
       item.checked = false;
       if (item.typeRecId === typeRecId) {

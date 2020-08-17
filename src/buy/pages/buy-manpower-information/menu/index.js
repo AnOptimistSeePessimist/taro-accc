@@ -31,12 +31,17 @@ export default class Menu extends Component {
 	}
 
 	confirm = () => {
-		const { listImg } = this.props
-		console.log('Menu测试数据', listImg)
-		Taro.navigateTo({ url: `/buy/pages/buy-details/index?item=${JSON.stringify(listImg)}` })
+		const { listImg, hresCargostationMap } = this.props
+		const hcmKeys = Object.keys(hresCargostationMap)
+		const hresCargostation =hcmKeys.map((key) => {
+			return 	hresCargostationMap[key]
+		})
+		console.log('Menu测试数据', hresCargostation)
+		Taro.navigateTo({ url: `/buy/pages/buy-details/index?item=${JSON.stringify(listImg)}&hresCargostationMap=${JSON.stringify(hresCargostation)}` })
 	}
 	render() {
 		const { listImg, hresCargostationMap } = this.props
+		console.log(listImg)
 		const hcmKeys = Object.keys(hresCargostationMap)
 		// console.log(hcmKeys)
 		const time = parseInt(listImg.timeEnd) - parseInt(listImg.timeStart)
@@ -49,7 +54,13 @@ export default class Menu extends Component {
 				/>
 				<View className='text'>
 					<Text className='text-workerName' onClick={this.confirm}>{listImg.workTypeName} </Text>
-					<Text className='text-hours' onClick={this.confirm}>{listImg.timeStart} - {listImg.timeEnd} ({time}小时) {listImg.dateStart}</Text>
+					<Text className='text-hours' onClick={this.confirm}>{listImg.timeStart} - {listImg.timeEnd} ({time}小时)</Text>
+					<Text className='text-hours' onClick={this.confirm}>日期:</Text>
+					<View className='text-data-text' onClick={this.confirm}>
+							{listImg.workdateList && listImg.workdateList.map((item) => {
+								return (<Text key={item}>{item}</Text>)
+							})}
+					</View>
 					<Text className='text-dollar' onClick={this.confirm}>￥{listImg.price}/小时</Text>
 					<Text className='text-workerStation' onClick={this.closeModal}> ({listImg.rsNum}人)</Text>
 				</View>
@@ -79,7 +90,6 @@ export default class Menu extends Component {
 										</View>)
 								})
 							}
-							
 						</View>
 					</AtModalContent>
 					<AtModalAction>

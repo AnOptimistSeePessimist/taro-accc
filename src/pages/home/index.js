@@ -249,7 +249,6 @@ class Home extends Component {
   // }
 
   render() {
-    // console.log('workTypeList: ', this.state.dataList.length);
     return (
       <View className='home'>
         <View className='header'>
