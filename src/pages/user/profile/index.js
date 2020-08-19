@@ -11,6 +11,10 @@ import './index.scss';
 class Profile extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      userDetail: {},
+    };
   }
 
   getUserInformation = (res) => {
@@ -20,6 +24,11 @@ class Profile extends Component {
     //   }
     // });
     console.log('userInfo: ', res);
+
+    this.setState({
+      userDetail: res.detail
+    });
+
     if (this.props.userInfo.login) {
       Taro.navigateTo({url: '/user/pages/user-setting/index'});
     } else {
@@ -51,6 +60,7 @@ class Profile extends Component {
 
   render() {
     const {userInfo} = this.props;
+    const {userDetail} = this.state;
     return (
       <Button
         className='userInfo'
@@ -68,11 +78,16 @@ class Profile extends Component {
           />
           <View className='wrapper'>
             <View className='avatar'>
-              <Image
+              {
+                userInfo.login && userDetail.rawData ?
+                <OpenData type='userAvatarUrl'/>
+                :
+                <Image
                 src={userInfo.avatar || defaultAvatar}
                 className='img'
                 // onClick={this.handleLogin}
               />
+              }
             </View>
             <View className='info'>
               <Text className='name'>{userInfo.login ? (userInfo.userInfoDto && userInfo.userInfoDto.userDetailDto && userInfo.userInfoDto.userDetailDto.nickName) || '' : '未登录'}</Text>

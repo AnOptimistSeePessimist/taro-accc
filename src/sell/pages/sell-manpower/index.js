@@ -317,7 +317,7 @@ class SellManpower extends Component {
 
     this.setState({
       checkedManpower,
-      displayCheckedManpower: manpowerName.toString()
+      displayCheckedManpower: manpowerName.join('、')
     });
   };
 
@@ -456,7 +456,7 @@ class SellManpower extends Component {
 
   render() {
     const {dateMonth, selectedWorkDateList} = this.state;
-    const displayActiveDate = selectedWorkDateList.length > 2 ? take(selectedWorkDateList, 2).toString() + '...' : selectedWorkDateList.toString();
+    const displayActiveDate = selectedWorkDateList.length > 2 ? take(selectedWorkDateList, 2).join('、') + '...' : selectedWorkDateList.join('、');
     return (
       <View className='sell-manpower'>
         <View className='wrapper'>

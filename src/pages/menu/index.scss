@@ -6,6 +6,7 @@
   .section-container {
     background-color: white;
     margin-bottom: 25px;
+    width: 100%;
     .section-header {
       border-bottom: 1px solid #bababa;
       padding: 15px;
@@ -17,6 +18,7 @@
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
+      width: 100%;
       // background-color: red;
       .nil-sub-menu {
         color: red;
@@ -53,6 +55,7 @@
           border-right-width: 0;
         }
       }
+
     }
   }
 }

@@ -10,10 +10,6 @@ import {AtSwipeAction} from 'taro-ui';
 
 import './index.scss';
 
-function getRandomImage() {
-  return `https://picsum.photos/seed/${Math.ceil(Math.random() * 100)}/100/100`;
-}
-
 @connect(state => ({userInfo: state.user.userInfo}), {})
 class UserRelease extends Component {
   constructor(props) {
@@ -66,6 +62,7 @@ class UserRelease extends Component {
             publishRecid,
             workTypeName,
             workdateList,
+            workTypePicUrl,
           }
       } = publish;
       return (
@@ -110,7 +107,7 @@ class UserRelease extends Component {
             <View className='left-image'>
             <Image
               className='image'
-              src={getRandomImage()}
+              src={workTypePicUrl}
             />
             </View>
             <View className='right-information'>
