@@ -102,35 +102,23 @@ export default class BuyDetails extends Component {
   }
 
   componentWillMount () {
-    console.log('执行componentWillMount', this.$preloadData)
-    this.fetchData(this.$router.params.item, this.$router.params.hresCargostationMap)
-  }
-
-  componentWillPreload (params) {
-    console.log('执行componentWillPreload')
-    return this.fetchData(params.item, params.hresCargostationMap)
+    this.fetchData(this.$router.preload.item, this.$router.preload.hresCargostationMap)
   }
 
   fetchData (item, hresCargostationMap) {
-    console.log('《《《《',JSON.parse(item), JSON.parse(hresCargostationMap))
-    const data = JSON.parse(item)
-    const hresCargostationList = JSON.parse(hresCargostationMap)
+    const data = item
+    const hresCargostationList = hresCargostationMap
     let workDateList = []
     data.workdateList.map((item, index) => {
       workDateList.push({id: index, name: item, active: false})
     })
     let newPassareaList
-     hresCargostationList.map(item => {
+    newPassareaList = hresCargostationList.map(item => {
       console.log('hresCargostation',item)
-      newPassareaList = item.map(station => {
-        const {passareaDtoList: areas} = station;
-        const newAreas = areas.map(area => {
-          area.checked = false;
-          return area;
-        });
-        station.passareaDtoList = newAreas;
-        return station;
+      item.passareaDtoList.forEach(station => {
+        station.checked = false;
       })
+      return item
     });
     console.log('newPassareaList: ', newPassareaList);
     this.setState({
@@ -404,6 +392,7 @@ export default class BuyDetails extends Component {
   renderPassarea = () => {
     const {passareaList, displayCheckedPassareaList: displayCheckedPassarea} = this.state;
     console.log('displayCheckedPassarea', displayCheckedPassarea)
+    console.log('passareaList',passareaList)
     return passareaList.map((stationItem) => {
       const {recid: stationId, stationcode, stationdsc, passareaDtoList} = stationItem;
       return (
@@ -513,7 +502,7 @@ export default class BuyDetails extends Component {
           className='item-warp'
           style={{ height, paddingBottom: `${safety}px` }}
         >
-          <Gallery list={dataImg.listImg} />
+          <Gallery Img={dataImg.workTypePicUrl} />
           <InfoBase data={dataImg}/>
           {/* <InfoParam /> */}
         </ScrollView>
@@ -532,7 +521,7 @@ export default class BuyDetails extends Component {
               <View className='float-item-title-img'>
                 <Image
                   className='img'
-                  src={dataImg.imgSrc}
+                  src={dataImg.workTypePicUrl}
                 />
               </View>
               <View className='float-item-title-text'>

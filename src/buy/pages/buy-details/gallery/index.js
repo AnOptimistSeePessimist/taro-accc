@@ -4,7 +4,7 @@ import './index.scss'
 
 export default class Gallery extends Component {
   static defaultProps = {
-    list: []
+    Img: ''
   }
 
   state = {
@@ -17,7 +17,7 @@ export default class Gallery extends Component {
   }
 
   render () {
-		const { list } = this.props
+		const { Img } = this.props
     const { current } = this.state
     return (
       <View className='item-gallery'>
@@ -26,21 +26,18 @@ export default class Gallery extends Component {
           current={current}
           onChange={this.handleChange}
         >
-         {list.map((item, index) => (
             <SwiperItem
-              key={index}
               className='item-gallery-swiper-item'
             >
               <Image
                 className='item-gallery-swiper-item-img'
-                src={item.img}
+                src={Img}
               />
             </SwiperItem>
-          ))}
         </Swiper>
         <View className='item-gallery-indicator'>
           <Text className='item-gallery-indicator-txt'>
-            {`${current + 1}/${list.length}`}
+            {`${current + 1}/${1}`}
           </Text>
         </View>
       </View>
