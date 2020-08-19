@@ -21,7 +21,7 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mobilePhone: '15060170315', // 手机号 15837621762 18350863236
+      mobilePhone: '15837621766',//'15060170315', // 手机号 15837621762 18350863236
       code: '', // 验证码
       // sending: 0, // 0 == 获取验证码 1 == 多少秒后重新发送验证码   2 == 重新获取验证码
       // smsTime: 60, // 默认为 60s 再次重新获取验证码

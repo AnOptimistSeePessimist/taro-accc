@@ -2,7 +2,16 @@ import Taro, { Component } from '@tarojs/taro';
 import { View, Text, Image, ScrollView, Button, Picker } from '@tarojs/components';
 import { connect } from '@tarojs/redux'
 import {dataPageList } from '../../actions/home'
-import { AtDrawer, AtList, AtListItem, AtTag } from 'taro-ui'
+import { 
+  AtDrawer, 
+  AtList, 
+  AtListItem, 
+  AtTag,
+  AtModal,
+	AtModalHeader,
+	AtModalContent,
+	AtModalAction, 
+} from 'taro-ui'
 import {formatTimeStampToTime} from '@utils/common';
 import { getWindowHeight } from '@utils/style';
 import { API_RSPUBLISH_LIST, API_WORK_TYPE_DISTINCT } from '@constants/api';
@@ -12,10 +21,6 @@ import throttle from 'lodash.throttle';
 import fetch from '@utils/request';
 import Menu from './menu'
 import './index.scss';
-
-function listImgSrc() {
-  return `https://picsum.photos/seed/${Math.ceil(Math.random() * 100)}/110/70`
-}
 
 
 @connect(state => ({
@@ -43,6 +48,8 @@ class Home extends Component {
       // outOfdate: formatTimeStampToTime(Date.now()),
       workTypeList: new Array(8).fill({}),
       total: -1, // 列表总数
+      isScreening: false, //筛选显示
+      isModalOpened: false //站点人数
     }
     this._pageSize = 10; // 每页数据量
   }
@@ -84,6 +91,7 @@ class Home extends Component {
       this.setState({
         dataList: data.list,
         refresherTriggered: false,
+        isScreening: true
       }, () => {
         Taro.hideLoading();
         this._freshing = false;
@@ -248,13 +256,25 @@ class Home extends Component {
   //   });
   // }
 
+  closeModal = () => {
+    console.log('关闭')
+    this.setState({
+      isModalOpened: !this.state.isModalOpened
+    })
+		// this._isModalOpened = true
+	}
+
   render() {
     return (
       <View className='home'>
-        <View className='header'>
-          <Text onClick={this.todrawerShowHide}>筛选</Text>
-        </View>
-        <View className='height-margin'></View>
+        {this.state.isScreening && 
+         <View>
+            <View className='header'>
+              <Text onClick={this.todrawerShowHide}>筛选</Text>
+            </View>
+            <View className='height-margin'></View>
+         </View>
+        }
         <ScrollView
           className='home-scroll-view'
           scrollY
@@ -274,24 +294,17 @@ class Home extends Component {
           onScrollToLower={() => this.scrollToLower()}
         > 
         <View style={{height: `${Taro.getSystemInfoSync().windowHeight + 1}px`}}>
-          <View className='placeholder'>23123</View>
-            {this.state.dataList.length === 0? 
-              <View className='data-null' style={{height: getWindowHeight(false)}}>暂无数据</View>
-              : 
+          <View className='placeholder'>23123</View>               
               <View className='data-item'>
                 <View className='data-list'>
                   {this.state.dataList.map((item, index) => {
                     const evenNum = index % 2 === 0
                     const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
-                    rspublishDto.imgSrc = listImgSrc()
-                    rspublishDto.listImg = [
-                      { img: listImgSrc() },
-                      { img: listImgSrc() }
-                    ]
+                   
                     // console.log('返回的数据',hresCargostationMap)
                     if (evenNum) {
                       return (
-                        <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} />
+                        <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} oncloseModal = {this.closeModal}/>
                       )
                     }
                   })}
@@ -300,25 +313,55 @@ class Home extends Component {
                   {this.state.dataList.map((item, index) => {
                     const evenNum = index % 2 === 1
                     const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
-                    rspublishDto.imgSrc = listImgSrc()
-                    rspublishDto.listImg = [
-                      { img: listImgSrc() },
-                      { img: listImgSrc() }
-                    ]
 
                     if (evenNum) {
                       return (
-                        <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap}/>
+                        <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} oncloseModal = {this.closeModal}/>
                       )
                     }
                   })}
                 </View>
-              </View>
-            }
+              </View>  
           <View className='placeholder'>23123</View>
         </View>  
         </ScrollView>
         
+        <AtModal
+					isOpened={this.state.isModalOpened}
+					onClose={this.closeModal}
+				>
+					<AtModalHeader>适用区域</AtModalHeader>
+					<AtModalContent>
+						<View className='modal-content'>
+              测试
+							{/* {
+								hcmKeys.map((key, index) => {
+									return (
+										<View key={index}> 1 人:
+											{
+												hresCargostationMap[key].map((item, hcIndex) => {
+													return (<Text key={hcIndex}>{item.stationdsc} (
+														{
+															item.passareaDtoList.map((item, passIndex) => {
+																return (<Text key={passIndex}>{item.areaCode} </Text>)
+															})
+														}
+													) </Text>)
+												})
+											}
+										</View>)
+								})
+							} */}
+						</View>
+					</AtModalContent>
+					<AtModalAction>
+						<Button onClick={this.closeModal}>
+							确定
+            </Button>
+					</AtModalAction>
+				</AtModal>
+
+
         <AtDrawer
           show={this.state.AtDrawer}
           mask

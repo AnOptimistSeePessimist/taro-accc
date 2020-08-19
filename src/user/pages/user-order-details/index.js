@@ -132,6 +132,8 @@ export default class UserDetails extends Component {
 		this.setState({
 			isWqrCode: !this.state.isWqrCode
 		})
+		clearTimeout(this._signInTime)
+		clearTimeout(this._workOverTime)
 	}
 	
 	orderWorkInformation = () => {
@@ -234,7 +236,7 @@ export default class UserDetails extends Component {
 			isWqrCode: !this.state.isWqrCode,
 			checkInOrOut: checkInCode,
 		}, () => {
-			setTimeout(() => {
+		 this._signInTime = setTimeout(() => {
 				this.orderStatusUpload(orderRecid)
 				this.orderWorkInformation()
 			}, 5000)
@@ -248,7 +250,7 @@ export default class UserDetails extends Component {
 			isWqrCode: !this.state.isWqrCode,
 			checkInOrOut: checkOutTime
 		}, () => {
-			setTimeout(() => {
+		 this._workOverTime =	setTimeout(() => {
 				this.orderStatusUpload(orderRecid)
 				this.orderWorkInformation()
 			}, 5000)
@@ -283,9 +285,6 @@ export default class UserDetails extends Component {
 					{this.state.isBotton && 
 						<Button plain={true} className='release submit' formType='submit' onClick={() => {
 								switch (orderstatusDtoList[0].status) {
-									case 1:
-											this.handleBuy()
-										break;
 										case 2:
 											this.dispatching()
 										break;
