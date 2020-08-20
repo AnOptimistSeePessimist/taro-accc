@@ -49,7 +49,9 @@ class Home extends Component {
       workTypeList: new Array(8).fill({}),
       total: -1, // 列表总数
       isScreening: false, //筛选显示
-      isModalOpened: false //站点人数
+      isModalOpened: false, //站点人数
+      hresCargostationMap: [], //站点
+      hcmKeys: []
     }
     this._pageSize = 10; // 每页数据量
   }
@@ -256,13 +258,22 @@ class Home extends Component {
   //   });
   // }
 
-  closeModal = () => {
-    console.log('关闭')
+  setStation = (hresCargostationMap) => {
+    const hcmKeys = Object.keys(hresCargostationMap)
+    console.log('关闭', hcmKeys)
     this.setState({
-      isModalOpened: !this.state.isModalOpened
+      isModalOpened: true,
+      hresCargostationMap,
+      hcmKeys
     })
 		// this._isModalOpened = true
-	}
+  }
+  
+  closeModal = () => {
+    this.setState({
+      isModalOpened: false,
+    })
+  }
 
   render() {
     return (
@@ -304,7 +315,7 @@ class Home extends Component {
                     // console.log('返回的数据',hresCargostationMap)
                     if (evenNum) {
                       return (
-                        <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} oncloseModal = {this.closeModal}/>
+                        <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} oncloseModal = {this.setStation}/>
                       )
                     }
                   })}
@@ -316,7 +327,7 @@ class Home extends Component {
 
                     if (evenNum) {
                       return (
-                        <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} oncloseModal = {this.closeModal}/>
+                        <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} oncloseModal = {this.setStation}/>
                       )
                     }
                   })}
@@ -333,13 +344,12 @@ class Home extends Component {
 					<AtModalHeader>适用区域</AtModalHeader>
 					<AtModalContent>
 						<View className='modal-content'>
-              测试
-							{/* {
-								hcmKeys.map((key, index) => {
+							 {
+								this.state.hcmKeys.map((key, index) => {
 									return (
 										<View key={index}> 1 人:
 											{
-												hresCargostationMap[key].map((item, hcIndex) => {
+												this.state.hresCargostationMap[key].map((item, hcIndex) => {
 													return (<Text key={hcIndex}>{item.stationdsc} (
 														{
 															item.passareaDtoList.map((item, passIndex) => {
@@ -351,7 +361,7 @@ class Home extends Component {
 											}
 										</View>)
 								})
-							} */}
+							}
 						</View>
 					</AtModalContent>
 					<AtModalAction>

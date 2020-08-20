@@ -21,7 +21,7 @@ export default class Menu extends Component {
 	closeModal = () => {
 		const {oncloseModal} = this.props
 		// console.log('函数', oncloseModal)
-		oncloseModal()
+		oncloseModal(this.props.hresCargostationMap)
 	}
 
 	confirm = () => {
