@@ -2,7 +2,7 @@ import Taro, {Component} from '@tarojs/taro';
 import {View, Text, Image, ScrollView} from '@tarojs/components';
 import {connect} from '@tarojs/redux';
 import fetch from '@utils/request';
-import {API_RSPUBLISH_LIST} from '@constants/api';
+import {API_RSPUBLISH_LIST, IMAGE_PREFIX} from '@constants/api';
 import { getWindowHeight } from '@utils/style';
 import chunk from 'lodash.chunk';
 import throttle from 'lodash.throttle';
@@ -107,7 +107,7 @@ class UserRelease extends Component {
             <View className='left-image'>
             <Image
               className='image'
-              src={workTypePicUrl}
+              src={IMAGE_PREFIX + workTypePicUrl}
             />
             </View>
             <View className='right-information'>

@@ -1,4 +1,8 @@
-const host = 'http://172.21.118.79:8090/accc-openapi';
+const ipAddress = '172.21.118.79';
+const port = 8090;
+
+const host = `http://${ipAddress}:${port}/accc-openapi`;
+export const IMAGE_PREFIX = `http://${ipAddress}:8089/accc-web-app/file`;
 
 // user
 export const API_USER_LOGIN = `${host}/login`; // 登录
