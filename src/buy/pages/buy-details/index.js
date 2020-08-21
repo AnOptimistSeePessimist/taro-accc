@@ -17,7 +17,7 @@ import InfoParam from './infoParam'
 import Footer from './footer'
 import classnames from 'classnames'
 import { getWindowHeight } from '@utils/style'
-import { API_ORDER_CREATE, API_CALLBACK_WX, API_CARGOSTATION_LIST } from '@constants/api';
+import { API_ORDER_CREATE, API_CALLBACK_WX, API_CARGOSTATION_LIST,IMAGE_PREFIX } from '@constants/api';
 import cloneDeep from 'lodash.clonedeep';
 import {
   AtFloatLayout,
@@ -521,7 +521,7 @@ export default class BuyDetails extends Component {
               <View className='float-item-title-img'>
                 <Image
                   className='img'
-                  src={dataImg.workTypePicUrl}
+                  src={IMAGE_PREFIX + dataImg.workTypePicUrl}
                 />
               </View>
               <View className='float-item-title-text'>

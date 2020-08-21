@@ -1,5 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text, Swiper, SwiperItem, Image } from '@tarojs/components'
+import { IMAGE_PREFIX } from '@constants/api';
 import './index.scss'
 
 export default class Gallery extends Component {
@@ -31,7 +32,7 @@ export default class Gallery extends Component {
             >
               <Image
                 className='item-gallery-swiper-item-img'
-                src={Img}
+                src={IMAGE_PREFIX + Img}
               />
             </SwiperItem>
         </Swiper>

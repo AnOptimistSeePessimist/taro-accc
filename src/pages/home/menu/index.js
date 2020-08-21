@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
-
+import { IMAGE_PREFIX } from '@constants/api';
 import './index.scss'
 
 export default class Menu extends Component {
@@ -46,7 +46,7 @@ export default class Menu extends Component {
 			<View className='data-img'>
 				<Image
 					className='img'
-					src={listImg.workTypePicUrl}
+					src={IMAGE_PREFIX + listImg.workTypePicUrl}
 					onClick={this.confirm}
 				/>
 				<View className='text'>
