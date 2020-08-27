@@ -33,13 +33,6 @@ import fetch from '@utils/request';
 
 import './index.scss'
 
-function datePoor (dateStart, dateEnd) {
-  const start = new Date(dateStart); 
-  const end = new Date(dateEnd); 
-  const days = end.getTime() - start.getTime(); 
-  const day = parseInt(days / (1000 * 60 * 60 * 24));
-  return (day + 1)
-}
 
 @connect(state => ({
   userInfo: state.user.userInfo,
@@ -67,6 +60,8 @@ export default class BuyDetails extends Component {
       isOpenedPassarea: false,// 是否显示通行证选择列表
       passareaList: [], // 通行证适用区域列表
       displayCheckedPassareaList: {}, // 显示在界面上的通行证适用区域
+      stationItemId: '', //通行区域id
+      areaName: [],
       list: [
         {
           id: 1,
@@ -174,12 +169,12 @@ export default class BuyDetails extends Component {
 
   handleBuy = () => {
     const token =  this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
-    const {dataImg:{ price, publishRecid}, value, timeStart, timeEnd, workDateTitle} = this.state
+    const {dataImg:{ price, publishRecid}, value, timeStart, timeEnd, workDateTitle, stationItemId, areaName} = this.state
     let address = ''
-    let areaCode = ''
+    let areaCode = areaName.sort().join()
     
 
-    if(!token){
+    if(!this.props.userInfo.login){
       Taro.navigateTo({url: '/user/pages/user-login/index'})
       return
     }
@@ -193,18 +188,20 @@ export default class BuyDetails extends Component {
       return
     }
 
-    if(Object.keys(this.state.displayCheckedPassareaList).length === 0){
+    if(stationItemId === ''){
       Taro.showToast({
         icon: "none",
         title: '请选择地址',
         duration: 2000
       })
       return
+    }else {
+      this.state.passareaList.map(item => {
+        if(item.recid === stationItemId) {
+          address = item.stationcode
+        }
+      })
     }
-    Object.keys(this.state.displayCheckedPassareaList).map(passarea => {
-      address = passarea;   
-      areaCode = this.state.displayCheckedPassareaList[passarea].sort().join()
-    })
 
     if(workDateTitle.length === 0 ){
       Taro.showToast({
@@ -332,69 +329,44 @@ export default class BuyDetails extends Component {
   // }
 
   handlePassareaChange = (e) => {
-    const {passareaList, displayCheckedPassareaList: displayCheckedPassarea} = this.state;
+    const {passareaList} = this.state;
     const stationId = e.target.dataset.stationId;
     const areaId = e.target.dataset.areaId;
+    const areaArr = []
     console.log('handlePassareaChange: ', e);
     const newPassareaList = passareaList.slice();
     
-    
       newPassareaList.forEach((station) => {
-        const {recid, stationcode, stationdsc, passareaDtoList} = station;
+        const {recid, passareaDtoList} = station;
         console.log('newPassareaList', station)
         if (recid === stationId) {
           passareaDtoList.forEach(area => {
             if (area.recId === areaId) {
-              if (!!!displayCheckedPassarea[stationcode]) {
-                displayCheckedPassarea[stationcode] = [];
-              }
               area.checked = !area.checked;
-              if (area.checked) {
-                displayCheckedPassarea[stationcode].push(area.areaCode);
-              } else {
-                displayCheckedPassarea[stationcode].forEach((areaCode1, index) => {
-                  if (areaCode1 === area.areaCode) {
-                    displayCheckedPassarea[stationcode].splice(index, 1);
-                  }
-                });
-                displayCheckedPassarea[stationcode].splice();
-                if (displayCheckedPassarea[stationcode].length === 0) {
-                  delete displayCheckedPassarea[stationcode];
-                }
-              }
+            }
+            if(area.checked){
+              areaArr.push(area.areaCode)
             }
           });
         }else {
           passareaDtoList.forEach(area => {
             area.checked = false
-            if(displayCheckedPassarea[stationcode]){
-              displayCheckedPassarea[stationcode].forEach((areaCode1, index) => {
-                if (areaCode1 === area.areaCode) {
-                  displayCheckedPassarea[stationcode].splice(index, 1);
-                }
-              });
-                displayCheckedPassarea[stationcode].splice();
-                if (displayCheckedPassarea[stationcode].length === 0) {
-                  delete displayCheckedPassarea[stationcode];
-                }
-            }
           })
         }
       });
-    
     console.log('选中后的区域列表: ',  newPassareaList);
     this.setState({
       passareaList: newPassareaList,
-      displayCheckedPassareaList: displayCheckedPassarea,
+      stationItemId: areaArr.length === 0? '' : stationId,
+      areaName: areaArr
     });
   };
 
   renderPassarea = () => {
-    const {passareaList, displayCheckedPassareaList: displayCheckedPassarea} = this.state;
-    console.log('displayCheckedPassarea', displayCheckedPassarea)
+    const {passareaList} = this.state;
     console.log('passareaList',passareaList)
     return passareaList.map((stationItem) => {
-      const {recid: stationId, stationcode, stationdsc, passareaDtoList} = stationItem;
+      const {recid: stationId, stationdsc, passareaDtoList} = stationItem;
       return (
         <View className='station' key={stationId}>
           <View className='station-item'>
@@ -404,12 +376,11 @@ export default class BuyDetails extends Component {
             {
               passareaDtoList.map((areaItem) => {
                 const {recId, areaCode, checked} = areaItem;
-                console.log('areaCode', areaCode)
                 return (
                   <View className='area-item' key={recId}>
                     <CheckboxGroup 
-                      data-station-id={stationItem.recid}  
-                      data-area-id={recId} 
+                      data-station-id={stationItem.recid}
+                      data-area-id={recId}
                       onChange={this.handlePassareaChange}
                     >
                       <Checkbox 
@@ -489,11 +460,11 @@ export default class BuyDetails extends Component {
 
   render() {
     const height = getWindowHeight(false);
-    const { dataImg, isOpeneds, textTitle, workDateList, workDateTitle, dollar, dataTitle } = this.state;
+    const { dataImg, isOpeneds, textTitle, workDateList, workDateTitle, dollar, dataTitle, stationItemId, areaName} = this.state;
     const res = Taro.getSystemInfoSync();
     const paddingBottom = res.safeArea == undefined ? 0 : res.screenHeight - res.safeArea.bottom;
     const safety = res.screenHeight - res.safeArea.bottom;
-    console.log(dataImg)
+    console.log('同行区域', stationItemId)
     console.log('屏幕高度', height, safety)
     return (
       <View className='buy-details'>
@@ -577,20 +548,17 @@ export default class BuyDetails extends Component {
               >
               <View className={`iconfont iconionc-- addressimg`} />
               <View className='pay-address-userName-phone-address'>
-                  {Object.keys(this.state.displayCheckedPassareaList).length === 0? '请选择地址':
-                  this.state.passareaList.length !== 0 && Object.keys(this.state.displayCheckedPassareaList).map(passarea => {
+                  {stationItemId === ''? '请选择地址':
+                  this.state.passareaList.length !== 0 && this.state.passareaList.map(item => {
                         let desc = '';
-                        this.state.passareaList.forEach((passareaItem) => {
-                          if (passarea === passareaItem.stationcode) {
-                            desc = passareaItem.stationdsc;
-                          }
-                        });
-                        
-                      return (
-                        <View key={passarea}>
-                          {desc + this.state.displayCheckedPassareaList[passarea]}
-                        </View>
-                      );
+                        if(item.recid === stationItemId) {
+                          desc = item.stationdsc
+                          return (
+                            <View key={stationItemId}>
+                              {desc + areaName.sort().join()}
+                            </View>
+                          );
+                        }
                     })}
               </View>
             </View>

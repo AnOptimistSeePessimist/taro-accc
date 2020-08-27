@@ -124,7 +124,7 @@ export default class UserDetails extends Component {
 
 	closeModal = () => {
 		this.setState({
-			isAtModal: !this.state.isAtModal
+			isAtModal: false
     })
 	}
 
@@ -172,7 +172,8 @@ export default class UserDetails extends Component {
 			if(status === 200 ) {
 				Taro.hideLoading()
 				this.setState({
-					isWqrCode: false
+					isWqrCode: false,
+					isAtModal: false,
 				}, () => {
 					this.statusUpload(data)
 				})
@@ -192,9 +193,6 @@ export default class UserDetails extends Component {
 	wxPay = (orderNo, orderRecid) => {
 		const token =  this.props.userInfo.userToken && this.props.userInfo.userToken.accessToken
 		console.log('订单号-订单id',orderNo, orderRecid)
-		this.setState({
-			isAtModal: !this.state.isAtModal
-    })
     fetch({
       url: API_CALLBACK_WX + `?orderNo=${orderNo}`,
       method: 'POST',
@@ -210,6 +208,9 @@ export default class UserDetails extends Component {
         this.orderStatusUpload(orderRecid)
   
       } else {
+				this.setState({
+					isAtModal: false
+				})
         Taro.showToast({
           icon: "none",
           title: message,
@@ -220,7 +221,7 @@ export default class UserDetails extends Component {
 	}
 	handleBuy = () => {
 		this.setState({
-			isAtModal: !this.state.isAtModal
+			isAtModal: true
 		})
 	}
 	
@@ -285,6 +286,8 @@ export default class UserDetails extends Component {
 					{this.state.isBotton && 
 						<Button plain={true} className='release submit' formType='submit' onClick={() => {
 								switch (orderstatusDtoList[0].status) {
+										case 1: 
+										this.handleBuy()
 										case 2:
 											this.dispatching()
 										break;
