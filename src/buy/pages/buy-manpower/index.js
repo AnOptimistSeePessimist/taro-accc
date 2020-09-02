@@ -72,8 +72,9 @@ class BuyManpower extends Component {
           })
           return
         }
-        console.log('workTypeName',workTypeName)
-        Taro.navigateTo({ url: `/buy/pages/buy-manpower-information/index?item=${JSON.stringify(data.list)}&worktypeName=${workTypeName}`})
+        this.$preload('item', data.list)
+        this.$preload('workTypeName', workTypeName)
+        Taro.navigateTo({ url: `/buy/pages/buy-manpower-information/index`})
       } else {
         Taro.showToast({
           icon: "none",

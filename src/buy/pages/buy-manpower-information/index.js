@@ -6,11 +6,13 @@ import chunk from 'lodash.chunk';
 import throttle from 'lodash.throttle';
 import fetch from '@utils/request';
 import Menu from './menu'
+import {
+	AtModal,
+	AtModalHeader,
+	AtModalContent,
+	AtModalAction,
+} from 'taro-ui'
 import './index.scss';
-
-function listImgSrc() {
-  return `https://picsum.photos/seed/${Math.ceil(Math.random() * 100)}/110/70`
-}
 
 class LeaseInformation extends Component {
   config = {
@@ -22,35 +24,33 @@ class LeaseInformation extends Component {
     this.state = {
       dataList: [],
       refresherTriggered: false,
-      pageNum: 1,
-      pageMax: '',
 			total: -1, // 列表总数
-			worktypeName: this.$router.params.worktypeName
+      workTypeName: '',
+      isModalOpened: false, //站点人数
+      hresCargostationMap: [],
     }
+    this._pageNum = 1; // 第几页
     this._pageSize = 10; // 每页数据量
+    
   }
 
   componentWillMount() {
-		this.refresherRefresh();
-		this.fetchData(this.$router.params.item)
+		
+		this.fetchData(this.$router.preload.item, this.$router.preload.workTypeName)
   }
 
-  componentWillPreload (params) {
-    return this.fetchData(params.item,)
-  }
-
-  fetchData (item) {
-    //console.log('《《《《',JSON.parse(item))
-    const data = JSON.parse(item)
+  fetchData (item, workTypeName) {
+    console.log('《《《《',workTypeName )
     this.setState({
-      dataList: data,
+      dataList: item,
+      workTypeName
     })
   }
 
   
   // 获取工单
   fetchWorkOrder = (pageNum, pageSize, callback) => {
-    fetch({url: API_RSPUBLISH_LIST + `?pageNum=${pageNum}&pageSize=${pageSize}&worktypeName=${this.state.worktypeName}`})
+    fetch({url: API_RSPUBLISH_LIST + `?contentType=1&pageNum=${pageNum}&pageSize=${pageSize}&worktypeName=${this.state.workTypeName}`})
       .then((res) => {
         const {data, status} = res.data;
 
@@ -87,6 +87,17 @@ class LeaseInformation extends Component {
   });
 };
 
+
+setStation = (hresCargostationMap) => {
+  const hcmKeys = Object.keys(hresCargostationMap)
+  console.log('关闭', hcmKeys)
+  this.setState({
+    isModalOpened: true,
+    hresCargostationMap,
+    hcmKeys
+  })
+  // this._isModalOpened = true
+}
 
   scrollToLower = throttle(() => {
     console.log('onScrollToLower...');
@@ -148,6 +159,12 @@ class LeaseInformation extends Component {
     });
   };
 
+  closeModal = () => {
+    this.setState({
+      isModalOpened: false,
+    })
+  }
+
   render() {
     console.log('workTypeList: ', this.state.dataList);
     return (
@@ -178,15 +195,10 @@ class LeaseInformation extends Component {
                   {this.state.dataList.map((item, index) => {
                     const evenNum = index % 2 === 0
                     const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
-                    rspublishDto.imgSrc = listImgSrc()
-                    rspublishDto.listImg = [
-                      { img: listImgSrc() },
-                      { img: listImgSrc() }
-                    ]
                     // console.log('返回的数据',hresCargostationMap)
                     if (evenNum) {
                       return (
-                        <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} />
+                        <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} oncloseModal = {this.setStation}/>
                       )
                     }
                   })}
@@ -195,15 +207,9 @@ class LeaseInformation extends Component {
                   {this.state.dataList.map((item, index) => {
                     const evenNum = index % 2 === 1
                     const { rspublishDto, rspublishDto:{publishRecid}, hresCargostationMap } = item
-                    rspublishDto.imgSrc = listImgSrc()
-                    rspublishDto.listImg = [
-                      { img: listImgSrc() },
-                      { img: listImgSrc() }
-                    ]
-
                     if (evenNum) {
                       return (
-                        <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap}/>
+                        <Menu listImg={rspublishDto} key={publishRecid} hresCargostationMap={hresCargostationMap} oncloseModal = {this.setStation}/>
                       )
                     }
                   })}
@@ -212,6 +218,40 @@ class LeaseInformation extends Component {
           <View className='placeholder'>23123</View>
         </View>  
         </ScrollView>
+
+        <AtModal
+					isOpened={this.state.isModalOpened}
+					onClose={this.closeModal}
+				>
+					<AtModalHeader>适用区域</AtModalHeader>
+					<AtModalContent>
+						<View className='modal-content'>
+							 {
+								this.state.hcmKeys.map((key, index) => {
+									return (
+										<View key={index}> 1 人:
+											{
+												this.state.hresCargostationMap[key].map((item, hcIndex) => {
+													return (<Text key={hcIndex}>{item.stationdsc} (
+														{
+															item.passareaDtoList.map((item, passIndex) => {
+																return (<Text key={passIndex}>{item.areaCode} </Text>)
+															})
+														}
+													) </Text>)
+												})
+											}
+										</View>)
+								})
+							}
+						</View>
+					</AtModalContent>
+					<AtModalAction>
+						<Button onClick={this.closeModal}>
+							确定
+            </Button>
+					</AtModalAction>
+				</AtModal>
       </View>
     );
   }

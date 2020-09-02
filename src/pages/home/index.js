@@ -42,8 +42,6 @@ class Home extends Component {
       dataList: [],
       AtDrawer: false,
       refresherTriggered: false,
-      pageNum: 1,
-      pageMax: '',
       date: formatTimeStampToTime(Date.now()),
       // outOfdate: formatTimeStampToTime(Date.now()),
       workTypeList: new Array(8).fill({}),
