@@ -10,13 +10,6 @@ export default class Menu extends Component {
 		oncloseModal: () => {}
 	}
 
-	constructor(props) {
-		super(props)
-		this.state = {
-			isModalOpened: false,
-			stationdsc: []
-		}
-	}
 
 	closeModal = () => {
 		const {oncloseModal} = this.props

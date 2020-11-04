@@ -3,7 +3,7 @@ import {View, Text, ScrollView} from '@tarojs/components';
 import fetch from '@utils/request';
 import {API_ORDER_MYORDER} from '@constants/api';
 import {connect} from '@tarojs/redux';
-
+import throttle from 'lodash.throttle';
 import './index.scss';
 import { getWindowHeight } from '@utils/style';
 
@@ -25,9 +25,11 @@ class UserOrder extends Component {
     this.fetchMyOrder();
   }
 
-  scrollToLower = () => {
-    console.log('scrollToLower底部上拉');
-  };
+  scrollToLower = throttle(() => {
+    console.log('onScrollToLower...');
+    this.fetchMyOrder()
+  }, 1000);
+
 
   onRefresherRefresh = () => {
     this.setState({
@@ -146,7 +148,9 @@ class UserOrder extends Component {
         enableBackToTop={true}
         onScrollToLower={this.scrollToLower}
       >
+        <View className='placeholder'>23123</View>
         {this.renderOrderList()}
+        <View className='placeholder'>23123</View>
       </ScrollView>
     );
   }
